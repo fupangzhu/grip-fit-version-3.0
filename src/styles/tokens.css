@@ -1,0 +1,48 @@
+:root {
+  /* ── Backgrounds ── */
+  --bg-gradient: radial-gradient(
+    ellipse 60% 70% at 50% 50%,
+    #20324c 0%,
+    #182539 25%,
+    #101926 50%,
+    #080c13 75%,
+    #040609 87.5%,
+    #000000 100%
+  );
+  --bg-deep: #000000;
+  --bg-atmos: rgba(180, 197, 255, 0.05);
+
+  /* ── Card surfaces (合并相近色) ── */
+  --card-front: #272a2f;
+  --card-back: #1d2024;
+  --card-input: #0b0e13;
+  --card-border: rgba(66, 70, 85, 0.4);
+  --card-border-top: #424655;
+
+  /* ── Text ── */
+  --text-1: #e0e2e8;
+  --text-2: #8d90a1;
+  --text-3: #c3c6d8;
+  --text-faint: rgba(255, 255, 255, 0.38);
+  --text-nav: rgba(255, 255, 255, 0.38);
+  --text-login-btn: rgba(255, 255, 255, 0.42);
+
+  /* ── Accent ── */
+  --accent: #b4c5ff;
+  --accent-blue: #618bff;
+  --accent-soft: rgba(180, 197, 255, 0.5);
+
+  /* ── CTA ── */
+  --cta-gradient: linear-gradient(158deg, #b4c5ff 0%, #618bff 100%);
+  --cta-shadow: 0 10px 30px rgba(180, 197, 255, 0.2);
+  --cta-text: #002a78;
+
+  /* ── Fonts ── */
+  --font-zh: 'Noto Sans SC', 'PingFang SC', system-ui, sans-serif;
+  --font-en: 'Inter', system-ui, sans-serif;
+  --font-brand: 'Space Grotesk', 'Inter', sans-serif;
+
+  /* ── Layout ── */
+  --page-w: 1280px;
+  --page-h: 856px;
+}

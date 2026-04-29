@@ -1,0 +1,71 @@
+.gf-nav {
+  position: absolute;
+  top: 30px;
+  left: 38px;
+  right: 38px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 30;
+  pointer-events: auto;
+}
+
+.gf-nav__logo {
+  font-family: var(--font-brand);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 3.08px;
+  color: #ffffff;
+  cursor: pointer;
+  user-select: none;
+  line-height: 21px;
+}
+
+.gf-nav__links {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 32px;
+  align-items: center;
+}
+
+.gf-nav__links li {
+  font-family: var(--font-zh);
+  font-weight: 500;
+  font-size: 13px;
+  letter-spacing: 0.26px;
+  color: var(--text-nav);
+  cursor: pointer;
+  transition: color 0.2s ease;
+  line-height: 19.5px;
+}
+
+.gf-nav__links li:hover {
+  color: #ffffff;
+}
+
+.gf-nav__login {
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  padding: 8px 17px;
+  font-family: var(--font-zh);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.48px;
+  color: var(--text-login-btn);
+  transition: border-color 0.2s ease, color 0.2s ease;
+  line-height: 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(255, 255, 255, 0.015);
+}
+
+.gf-nav__login:hover {
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.03);
+}

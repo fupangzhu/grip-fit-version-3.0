@@ -1,0 +1,264 @@
+/* ── Inner layouts ── */
+.card-inner {
+  position: relative;
+  height: 100%;
+  padding: 28px 28px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.card-inner--front {
+  gap: 20px;
+}
+
+.card-inner--back {
+  gap: 14px;
+  opacity: 0.9;
+}
+
+/* ── Header ── */
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: rgba(180, 197, 255, 0.08);
+  border: 1px solid rgba(180, 197, 255, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-icon--muted {
+  background: rgba(180, 197, 255, 0.04);
+  border-color: rgba(180, 197, 255, 0.1);
+}
+
+.card-stage-label {
+  font-family: var(--font-en);
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-3);
+  font-weight: 600;
+}
+
+.card-stage-label--soft {
+  color: var(--text-2);
+}
+
+/* ── Body ── */
+.card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+  min-height: 0;
+}
+
+.card-tag {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(180, 197, 255, 0.25);
+  background: rgba(180, 197, 255, 0.06);
+  font-family: var(--font-zh);
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 0.5px;
+}
+
+.card-title {
+  font-family: var(--font-zh);
+  font-weight: 600;
+  font-size: 22px;
+  line-height: 1.4;
+  color: var(--text-1);
+  letter-spacing: -0.3px;
+  margin: 0;
+}
+
+.card-title--muted {
+  font-family: var(--font-zh);
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 1.4;
+  color: var(--text-2);
+  letter-spacing: -0.2px;
+  margin: 0;
+}
+
+.card-desc {
+  font-family: var(--font-zh);
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text-2);
+  margin: 0;
+}
+
+.card-desc--muted {
+  color: var(--text-3);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+/* ── Back card bullets ── */
+.card-bullets {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.card-bullets li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-zh);
+  font-size: 11px;
+  color: var(--text-3);
+  letter-spacing: 0.2px;
+}
+
+.card-bullets .dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--accent);
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+
+/* ── Front previews ── */
+.preview {
+  margin-top: auto;
+  border-radius: 14px;
+  border: 1px solid rgba(180, 197, 255, 0.12);
+  background: rgba(11, 14, 19, 0.55);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.preview--scan {
+  gap: 10px;
+}
+
+.preview-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.preview-label {
+  font-family: var(--font-zh);
+  font-size: 11px;
+  color: var(--text-3);
+  letter-spacing: 0.4px;
+}
+
+.preview-value {
+  font-family: var(--font-en);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: -0.2px;
+}
+
+.preview-bar {
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(180, 197, 255, 0.12);
+  overflow: hidden;
+}
+
+.preview-bar__fill {
+  height: 100%;
+  width: 98%;
+  background: var(--cta-gradient);
+  border-radius: 999px;
+}
+
+.preview-img {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  background: radial-gradient(ellipse at 50% 60%, rgba(97, 139, 255, 0.18) 0%, rgba(0, 0, 0, 0.5) 80%);
+}
+
+.preview-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.9;
+}
+
+.scanline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  box-shadow: 0 0 10px var(--accent);
+  animation: scan 2.4s ease-in-out infinite;
+}
+
+@keyframes scan {
+  0%, 100% { top: 10%; opacity: 0.3; }
+  50%      { top: 85%; opacity: 1; }
+}
+
+.preview--model img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+
+/* ── Metric preview ── */
+.preview--metric {
+  padding: 0;
+  border: none;
+  background: transparent;
+}
+
+.metric-card {
+  border-radius: 14px;
+  border: 1px solid rgba(180, 197, 255, 0.18);
+  background: linear-gradient(
+    135deg,
+    rgba(180, 197, 255, 0.08) 0%,
+    rgba(97, 139, 255, 0.04) 100%
+  );
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.metric-label {
+  font-family: var(--font-zh);
+  font-size: 11px;
+  color: var(--text-3);
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+
+.metric-value {
+  font-family: var(--font-en);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-1);
+  letter-spacing: -0.5px;
+}

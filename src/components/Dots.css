@@ -1,0 +1,26 @@
+.gf-dots {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+}
+
+.gf-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(180, 197, 255, 0.18);
+  padding: 0;
+  cursor: pointer;
+  transition: background 0.3s ease, width 0.3s ease;
+}
+
+.gf-dot.is-active {
+  width: 28px;
+  background: var(--accent);
+  box-shadow: 0 0 12px rgba(180, 197, 255, 0.45);
+}
+
+.gf-dot:hover {
+  background: rgba(180, 197, 255, 0.5);
+}

@@ -1,0 +1,246 @@
+.role-page {
+  background:
+    radial-gradient(ellipse 48% 70% at 50% 42%, rgba(33, 52, 80, 0.92) 0%, rgba(18, 30, 47, 0.88) 43%, rgba(6, 10, 16, 0.98) 100%),
+    #04070d;
+}
+
+.role-page::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 50% 28% at 52% 53%, rgba(113, 152, 216, 0.1), transparent 66%),
+    radial-gradient(ellipse 36% 46% at 18% 48%, rgba(47, 87, 142, 0.08), transparent 70%),
+    radial-gradient(ellipse 32% 44% at 85% 48%, rgba(47, 87, 142, 0.08), transparent 70%);
+  pointer-events: none;
+}
+
+.role-main {
+  position: relative;
+  z-index: 5;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.role-title {
+  margin-top: 188px;
+  color: #f1f4fb;
+  font-size: 40px;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: -0.9px;
+}
+
+.role-card-row {
+  margin-top: 150px;
+  display: grid;
+  grid-template-columns: repeat(2, 432px);
+  gap: 32px;
+}
+
+.role-card {
+  position: relative;
+  height: 264px;
+  padding: 47px 31px 34px;
+  border: 1px solid rgba(169, 198, 236, 0.36);
+  border-radius: 9px;
+  overflow: hidden;
+  text-align: left;
+  color: #f4f7fc;
+  background:
+    linear-gradient(135deg, rgba(32, 52, 78, 0.34), rgba(11, 18, 30, 0.22)),
+    rgba(20, 35, 55, 0.3);
+  backdrop-filter: blur(22px) saturate(140%);
+  -webkit-backdrop-filter: blur(22px) saturate(140%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 -1px 0 rgba(174, 207, 255, 0.08),
+    0 28px 80px rgba(0, 0, 0, 0.16);
+}
+
+.role-card::before {
+  content: '';
+  position: absolute;
+  inset: -40px -60px;
+  background:
+    radial-gradient(ellipse 78% 34% at 52% 40%, rgba(154, 203, 255, 0.13), transparent 64%),
+    linear-gradient(110deg, transparent 18%, rgba(255, 255, 255, 0.09) 38%, transparent 58%);
+  opacity: 0.85;
+  filter: blur(14px);
+  transform: rotate(-5deg);
+  pointer-events: none;
+}
+
+.role-card__glare {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(118deg, transparent 0%, rgba(255, 255, 255, 0.09) 43%, transparent 68%);
+  transform: translateX(-58%);
+  opacity: 0;
+  transition: transform 0.65s ease, opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.role-card:hover .role-card__glare {
+  transform: translateX(70%);
+  opacity: 0.72;
+}
+
+.role-card__icon,
+.role-card__title,
+.role-card__desc {
+  position: relative;
+  z-index: 1;
+  display: block;
+}
+
+.role-card__icon {
+  color: rgba(227, 234, 244, 0.86);
+  margin-bottom: 34px;
+}
+
+.role-card__title {
+  color: #f4f7fc;
+  font-size: 24px;
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+  margin-bottom: 18px;
+}
+
+.role-card__desc {
+  max-width: 360px;
+  color: rgba(220, 226, 239, 0.72);
+  font-family: var(--font-en);
+  font-size: 16px;
+  line-height: 1.64;
+  letter-spacing: 0;
+}
+
+.role-wave {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 300px;
+  height: 365px;
+  z-index: 2;
+  pointer-events: none;
+  overflow: hidden;
+  opacity: 0.92;
+}
+
+.role-wave::before,
+.role-wave::after {
+  content: '';
+  position: absolute;
+  top: 92px;
+  left: -28%;
+  width: 560px;
+  height: 170px;
+  border-radius: 999px;
+  background: radial-gradient(ellipse at center, rgba(153, 203, 255, 0.16), rgba(74, 124, 196, 0.07) 42%, transparent 72%);
+  filter: blur(30px);
+  opacity: 0.7;
+  animation: role-flow-glow 9.5s linear infinite;
+}
+
+.role-wave::after {
+  top: 156px;
+  width: 720px;
+  height: 145px;
+  opacity: 0.48;
+  animation-duration: 13s;
+  animation-delay: -5.5s;
+}
+
+.role-wave__svg {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.role-wave__path {
+  stroke-dasharray: 140 840;
+  stroke-linecap: round;
+  opacity: 0.42;
+  animation:
+    role-wave-flow 7.5s linear infinite,
+    role-wave-sway 14s ease-in-out infinite alternate;
+}
+
+.role-wave__path--2,
+.role-wave__path--5 {
+  animation-duration: 9s, 17s;
+  animation-delay: -2.2s, -3s;
+  opacity: 0.36;
+}
+
+.role-wave__path--3,
+.role-wave__path--6 {
+  animation-duration: 11s, 19s;
+  animation-delay: -4.5s, -6s;
+  opacity: 0.28;
+}
+
+.role-notice {
+  position: absolute;
+  left: 50%;
+  bottom: 46px;
+  z-index: 20;
+  transform: translateX(-50%);
+  padding: 11px 18px;
+  border: 1px solid rgba(180, 197, 255, 0.26);
+  border-radius: 999px;
+  background: rgba(11, 18, 29, 0.82);
+  color: rgba(234, 239, 248, 0.9);
+  font-size: 13px;
+  line-height: 1;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+@keyframes role-wave-flow {
+  0% {
+    stroke-dashoffset: 980;
+  }
+
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes role-wave-sway {
+  0% {
+    transform: translate3d(-28px, -8px, 0) scaleY(1);
+  }
+
+  100% {
+    transform: translate3d(42px, 10px, 0) scaleY(1.07);
+  }
+}
+
+@keyframes role-flow-glow {
+  0% {
+    transform: translate3d(-14vw, 0, 0) scaleX(0.82);
+    opacity: 0;
+  }
+
+  12% {
+    opacity: 0.58;
+  }
+
+  52% {
+    opacity: 0.74;
+  }
+
+  88% {
+    opacity: 0.3;
+  }
+
+  100% {
+    transform: translate3d(150vw, -18px, 0) scaleX(1.08);
+    opacity: 0;
+  }
+}
