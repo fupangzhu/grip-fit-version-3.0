@@ -103,52 +103,15 @@ function MetricPreview({ metric }: { metric: { label: string; value: string } })
 /* ── Icons (simple inline SVG) ── */
 
 function IconFor({ name, muted }: { name: Stage['icon']; muted?: boolean }) {
-  const color = muted ? 'rgba(180,197,255,0.35)' : '#b4c5ff';
-  switch (name) {
-    case 'compass':
-      return (
-        <svg width="24" height="27" viewBox="0 0 20 27" fill="none">
-          <path
-            d="M10 2.2v22M3 6.6l7 4 7-4M10 10.6v14M3 20.2l7 4 7-4"
-            stroke={color}
-            strokeWidth="1.3"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-          <circle cx="10" cy="10.5" r="2.2" stroke={color} strokeWidth="1.3" />
-        </svg>
-      );
-    case 'cube':
-      return (
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path
-            d="M5 3h4M15 3h4v4M5 21h4M15 21h4v-4M3 5v4M3 15v4M21 9v6"
-            stroke={color}
-            strokeWidth="1.4"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-          <rect
-            x="8"
-            y="8"
-            width="8"
-            height="8"
-            stroke={color}
-            strokeWidth="1.4"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            rx="1"
-          />
-        </svg>
-      );
-    case 'chart':
-    case 'chart-pro':
-      return (
-        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-          <rect x="3" y="11" width="3.4" height="8" rx="0.6" fill={color} />
-          <rect x="9.3" y="6" width="3.4" height="13" rx="0.6" fill={color} />
-          <rect x="15.6" y="2.5" width="3.4" height="16.5" rx="0.6" fill={color} />
-        </svg>
-      );
-  }
+  const src =
+    name === 'compass' ? '/assets/icon-compass.svg' : name === 'cube' ? '/assets/icon-cube.svg' : '/assets/icon-chart.svg';
+
+  return (
+    <img
+      className={`card-icon__asset card-icon__asset--${name} ${muted ? 'card-icon__asset--muted' : ''}`}
+      src={src}
+      alt=""
+      draggable={false}
+    />
+  );
 }

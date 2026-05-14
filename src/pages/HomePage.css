@@ -1,7 +1,47 @@
-.home-page {
+.page-shell.home-page {
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
   background:
     radial-gradient(ellipse 50% 62% at 50% 54%, rgba(41, 63, 95, 0.98) 0%, rgba(20, 32, 49, 0.92) 42%, rgba(5, 9, 15, 0.98) 100%),
     #050910;
+  scrollbar-width: none;
+}
+
+.home-page::-webkit-scrollbar {
+  display: none;
+}
+
+.home-fixed-stage {
+  position: fixed;
+  inset: 0;
+  z-index: 4;
+  min-width: 1280px;
+  min-height: 800px;
+  pointer-events: none;
+  transform-origin: 50% 45%;
+}
+
+.home-fixed-stage::before {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  content: '';
+  background:
+    radial-gradient(ellipse 50% 62% at 50% 54%, rgba(41, 63, 95, 0.98) 0%, rgba(20, 32, 49, 0.92) 42%, rgba(5, 9, 15, 0.98) 100%),
+    #050910;
+}
+
+.home-fixed-stage .gf-nav,
+.home-fixed-stage .home-start {
+  pointer-events: auto;
+}
+
+.home-fixed-stage .home-title,
+.home-fixed-stage .gripfit-title {
+  pointer-events: auto;
 }
 
 .home-main {
@@ -136,4 +176,30 @@
   line-height: 1;
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
+}
+
+.home-transition-glow {
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 38%, rgba(20, 42, 79, 0.78) 0%, rgba(5, 10, 18, 0.3) 55%, transparent 78%),
+    linear-gradient(180deg, rgba(5, 9, 16, 0) 0%, rgba(2, 5, 9, 0.88) 72%, #020509 100%);
+}
+
+.home-scroll-content {
+  position: relative;
+  z-index: 2;
+  min-height: calc(118vh + 3175px);
+  padding-top: 118vh;
+  background:
+    linear-gradient(180deg, rgba(11, 23, 42, 0.98) 0, rgba(11, 23, 42, 0.98) 65px, #04080d 65px, #020509 100%);
+}
+
+.home-analysis-stage {
+  position: relative;
+  min-height: 3175px;
+  transform-origin: 50% 0;
+  will-change: opacity, transform;
 }

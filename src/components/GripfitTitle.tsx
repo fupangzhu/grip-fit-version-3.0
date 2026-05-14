@@ -148,6 +148,42 @@ export default function GripfitTitle({ width = 720, height = 180 }: GripfitTitle
     return () => cancelAnimationFrame(state.animId);
   }, [buildParticles, height, width]);
 
+  useEffect(() => {
+    const updateMouse = (clientX: number, clientY: number) => {
+      const rect = canvasRef.current?.getBoundingClientRect();
+      if (!rect) return;
+
+      const x = clientX - rect.left;
+      const y = clientY - rect.top;
+      const margin = 96;
+
+      if (x < -margin || y < -margin || x > rect.width + margin || y > rect.height + margin) {
+        stateRef.current.mouseX = -9999;
+        stateRef.current.mouseY = -9999;
+        return;
+      }
+
+      stateRef.current.mouseX = x;
+      stateRef.current.mouseY = y;
+    };
+
+    const handleWindowMouseMove = (event: MouseEvent) => updateMouse(event.clientX, event.clientY);
+    const resetMouse = () => {
+      stateRef.current.mouseX = -9999;
+      stateRef.current.mouseY = -9999;
+    };
+
+    window.addEventListener('mousemove', handleWindowMouseMove);
+    window.addEventListener('blur', resetMouse);
+    document.addEventListener('mouseleave', resetMouse);
+
+    return () => {
+      window.removeEventListener('mousemove', handleWindowMouseMove);
+      window.removeEventListener('blur', resetMouse);
+      document.removeEventListener('mouseleave', resetMouse);
+    };
+  }, []);
+
   const handleMouseMove = useCallback((event: React.MouseEvent<HTMLCanvasElement>) => {
     const rect = canvasRef.current?.getBoundingClientRect();
     if (!rect) return;

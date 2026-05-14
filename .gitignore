@@ -1,5 +1,8 @@
 node_modules/
 dist/
+output/
 *.tsbuildinfo
 .DS_Store
 public/assets/home-reference.png
+public/assets/hand-guide-dotted*.png
+public/assets/hand-guide-generated.png

@@ -4,13 +4,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 40px 0;
+  padding: 0;
 }
 
 .deck {
   position: relative;
-  width: 460px;
-  height: 480px;
+  width: 560px;
+  height: 520px;
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -19,25 +19,26 @@
 
 .deck-slot {
   position: absolute;
-  top: 10px;
-  left: 60px;
+  top: 30px;
+  left: 110px;
   width: 340px;
-  height: 460px;
+  height: 456px;
   transform-origin: 50% 90%;
   will-change: transform, opacity, filter;
-  border-radius: 20px;
+  border-radius: 7px;
   border: 1px solid var(--card-border);
-  background: var(--card-back);
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.45);
+  background: #111418;
+  box-shadow: 0 34px 82px rgba(0, 0, 0, 0.44);
   overflow: hidden;
   cursor: pointer;
 }
 
 .deck-slot.is-front {
-  background: var(--card-front);
-  border-color: rgba(180, 197, 255, 0.18);
-  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.55),
-              0 0 40px rgba(180, 197, 255, 0.08);
+  background: #101214;
+  border-color: rgba(188, 204, 234, 0.22);
+  box-shadow:
+    0 42px 90px rgba(0, 0, 0, 0.58),
+    0 0 58px rgba(98, 137, 206, 0.08);
   cursor: default;
 }
 

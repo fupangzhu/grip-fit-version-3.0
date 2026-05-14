@@ -1,0 +1,312 @@
+.hand-recognition-page {
+  min-width: 0;
+  min-height: 0;
+  background:
+    radial-gradient(ellipse 48% 66% at 50% 50%, rgba(42, 68, 101, 0.7) 0%, rgba(18, 31, 49, 0.52) 44%, rgba(6, 11, 18, 0.86) 76%, #030609 100%),
+    linear-gradient(180deg, #10161d 0%, #050a10 100%);
+}
+
+.hand-recognition-page::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 63px;
+  height: 1px;
+  background: rgba(146, 160, 187, 0.08);
+  pointer-events: none;
+}
+
+.hand-recognition-page::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(111, 145, 255, 0.09), transparent 33%),
+    radial-gradient(ellipse 18% 62% at 0% 48%, rgba(75, 117, 184, 0.08), transparent 78%),
+    radial-gradient(ellipse 18% 62% at 100% 48%, rgba(75, 117, 184, 0.07), transparent 78%);
+  pointer-events: none;
+}
+
+.hand-scan-stage {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 2;
+  width: 1280px;
+  height: 913px;
+  transform-origin: center center;
+}
+
+.hand-scan-brand {
+  position: absolute;
+  top: 26px;
+  left: 32px;
+  z-index: 3;
+  color: rgba(248, 250, 255, 0.96);
+  font-family: var(--font-brand);
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 5px;
+}
+
+.hand-scan-menu {
+  position: absolute;
+  top: 96px;
+  right: 33px;
+  z-index: 3;
+  display: flex;
+  gap: 8px;
+}
+
+.hand-scan-menu span {
+  width: 4px;
+  height: 4px;
+  background: rgba(164, 184, 255, 0.8);
+}
+
+.hand-scan-main {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 913px;
+}
+
+.hand-scan-progress {
+  position: absolute;
+  top: 108px;
+  left: 50%;
+  width: 448px;
+  transform: translateX(-50%);
+}
+
+.hand-scan-progress__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: rgba(199, 210, 239, 0.86);
+  font-family: var(--font-en);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 4px;
+  line-height: 1;
+}
+
+.hand-scan-progress__top span:last-child {
+  color: rgba(199, 214, 255, 0.96);
+  font-weight: 500;
+  letter-spacing: 1px;
+}
+
+.hand-scan-progress__track {
+  position: relative;
+  margin-top: 13px;
+  height: 2px;
+  background: rgba(194, 204, 230, 0.12);
+  overflow: hidden;
+}
+
+.hand-scan-progress__track span {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 51%;
+  background: linear-gradient(90deg, rgba(174, 194, 255, 0.88), rgba(86, 130, 255, 0.72));
+  box-shadow: 0 0 18px rgba(120, 160, 255, 0.42);
+}
+
+.hand-scan-capture {
+  position: absolute;
+  top: 229px;
+  left: 50%;
+  width: 420px;
+  height: 444px;
+  transform: translateX(-50%);
+}
+
+.hand-guide-frame {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 579px;
+  height: 684px;
+  transform: translate(-50%, -50%);
+  object-fit: contain;
+  opacity: 0.46;
+  filter: drop-shadow(0 0 8px rgba(159, 205, 255, 0.12));
+  pointer-events: none;
+}
+
+.hand-scan-line {
+  position: absolute;
+  top: 225px;
+  left: 50%;
+  width: 334px;
+  height: 1px;
+  margin-left: -167px;
+  background: linear-gradient(90deg, transparent 0%, rgba(54, 107, 255, 0.2) 16%, rgba(54, 107, 255, 0.95) 50%, rgba(54, 107, 255, 0.2) 84%, transparent 100%);
+  box-shadow: 0 0 20px rgba(57, 116, 255, 0.38);
+}
+
+.hand-scan-corner {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  color: #3575ff;
+}
+
+.hand-scan-corner::before,
+.hand-scan-corner::after {
+  content: '';
+  position: absolute;
+  background: currentColor;
+}
+
+.hand-scan-corner::before {
+  width: 40px;
+  height: 2px;
+}
+
+.hand-scan-corner::after {
+  width: 2px;
+  height: 40px;
+}
+
+.hand-scan-corner--tl {
+  top: 50px;
+  left: 18px;
+}
+
+.hand-scan-corner--tl::before,
+.hand-scan-corner--tl::after {
+  top: 0;
+  left: 0;
+}
+
+.hand-scan-corner--tr {
+  top: 50px;
+  right: 6px;
+}
+
+.hand-scan-corner--tr::before {
+  top: 0;
+  right: 0;
+}
+
+.hand-scan-corner--tr::after {
+  top: 0;
+  right: 0;
+}
+
+.hand-scan-corner--bl {
+  left: 18px;
+  bottom: 46px;
+}
+
+.hand-scan-corner--bl::before {
+  left: 0;
+  bottom: 0;
+}
+
+.hand-scan-corner--bl::after {
+  left: 0;
+  bottom: 0;
+}
+
+.hand-scan-corner--br {
+  right: 6px;
+  bottom: 46px;
+}
+
+.hand-scan-corner--br::before {
+  right: 0;
+  bottom: 0;
+}
+
+.hand-scan-corner--br::after {
+  right: 0;
+  bottom: 0;
+}
+
+.hand-scan-copy {
+  position: absolute;
+  top: 683px;
+  left: 50%;
+  width: 320px;
+  transform: translateX(-50%);
+  text-align: center;
+}
+
+.hand-scan-copy h1 {
+  color: rgba(231, 236, 248, 0.92);
+  font-family: var(--font-zh);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.hand-scan-copy p {
+  margin-top: 11px;
+  color: rgba(169, 180, 207, 0.48);
+  font-family: var(--font-zh);
+  font-size: 9px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 1.2px;
+}
+
+.hand-scan-actions {
+  position: absolute;
+  top: 760px;
+  left: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 19px;
+  transform: translateX(-50%);
+}
+
+.hand-scan-primary {
+  width: 690px;
+  height: 59px;
+  border-radius: 4px;
+  background: linear-gradient(137deg, #b8c8ff 0%, #477cff 100%);
+  color: #073174;
+  font-family: var(--font-zh);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.2px;
+  box-shadow: 0 16px 42px rgba(56, 104, 255, 0.18);
+}
+
+.hand-scan-secondary {
+  width: 84px;
+  height: 34px;
+  border: 1px solid rgba(155, 169, 199, 0.16);
+  border-radius: 7px;
+  background: rgba(6, 10, 16, 0.18);
+  color: rgba(194, 204, 224, 0.38);
+  font-family: var(--font-zh);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.hand-scan-notice {
+  position: fixed;
+  left: 50%;
+  bottom: 42px;
+  z-index: 20;
+  transform: translateX(-50%);
+  padding: 11px 18px;
+  border: 1px solid rgba(62, 122, 255, 0.28);
+  border-radius: 999px;
+  background: rgba(7, 14, 24, 0.86);
+  color: rgba(234, 239, 248, 0.92);
+  font-size: 13px;
+  line-height: 1;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}

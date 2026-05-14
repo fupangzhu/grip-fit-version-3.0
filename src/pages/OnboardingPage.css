@@ -10,8 +10,8 @@
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse at 18% 30%, rgba(97, 139, 255, 0.18) 0%, transparent 55%),
-    radial-gradient(ellipse at 82% 70%, rgba(180, 197, 255, 0.12) 0%, transparent 55%);
+    radial-gradient(ellipse 46% 62% at 50% 42%, rgba(38, 59, 88, 0.78) 0%, rgba(17, 29, 45, 0.58) 48%, transparent 78%),
+    radial-gradient(ellipse 44% 42% at 58% 71%, rgba(89, 125, 183, 0.13) 0%, transparent 68%);
   mix-blend-mode: screen;
   pointer-events: none;
   z-index: 1;
@@ -25,7 +25,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 120px 40px 80px;
+  padding: 104px 40px 128px;
 }
 
 /* ── Stage column ── */
@@ -33,54 +33,99 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 40px;
 }
 
-/* ── Controls ── */
-.onb-controls {
+.onb-dots {
+  position: absolute;
+  left: 50%;
+  bottom: 124px;
+  z-index: 10;
+  transform: translateX(-50%);
+}
+
+.onb-actions {
+  position: absolute;
+  right: 49px;
+  bottom: 42px;
+  z-index: 10;
   display: flex;
   align-items: center;
-  gap: 32px;
-  padding: 0 20px;
+  gap: 18px;
 }
 
-.onb-ghost {
+.onb-back,
+.onb-next {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 20px;
-  border-radius: 999px;
+  color: rgba(214, 221, 237, 0.62);
   background: transparent;
-  border: 1px solid rgba(180, 197, 255, 0.22);
-  color: var(--text-2);
   font-family: var(--font-zh);
   font-size: 12px;
   font-weight: 500;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
   cursor: pointer;
-  transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
 }
 
-.onb-ghost:hover {
+.onb-back {
+  position: absolute;
+  left: 48px;
+  bottom: 86px;
+  z-index: 10;
+}
+
+.onb-next {
+  width: 132px;
+  height: 52px;
+  justify-content: center;
+  border: 1px solid rgba(179, 197, 231, 0.13);
+  border-radius: 7px;
+  background: rgba(5, 9, 15, 0.14);
+  color: rgba(233, 238, 248, 0.84);
+}
+
+.onb-back:hover,
+.onb-next:hover {
   color: var(--text-1);
-  background: rgba(180, 197, 255, 0.06);
-  border-color: rgba(180, 197, 255, 0.4);
+}
+
+.onb-next:hover {
+  background: rgba(180, 197, 255, 0.04);
+  border-color: rgba(180, 197, 255, 0.28);
 }
 
 .onb-cta {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  padding: 12px 26px;
-  border-radius: 999px;
-  background: var(--cta-gradient);
-  color: var(--cta-text);
+  justify-content: center;
+  width: 134px;
+  height: 53px;
+  border-radius: 6px;
+  background: linear-gradient(137deg, #a8bcff 0%, #638cff 100%);
+  color: #073174;
   font-family: var(--font-zh);
   font-weight: 700;
   font-size: 13px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
+  letter-spacing: 0.2px;
   border: none;
   cursor: pointer;
-  box-shadow: 0 10px 30px rgba(180, 197, 255, 0.2);
+  box-shadow: 0 16px 40px rgba(98, 134, 255, 0.22);
+}
+
+.onb-notice {
+  position: absolute;
+  left: 50%;
+  bottom: 42px;
+  z-index: 20;
+  transform: translateX(-50%);
+  padding: 11px 18px;
+  border: 1px solid rgba(180, 197, 255, 0.26);
+  border-radius: 999px;
+  background: rgba(11, 18, 29, 0.82);
+  color: rgba(234, 239, 248, 0.9);
+  font-size: 13px;
+  line-height: 1;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
 }

@@ -1,0 +1,220 @@
+.analysis-page {
+  height: 100vh;
+  min-height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background:
+    linear-gradient(180deg, rgba(11, 23, 42, 0.98) 0, rgba(11, 23, 42, 0.98) 65px, #04080d 65px, #020509 100%);
+  color: #e4e7ee;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(62, 111, 255, 0.35) rgba(255, 255, 255, 0.04);
+}
+
+.analysis-content {
+  width: 896px;
+  min-height: 3175px;
+  margin: 0 auto;
+  padding: 98px 0 0;
+}
+
+.analysis-hero {
+  width: 690px;
+}
+
+.analysis-kicker {
+  color: #3f7aff;
+  font-family: var(--font-zh);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 1.1px;
+}
+
+.analysis-title {
+  margin-top: 42px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  font-family: var(--font-zh);
+  font-size: 56px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0;
+  color: #e7e9ef;
+}
+
+.analysis-title strong {
+  color: #3f78ff;
+  font-weight: 400;
+}
+
+.analysis-lede {
+  width: 632px;
+  margin-top: 45px;
+  color: rgba(178, 185, 199, 0.74);
+  font-family: var(--font-zh);
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.8;
+  letter-spacing: 0;
+}
+
+.analysis-features {
+  margin-top: 126px;
+  display: grid;
+  grid-template-columns: repeat(4, 206px);
+  gap: 24px;
+}
+
+.analysis-feature-card {
+  height: 260px;
+  padding: 91px 40px 0;
+  border: 1px solid rgba(105, 118, 143, 0.28);
+  background:
+    radial-gradient(circle at 50% 22%, rgba(43, 69, 122, 0.1), transparent 58%),
+    rgba(4, 8, 13, 0.12);
+}
+
+.analysis-feature-card h2 {
+  color: rgba(230, 233, 241, 0.92);
+  font-family: var(--font-zh);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.analysis-feature-card p {
+  margin-top: 21px;
+  color: rgba(176, 184, 199, 0.72);
+  font-family: var(--font-zh);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.65;
+}
+
+.analysis-icon {
+  display: block;
+  width: 32px;
+  height: 32px;
+  color: #3977ff;
+}
+
+.analysis-icon--large {
+  width: 64px;
+  height: 64px;
+}
+
+.analysis-flow {
+  margin-top: 183px;
+}
+
+.analysis-flow h2 {
+  color: rgba(235, 238, 244, 0.95);
+  text-align: center;
+  font-family: var(--font-zh);
+  font-size: 36px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.analysis-flow-grid {
+  margin-top: 95px;
+  display: grid;
+  grid-template-columns: 1fr;
+  border-top: 1px solid rgba(105, 118, 143, 0.28);
+  border-left: 1px solid rgba(105, 118, 143, 0.28);
+}
+
+.analysis-flow-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 250px;
+}
+
+.analysis-flow-row > * {
+  border-right: 1px solid rgba(105, 118, 143, 0.28);
+  border-bottom: 1px solid rgba(105, 118, 143, 0.28);
+}
+
+.analysis-flow-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #3977ff;
+}
+
+.analysis-flow-copy {
+  padding: 67px 64px 0;
+}
+
+.analysis-flow-copy h3 {
+  display: flex;
+  align-items: baseline;
+  gap: 13px;
+  color: rgba(235, 238, 244, 0.92);
+  font-family: var(--font-zh);
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.analysis-flow-copy h3 span {
+  color: rgba(43, 92, 183, 0.76);
+  font-family: var(--font-en);
+  font-size: 31px;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+.analysis-flow-copy p {
+  width: 292px;
+  margin-top: 28px;
+  color: rgba(176, 184, 199, 0.76);
+  font-family: var(--font-zh);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.78;
+}
+
+.analysis-footer {
+  margin-top: 352px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 214px;
+}
+
+.analysis-start {
+  width: 166px;
+  height: 53px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border-radius: 6px;
+  background: linear-gradient(137deg, #a8bcff 0%, #638cff 100%);
+  color: #073174;
+  font-family: var(--font-zh);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  line-height: 1;
+  box-shadow: 0 16px 40px rgba(98, 134, 255, 0.22);
+}
+
+.analysis-notice {
+  position: fixed;
+  left: 50%;
+  bottom: 42px;
+  z-index: 20;
+  transform: translateX(-50%);
+  padding: 11px 18px;
+  border: 1px solid rgba(62, 122, 255, 0.28);
+  border-radius: 999px;
+  background: rgba(7, 14, 24, 0.86);
+  color: rgba(234, 239, 248, 0.92);
+  font-size: 13px;
+  line-height: 1;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}

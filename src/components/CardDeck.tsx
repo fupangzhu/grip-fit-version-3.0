@@ -19,12 +19,12 @@ const depthTransform = (depth: number) => {
     case 0:
       return { x: 0, y: 0, rotate: 0, scale: 1, opacity: 1, filter: 'blur(0px)', zIndex: 40 };
     case 1:
-      return { x: 26, y: -10, rotate: 3, scale: 0.97, opacity: 0.9, filter: 'blur(0.4px)', zIndex: 30 };
+      return { x: 48, y: 18, rotate: 4, scale: 0.97, opacity: 0.74, filter: 'blur(0.6px)', zIndex: 30 };
     case 2:
-      return { x: 56, y: -18, rotate: 8, scale: 0.94, opacity: 0.7, filter: 'blur(0.8px)', zIndex: 20 };
+      return { x: 90, y: 34, rotate: 9, scale: 0.94, opacity: 0.46, filter: 'blur(0.9px)', zIndex: 20 };
     case 3:
     default:
-      return { x: 92, y: -22, rotate: 14, scale: 0.9, opacity: 0.45, filter: 'blur(1px)', zIndex: 10 };
+      return { x: 128, y: 52, rotate: 14, scale: 0.91, opacity: 0.28, filter: 'blur(1.2px)', zIndex: 10 };
   }
 };
 
@@ -48,7 +48,7 @@ export default function CardDeck({ stages, front, onSelect }: Props) {
                 animate={{
                   x: t.x,
                   y: t.y,
-                  rotate: t.rotate,
+                  rotate: isFront && front === 0 ? -4 : t.rotate,
                   scale: t.scale,
                   opacity: t.opacity,
                   filter: t.filter,
