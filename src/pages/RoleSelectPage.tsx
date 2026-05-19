@@ -10,8 +10,10 @@ export default function RoleSelectPage() {
   const [notice, setNotice] = useState('');
 
   const chooseEnterprise = () => {
-    setNotice('企业端将在后续页面确认后接入');
-    window.setTimeout(() => setNotice(''), 1800);
+    setNotice('正在跳转到企业端...');
+    window.setTimeout(() => {
+      window.location.href = 'https://grip-fit-tob.vercel.app/';
+    }, 320);
   };
 
   return (
