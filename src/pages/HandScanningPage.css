@@ -40,15 +40,15 @@
 
 .hand-scanning-brand {
   position: absolute;
-  top: 26px;
-  left: 32px;
+  top: 30px;
+  left: 38px;
   z-index: 4;
-  color: rgba(248, 250, 255, 0.96);
+  color: #ffffff;
   font-family: var(--font-brand);
   font-size: 14px;
-  font-weight: 800;
-  line-height: 1;
-  letter-spacing: 5px;
+  font-weight: 700;
+  line-height: 21px;
+  letter-spacing: 3.08px;
 }
 
 .hand-scanning-main {
@@ -84,34 +84,90 @@
   content: '';
   position: absolute;
   inset: auto 0 0;
+  z-index: 2;
   height: 180px;
   background: linear-gradient(180deg, transparent 0%, rgba(5, 10, 16, 0.88) 100%);
+}
+
+.hand-scanning-video {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  filter: grayscale(0.58) saturate(0.72) brightness(0.9) contrast(1.08);
+  transition: opacity 360ms ease;
+}
+
+.hand-scanning-feed.is-camera-active .hand-scanning-video {
+  opacity: 0.62;
+}
+
+.hand-scanning-camera-status {
+  position: absolute;
+  left: 45px;
+  top: 38px;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 270px;
+  padding: 12px 14px;
+  border: 1px solid rgba(92, 137, 255, 0.22);
+  border-radius: 4px;
+  background: rgba(7, 13, 22, 0.44);
+  color: rgba(226, 234, 255, 0.72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.hand-scanning-camera-status strong {
+  color: rgba(180, 197, 255, 0.92);
+  font-family: var(--font-en);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 1.6px;
+}
+
+.hand-scanning-camera-status span {
+  font-family: var(--font-zh);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
 }
 
 .hand-scanning-hand {
   position: absolute;
   inset: 0;
   z-index: 1;
+  transition: opacity 260ms ease;
+}
+
+.hand-scanning-feed.is-camera-active .hand-scanning-hand {
+  opacity: 0.16;
 }
 
 .hand-scanning-hand img {
   position: absolute;
-  left: 171px;
-  top: 109px;
-  width: 645px;
+  left: 78px;
+  top: 32px;
+  width: 748px;
   height: auto;
   opacity: 0.58;
   filter: grayscale(0.72) saturate(0.58) brightness(1.05) contrast(0.84);
-  transform: scaleY(1.19);
+  transform: scaleY(1.05);
   transform-origin: top center;
 }
 
 .hand-scanning-mesh {
   position: absolute;
-  left: 171px;
-  top: 109px;
-  width: 645px;
-  height: 517px;
+  left: 78px;
+  top: 32px;
+  width: 748px;
+  height: 650px;
   background:
     repeating-linear-gradient(90deg, rgba(32, 42, 60, 0.42) 0 1px, transparent 1px 9px),
     repeating-linear-gradient(0deg, rgba(32, 42, 60, 0.33) 0 1px, transparent 1px 9px);
@@ -119,38 +175,52 @@
   opacity: 0.65;
   -webkit-mask-image: url('/assets/hand-scan.png');
   mask-image: url('/assets/hand-scan.png');
-  -webkit-mask-size: 645px auto;
-  mask-size: 645px auto;
+  -webkit-mask-size: 748px auto;
+  mask-size: 748px auto;
   -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
-  transform: scaleY(1.19);
+  transform: scaleY(1.05);
   transform-origin: top center;
 }
 
 .hand-scanning-hand-glow {
   position: absolute;
-  left: 182px;
-  top: 121px;
-  width: 620px;
-  height: 620px;
+  left: 90px;
+  top: 46px;
+  width: 710px;
+  height: 710px;
   background: radial-gradient(ellipse at 48% 43%, rgba(191, 211, 255, 0.18), transparent 62%);
   mix-blend-mode: screen;
   opacity: 0.42;
   -webkit-mask-image: url('/assets/hand-scan.png');
   mask-image: url('/assets/hand-scan.png');
-  -webkit-mask-size: 620px auto;
-  mask-size: 620px auto;
+  -webkit-mask-size: 710px auto;
+  mask-size: 710px auto;
   -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
-  transform: scaleY(1.19);
+  transform: scaleY(1.05);
   transform-origin: top center;
+}
+
+.hand-scanning-guide {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 4;
+  width: 540px;
+  height: 638px;
+  object-fit: contain;
+  transform: translate(-50%, -50%) scale(0.8);
+  opacity: 0.3;
+  filter: drop-shadow(0 0 8px rgba(159, 205, 255, 0.12));
+  pointer-events: none;
 }
 
 .hand-scanning-beam {
   position: absolute;
   left: 148px;
   top: 271px;
-  z-index: 3;
+  z-index: 5;
   width: 540px;
   height: 1px;
   background: linear-gradient(90deg, transparent 0%, rgba(54, 107, 255, 0.28) 15%, rgba(54, 107, 255, 1) 50%, rgba(54, 107, 255, 0.28) 85%, transparent 100%);

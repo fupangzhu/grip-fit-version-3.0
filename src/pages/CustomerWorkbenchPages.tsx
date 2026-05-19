@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type CSSProperties, type PointerEvent, type ReactNode } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type MutableRefObject, type PointerEvent, type ReactNode } from 'react';
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -32,6 +32,26 @@ type FlowState = {
   weight: number;
   cameraBump: number;
 };
+
+const profileGenderOptions = [
+  { key: 'male', label: '男 / Male', icon: '/assets/profile-figma-icon-male.svg' },
+  { key: 'female', label: '女 / Female', icon: '/assets/profile-figma-icon-female.svg' },
+] as const;
+
+const profileAgeOptions = [
+  { key: '18-35', label: '18-35', meta: 'EARLY-MID' },
+  { key: '36-55', label: '36-55', meta: 'EXPERIENCED' },
+  { key: '56+', label: '56+', meta: 'SENIOR' },
+] as const;
+
+type MeasurementViewport = 'top' | 'lateral' | 'palm' | 'wire';
+
+const measurementViewports: Array<{ key: MeasurementViewport; label: string }> = [
+  { key: 'top', label: 'TOP' },
+  { key: 'lateral', label: 'LATERAL' },
+  { key: 'palm', label: 'PALM' },
+  { key: 'wire', label: 'WIRE' },
+] as const;
 
 type ReportDimension = {
   id: string;
@@ -320,65 +340,394 @@ function CurveInput({
   );
 }
 
+type IntakeStage = 'profile' | 'scan-idle' | 'scan-active' | 'scan-confirm';
+type IntakeCameraStatus = 'requesting' | 'active' | 'unavailable';
+
+const CAROUSEL_IMAGES = [
+  '/assets/profile-grip-slim.png',
+  '/assets/profile-grip-normal.png',
+  '/assets/profile-grip-wide.png',
+];
+
+const INTAKE_METRICS = [
+  { label: '手长 · HAND LENGTH', value: '188.5', unit: 'mm' },
+  { label: '手宽 · HAND WIDTH', value: '84.2', unit: 'mm' },
+  { label: '拇指可达 · THUMB REACH', value: '66', unit: '%' },
+  { label: '掌厚 · PALM DEPTH', value: '32.4', unit: 'mm' },
+  { label: '五指跨度 · FINGER SPAN', value: '215', unit: 'mm' },
+  { label: '数据置信度 · CONFIDENCE', value: '98.2', unit: '%' },
+];
+
 function ProfileInfoPage() {
   const navigate = useNavigate();
-  const [gender, setGender] = useState<'female' | 'male' | 'other'>('female');
-  const [dominantHand, setDominantHand] = useState<'right' | 'left'>('right');
-  const [age, setAge] = useState(23);
-  const [height, setHeight] = useState(168);
+  const [gender, setGender] = useState<(typeof profileGenderOptions)[number]['key']>('male');
+  const [ageGroup, setAgeGroup] = useState<(typeof profileAgeOptions)[number]['key']>('18-35');
+  const [stage, setStage] = useState<IntakeStage>('profile');
+  const [carouselIdx, setCarouselIdx] = useState(0);
+  const [cameraStatus, setCameraStatus] = useState<IntakeCameraStatus>('requesting');
+  const [cameraMessage, setCameraMessage] = useState('正在调用摄像头...');
+  const [alignProgress, setAlignProgress] = useState(0);
+  const [revealedCount, setRevealedCount] = useState(0);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  useLayoutEffect(() => {
+    if (scrollRef.current) scrollRef.current.scrollTop = 0;
+  }, [stage]);
+
+  useEffect(() => {
+    const reset = () => {
+      if (scrollRef.current) scrollRef.current.scrollTop = 0;
+    };
+    window.addEventListener('resize', reset);
+    document.addEventListener('fullscreenchange', reset);
+    return () => {
+      window.removeEventListener('resize', reset);
+      document.removeEventListener('fullscreenchange', reset);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (stage !== 'profile') return;
+    const id = window.setInterval(() => {
+      setCarouselIdx((i) => (i + 1) % CAROUSEL_IMAGES.length);
+    }, 3600);
+    return () => window.clearInterval(id);
+  }, [stage]);
+
+  useEffect(() => {
+    if (stage !== 'scan-active') return;
+    let stream: MediaStream | null = null;
+    let cancelled = false;
+
+    const stopCamera = () => {
+      stream?.getTracks().forEach((t) => t.stop());
+      stream = null;
+    };
+
+    const requestCamera = async () => {
+      setCameraStatus('requesting');
+      setCameraMessage('正在调用摄像头...');
+
+      if (!navigator.mediaDevices?.getUserMedia) {
+        setCameraStatus('unavailable');
+        setCameraMessage('当前浏览器不支持摄像头调用');
+        return;
+      }
+
+      const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      const preferred = isMobile ? 'environment' : 'user';
+      const fallback = isMobile ? 'user' : 'environment';
+      const requests: MediaStreamConstraints[] = [
+        { audio: false, video: { facingMode: { ideal: preferred }, width: { ideal: 1280 }, height: { ideal: 720 } } },
+        { audio: false, video: { facingMode: { ideal: fallback }, width: { ideal: 1280 }, height: { ideal: 720 } } },
+        { audio: false, video: true },
+      ];
+
+      for (const constraints of requests) {
+        try {
+          const next = await navigator.mediaDevices.getUserMedia(constraints);
+          if (cancelled) {
+            next.getTracks().forEach((t) => t.stop());
+            return;
+          }
+          stream = next;
+          if (videoRef.current) {
+            videoRef.current.srcObject = next;
+            await videoRef.current.play().catch(() => undefined);
+          }
+          setCameraStatus('active');
+          setCameraMessage(isMobile ? '已连接手机后置摄像头' : '已连接电脑前置摄像头');
+          return;
+        } catch {
+          stopCamera();
+        }
+      }
+
+      if (!cancelled) {
+        setCameraStatus('unavailable');
+        setCameraMessage('摄像头不可用，请检查浏览器权限');
+      }
+    };
+
+    requestCamera();
+    return () => {
+      cancelled = true;
+      stopCamera();
+      if (videoRef.current) videoRef.current.srcObject = null;
+    };
+  }, [stage]);
+
+  useEffect(() => {
+    if (stage !== 'scan-active') {
+      setAlignProgress(0);
+      return;
+    }
+    if (cameraStatus !== 'active') return;
+    setAlignProgress(0);
+    const start = Date.now();
+    const duration = 4400;
+    const id = window.setInterval(() => {
+      const elapsed = Date.now() - start;
+      const pct = Math.min(100, (elapsed / duration) * 100);
+      setAlignProgress(pct);
+      if (pct >= 100) {
+        window.clearInterval(id);
+        window.setTimeout(() => setStage('scan-confirm'), 360);
+      }
+    }, 90);
+    return () => window.clearInterval(id);
+  }, [stage, cameraStatus]);
+
+  useEffect(() => {
+    if (stage !== 'scan-confirm') {
+      setRevealedCount(0);
+      return;
+    }
+    setRevealedCount(0);
+    let count = 0;
+    const id = window.setInterval(() => {
+      count += 1;
+      setRevealedCount(count);
+      if (count >= INTAKE_METRICS.length) window.clearInterval(id);
+    }, 460);
+    return () => window.clearInterval(id);
+  }, [stage]);
+
+  const stepNumber = stage === 'profile' ? 1 : 2;
+  const stepLabel = stepNumber === 1 ? '01' : '02';
+  const trackPercent = stepNumber === 1 ? 50 : 100;
+  const formLocked = stage !== 'profile';
+
   return (
     <div className="page-shell profile-info-page">
-      <section className="profile-panel">
-        <p className="profile-seq">ASSESSMENT PROFILE · 01/02</p>
-        <h1>补充一点信息，<br />让推荐更精准</h1>
-        <p className="profile-desc">基础画像只用于调整手部模型和握持场景权重，不会影响你的隐私设置。</p>
-        <div className="profile-grid">
-          {[
-            { key: 'female', label: '女性', meta: '默认测量模型' },
-            { key: 'male', label: '男性', meta: '更高掌宽权重' },
-            { key: 'other', label: '其他', meta: '中性模型' },
-            { key: dominantHand, label: dominantHand === 'right' ? '右手持机' : '左手持机', meta: '主用手' },
-          ].map((item, index) => (
-            <button
-              key={`${item.key}-${index}`}
-              className={index < 3 ? (gender === item.key ? 'is-selected' : '') : 'is-selected'}
-              type="button"
-              onClick={() => {
-                if (index < 3) setGender(item.key as 'female' | 'male' | 'other');
-                else setDominantHand((current) => current === 'right' ? 'left' : 'right');
-              }}
-            >
-              <span>{item.meta}</span>
-              {item.label}
-            </button>
-          ))}
-        </div>
-        <div className="profile-inline-form">
-          <NumericSlider label="年龄" value={age} min={16} max={70} unit="岁" onChange={setAge} />
-          <NumericSlider label="身高" value={height} min={145} max={200} unit="cm" onChange={setHeight} />
-          <div className="choice-row" role="group" aria-label="主用手">
-            {[
-              ['right', '右手'],
-              ['left', '左手'],
-            ].map(([value, label]) => (
-              <button
-                key={value}
-                className={dominantHand === value ? 'is-active' : ''}
-                type="button"
-                onClick={() => setDominantHand(value as 'right' | 'left')}
-              >
-                {label}
+      <div className={`profile-stage profile-stage--${stage}`}>
+        <header className="profile-topbar">
+          <span>GRIPFIT</span>
+        </header>
+        <section className="profile-panel">
+          <div className="profile-panel-scroll" ref={scrollRef}>
+            <div className="profile-progress">
+              <div className="profile-progress__meta">
+                <span>PROFILE INTAKE</span>
+                <span>{stepLabel} / 02</span>
+              </div>
+              <div className="profile-progress__track">
+                <motion.span
+                  initial={{ width: 0 }}
+                  animate={{ width: `${trackPercent}%` }}
+                  transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], delay: 0.05 }}
+                />
+              </div>
+            </div>
+            <h1>补充一点信息，<br />让推荐更精准</h1>
+
+            <div className={`profile-option-section profile-option-section--gender ${formLocked ? 'is-locked' : ''}`}>
+              <p className="profile-section-label">性别选择 / SELECT GENDER</p>
+              <div className="profile-gender-grid">
+                {profileGenderOptions.map((item) => (
+                  <button
+                    key={item.key}
+                    className={gender === item.key ? 'is-selected' : ''}
+                    type="button"
+                    aria-pressed={gender === item.key}
+                    disabled={formLocked}
+                    onClick={() => setGender(item.key)}
+                  >
+                    <img src={item.icon} alt="" />
+                    <span>{item.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className={`profile-option-section profile-option-section--age ${formLocked ? 'is-locked' : ''}`}>
+              <p className="profile-section-label">年龄区间 / AGE GROUP</p>
+              <div className="profile-age-grid">
+                {profileAgeOptions.map((item) => (
+                  <button
+                    key={item.key}
+                    className={ageGroup === item.key ? 'is-selected' : ''}
+                    type="button"
+                    aria-pressed={ageGroup === item.key}
+                    disabled={formLocked}
+                    onClick={() => setAgeGroup(item.key)}
+                  >
+                    <strong>{item.label}</strong>
+                    <span>{item.meta}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {!formLocked ? (
+              <button className="profile-primary" type="button" onClick={() => setStage('scan-idle')}>
+                <span>确认提交</span>
+                <img src="/assets/profile-figma-icon-arrow.svg" alt="" />
               </button>
-            ))}
+            ) : (
+              <button className="profile-primary profile-primary--locked" type="button" disabled>
+                <span>信息已确认 · 继续右侧采集</span>
+              </button>
+            )}
           </div>
+        </section>
+
+        <section className="profile-visual" aria-hidden>
+          {stage === 'profile' ? <ProfileCarousel idx={carouselIdx} /> : null}
+          {stage === 'scan-idle' ? <ScanIdleStage onStart={() => setStage('scan-active')} /> : null}
+          {stage === 'scan-active' ? (
+            <ScanActiveStage
+              videoRef={videoRef}
+              cameraStatus={cameraStatus}
+              cameraMessage={cameraMessage}
+              alignProgress={alignProgress}
+              onCancel={() => setStage('scan-idle')}
+            />
+          ) : null}
+          {stage === 'scan-confirm' ? (
+            <ScanConfirmStage
+              revealedCount={revealedCount}
+              onConfirm={() => navigate('/measure/auto')}
+              onRetry={() => setStage('scan-idle')}
+            />
+          ) : null}
+        </section>
+      </div>
+    </div>
+  );
+}
+
+function ProfileCarousel({ idx }: { idx: number }) {
+  return (
+    <>
+      <div className="profile-corner-dots">
+        {CAROUSEL_IMAGES.map((_, i) => (
+          <span key={i} className={i === idx ? 'is-active' : ''} />
+        ))}
+      </div>
+      <div className="profile-phone-crop">
+        {CAROUSEL_IMAGES.map((src, i) => (
+          <img key={src} src={src} alt="" className={i === idx ? 'is-active' : ''} />
+        ))}
+      </div>
+    </>
+  );
+}
+
+function ScanIdleStage({ onStart }: { onStart: () => void }) {
+  return (
+    <div className="profile-scan-preview">
+      <div className="profile-scan-capture">
+        <div className="profile-scan-corner profile-scan-corner--tl" />
+        <div className="profile-scan-corner profile-scan-corner--tr" />
+        <div className="profile-scan-corner profile-scan-corner--bl" />
+        <div className="profile-scan-corner profile-scan-corner--br" />
+        <img className="profile-scan-guide" src="/assets/hand-guide-outline.png" alt="" />
+        <div className="profile-scan-line" />
+      </div>
+      <div className="profile-scan-copy">
+        <h2>将右手掌心朝上对齐虚线</h2>
+        <p>建议距离摄像头 25CM</p>
+      </div>
+      <button className="profile-scan-button" type="button" onClick={onStart}>
+        进行扫描
+      </button>
+    </div>
+  );
+}
+
+function ScanActiveStage({
+  videoRef,
+  cameraStatus,
+  cameraMessage,
+  alignProgress,
+  onCancel,
+}: {
+  videoRef: MutableRefObject<HTMLVideoElement | null>;
+  cameraStatus: IntakeCameraStatus;
+  cameraMessage: string;
+  alignProgress: number;
+  onCancel: () => void;
+}) {
+  return (
+    <div className="profile-scan-camera">
+      <div className={`profile-scan-camera__viewport is-${cameraStatus}`}>
+        <div className="profile-scan-corner profile-scan-corner--tl" />
+        <div className="profile-scan-corner profile-scan-corner--tr" />
+        <div className="profile-scan-corner profile-scan-corner--bl" />
+        <div className="profile-scan-corner profile-scan-corner--br" />
+        <video ref={videoRef} className="profile-scan-camera__video" playsInline muted autoPlay />
+        <img className="profile-scan-camera__guide" src="/assets/hand-guide-outline.png" alt="" />
+        <div className="profile-scan-camera__status">
+          <strong>{cameraStatus === 'active' ? 'CAMERA ONLINE' : cameraStatus === 'unavailable' ? 'CAMERA OFFLINE' : 'CAMERA INITIALIZING'}</strong>
+          <span>{cameraMessage}</span>
         </div>
-        <button className="profile-primary" type="button" onClick={() => navigate('/hand-recognition')}>确认信息 →</button>
-      </section>
-      <section className="profile-visual" aria-hidden>
-        <img src="/assets/hero-phone-cut.png" alt="" />
-        <div className="profile-measure profile-measure--a">P72<br />188.5</div>
-        <div className="profile-measure profile-measure--b">P64<br />84.2</div>
-      </section>
+      </div>
+      <div className="profile-scan-camera__align">
+        <div className="profile-scan-camera__align-head">
+          <span>HAND ALIGNMENT</span>
+          <strong>{Math.round(alignProgress)}%</strong>
+        </div>
+        <div className="profile-scan-camera__align-track">
+          <span style={{ width: `${alignProgress}%` }} />
+        </div>
+        <p>请将右手掌心朝上对齐虚线，保持稳定。对齐完成后将自动采集数据。</p>
+        <button type="button" className="profile-scan-camera__cancel" onClick={onCancel}>
+          取消扫描
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function ScanConfirmStage({
+  revealedCount,
+  onConfirm,
+  onRetry,
+}: {
+  revealedCount: number;
+  onConfirm: () => void;
+  onRetry: () => void;
+}) {
+  const allRevealed = revealedCount >= INTAKE_METRICS.length;
+  return (
+    <div className="profile-scan-data">
+      <div className="profile-scan-data__head">
+        <span>CAPTURED METRICS</span>
+        <strong>
+          {revealedCount} / {INTAKE_METRICS.length}
+        </strong>
+      </div>
+      <ul className="profile-scan-data__list">
+        {INTAKE_METRICS.slice(0, revealedCount).map((item) => (
+          <motion.li
+            key={item.label}
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.46, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <span className="profile-scan-data__label">{item.label}</span>
+            <strong className="profile-scan-data__value">
+              {item.value}
+              <small>{item.unit}</small>
+            </strong>
+          </motion.li>
+        ))}
+      </ul>
+      <div className="profile-scan-data__actions">
+        <button type="button" className="profile-scan-data__retry" onClick={onRetry}>
+          重新扫描
+        </button>
+        <button
+          type="button"
+          className="profile-scan-data__confirm"
+          onClick={onConfirm}
+          disabled={!allRevealed}
+        >
+          确认进入测量
+        </button>
+      </div>
     </div>
   );
 }
@@ -389,20 +738,91 @@ function measurementModeFromPath(pathname: string) {
   return pathname.includes('manual') ? 'manual' : 'auto';
 }
 
+function measurementMarker(value: number, base: number, span: number) {
+  return Math.max(0, Math.min(100, ((value - base) / span) * 100));
+}
+
+function MeasurementMetric({
+  title,
+  desc,
+  value,
+  min,
+  max,
+  step,
+  marker,
+  label,
+  mode,
+  asset,
+  onChange,
+}: {
+  title: string;
+  desc: string;
+  value: number;
+  min: number;
+  max: number;
+  step: number;
+  marker: number;
+  label: string;
+  mode: 'auto' | 'manual';
+  asset: string;
+  onChange: (value: number) => void;
+}) {
+  const isManual = mode === 'manual';
+
+  return (
+    <article className={`measurement-figma-metric ${isManual ? 'is-manual' : 'is-auto'}`}>
+      <div className="measurement-figma-metric__label">
+        <h2>{title}</h2>
+        <p>{desc}</p>
+      </div>
+      <strong>{value.toFixed(1)}</strong>
+      {isManual ? (
+        <div className="measurement-figma-slider">
+          <div className="measurement-figma-slider__line">
+            <span style={{ left: `${marker}%` }} />
+          </div>
+          <input
+            type="range"
+            min={min}
+            max={max}
+            step={step}
+            value={value}
+            aria-label={`${title}手动调整`}
+            onChange={(event) => onChange(event.currentTarget.valueAsNumber)}
+          />
+        </div>
+      ) : null}
+      <div className="measurement-figma-curve">
+        <img src={asset} alt="" />
+        <i style={{ left: `${marker}%` }} />
+      </div>
+      <div className="measurement-figma-percentiles">
+        <span>P5</span>
+        <span>{label}</span>
+        <span>P95</span>
+      </div>
+    </article>
+  );
+}
+
 export function MeasurementPage() {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const [mode, setMode] = useState<'auto' | 'manual'>(() => measurementModeFromPath(pathname));
-  const [viewport, setViewport] = useState<'top' | 'lateral' | 'palm' | 'wire'>('top');
+  const [viewport, setViewport] = useState<MeasurementViewport>('top');
   const [handLength, setHandLength] = useState(() => readFlowState().handLength);
   const [handWidth, setHandWidth] = useState(() => readFlowState().handWidth);
   const [thumbReach, setThumbReach] = useState(() => readFlowState().thumbReach);
 
   useEffect(() => setMode(measurementModeFromPath(pathname)), [pathname]);
 
-  const previewImage = viewport === 'wire' ? '/assets/hand-wireframe.png' : viewport === 'palm' ? '/assets/hand-model.png' : '/assets/hand-scan.png';
-  const lengthPercent = Math.round(((handLength - 150) / 70) * 100);
-  const widthPercent = Math.round(((handWidth - 65) / 40) * 100);
+  const isManual = mode === 'manual';
+  const lengthMarker = measurementMarker(handLength, 150, 66);
+  const widthMarker = measurementMarker(handWidth, 65, 64);
+  const handAsset = isManual ? '/assets/measurement-manual-hand.png' : '/assets/measurement-auto-hand.png';
+  const lengthCurve = isManual ? '/assets/measurement-manual-curve.svg' : '/assets/measurement-auto-curve-length.svg';
+  const widthCurve = isManual ? '/assets/measurement-manual-curve.svg' : '/assets/measurement-auto-curve-width.svg';
+  const confidence = isManual ? '98.2' : '98.2';
 
   const submit = () => {
     writeFlowState({ handLength, handWidth, thumbReach });
@@ -410,57 +830,127 @@ export function MeasurementPage() {
   };
 
   return (
-    <WorkbenchShell active="measurement" navActive="measurement" rail={false}>
-      <section className="measurement-layout">
-        <aside className="measurement-panel">
+    <div className="page-shell measurement-figma-page">
+      <div className={`measurement-figma-stage measurement-figma-stage--${mode}`}>
+        <header className="measurement-figma-topbar">
+          <button type="button" onClick={() => navigate('/')}>GRIPFIT</button>
+          <nav aria-label="测量流程导航">
+            <button type="button" onClick={() => navigate('/profile/data')}>仪表盘</button>
+            <button className="is-active" type="button" onClick={() => navigate('/measure/auto')}>手部测量</button>
+            <button type="button" onClick={() => navigate('/report/best-phone')}>报告产出</button>
+          </nav>
+        </header>
+
+        <aside className="measurement-figma-panel">
           <h1>手部测量</h1>
-          <div className="segmented">
-            <button className={mode === 'auto' ? 'is-active' : ''} type="button" onClick={() => navigate('/measure/auto')}>智能测量</button>
-            <button className={mode === 'manual' ? 'is-active' : ''} type="button" onClick={() => navigate('/measure/manual')}>手动调整</button>
+          <div className="measurement-figma-mode-switch" role="tablist" aria-label="测量模式">
+            <button
+              className={mode === 'auto' ? 'is-active' : ''}
+              type="button"
+              role="tab"
+              aria-selected={mode === 'auto'}
+              onClick={() => navigate('/measure/auto')}
+            >
+              智能测量
+            </button>
+            <button
+              className={mode === 'manual' ? 'is-active' : ''}
+              type="button"
+              role="tab"
+              aria-selected={mode === 'manual'}
+              onClick={() => navigate('/measure/manual')}
+            >
+              手动调整
+            </button>
           </div>
-          <div className="measurement-section">
-            <div className="measurement-section__head"><span>核心测量维度</span><span>单位: MM</span></div>
-            <CurveInput title="手长" desc="Tip of middle finger to wrist crease" value={handLength} min={150} max={220} step={0.1} percent={lengthPercent} editing={mode === 'manual'} onChange={setHandLength} />
-            <CurveInput title="手宽" desc="Metacarpal breadth at the knuckles" value={handWidth} min={65} max={105} step={0.1} percent={widthPercent} editing={mode === 'manual'} onChange={setHandWidth} />
+
+          <div className="measurement-figma-controls">
+            <div className="measurement-figma-section-head">
+              <span>核心测量维度</span>
+              <span>单位: MM</span>
+            </div>
+            <MeasurementMetric
+              title="手长"
+              desc="Tip of middle finger to wrist crease"
+              value={handLength}
+              min={150}
+              max={220}
+              step={0.1}
+              marker={lengthMarker}
+              label="P72 (Current)"
+              mode={mode}
+              asset={lengthCurve}
+              onChange={setHandLength}
+            />
+            <MeasurementMetric
+              title="手宽"
+              desc="Metacarpal breadth at the knuckles"
+              value={handWidth}
+              min={65}
+              max={105}
+              step={0.1}
+              marker={widthMarker}
+              label="P30 (Current)"
+              mode={mode}
+              asset={widthCurve}
+              onChange={setHandWidth}
+            />
+
+            <div className="measurement-figma-actions">
+              <button className="measurement-figma-primary" type="button" onClick={submit}>提交测量 / COMMIT MEASUREMENT</button>
+              <button className="measurement-figma-secondary" type="button" onClick={() => {
+                setHandLength(defaultFlow.handLength);
+                setHandWidth(defaultFlow.handWidth);
+                setThumbReach(defaultFlow.thumbReach);
+              }}>
+                重置为默认 / RESET TO DEFAULT
+              </button>
+            </div>
           </div>
-          <div className="measurement-fields">
-            <NumericSlider label="拇指可达范围" value={thumbReach} min={42} max={86} unit="%" onChange={setThumbReach} />
-          </div>
-          <button className="wb-primary full" type="button" onClick={submit}>提交测量 / COMMIT MEASUREMENT</button>
-          <button className="wb-secondary full" type="button" onClick={() => {
-            setHandLength(defaultFlow.handLength);
-            setHandWidth(defaultFlow.handWidth);
-            setThumbReach(defaultFlow.thumbReach);
-          }}>
-            重置为默认 / RESET TO DEFAULT
-          </button>
         </aside>
-        <section className="measurement-model">
-          <div className="viewport-card">
-            <p>VIEWPORT</p>
-            <div>
-              {[
-                ['top', 'TOP'],
-                ['lateral', 'LATERAL'],
-                ['palm', 'PALM'],
-                ['wire', 'WIRE'],
-              ].map(([key, label]) => (
-                <button key={key} className={viewport === key ? 'is-active' : ''} type="button" onClick={() => setViewport(key as typeof viewport)}>
-                  {label}
+
+        <section className="measurement-figma-visual" aria-label="手部测量三维预览">
+          <div className="measurement-figma-preview">
+            <img className={`measurement-figma-hand measurement-figma-hand--${viewport}`} src={handAsset} alt="手部测量模型" />
+          </div>
+
+          <div className="measurement-figma-viewport-card">
+            <div className="measurement-figma-viewport-head">
+              <p>VIEWPORT</p>
+              {isManual ? <img src="/assets/measurement-manual-hud-icon.svg" alt="" /> : null}
+            </div>
+            <div className="measurement-figma-viewport-grid">
+              {measurementViewports.map((item) => (
+                <button
+                  key={item.key}
+                  className={viewport === item.key ? 'is-active' : ''}
+                  type="button"
+                  aria-pressed={viewport === item.key}
+                  onClick={() => setViewport(item.key)}
+                >
+                  {item.label}
                 </button>
               ))}
             </div>
           </div>
-          <img className={`measurement-preview measurement-preview--${viewport}`} src={previewImage} alt="手部测量模型" />
-          <div className="measurement-crosshair" aria-hidden />
-          <div className="measurement-stats">
-            <span>DATA CONFIDENCE <strong>{mode === 'auto' ? '98.2%' : '91.6%'}</strong></span>
-            <span>GB/T MATCH <strong>P{Math.max(5, Math.min(95, lengthPercent))}</strong></span>
-            <span>ESTIMATED GRIP WIDTH <strong>{(handWidth * 0.88).toFixed(1)}mm</strong></span>
+
+          <div className="measurement-figma-stats">
+            <div>
+              <span>DATA CONFIDENCE</span>
+              <strong>{confidence}<small>%</small></strong>
+            </div>
+            <div>
+              <span>GB/T MATCH</span>
+              <strong>P75<small>Rank</small></strong>
+            </div>
+            <div>
+              <span>ESTIMATED GRIP WIDTH</span>
+              <strong>{(handWidth * 0.885).toFixed(1)}mm</strong>
+            </div>
           </div>
         </section>
-      </section>
-    </WorkbenchShell>
+      </div>
+    </div>
   );
 }
 

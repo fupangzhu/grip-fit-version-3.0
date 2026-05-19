@@ -39,7 +39,7 @@ export default function HandRecognitionPage() {
         <main className="hand-scan-main" aria-labelledby="hand-scan-title">
           <section className="hand-scan-progress" aria-label="扫描流程进度">
             <div className="hand-scan-progress__top">
-              <span>ONBOARDING SEQUENCE</span>
+              <span>HAND CAPTURE</span>
               <span>02 / 02</span>
             </div>
             <div className="hand-scan-progress__track">
@@ -62,15 +62,18 @@ export default function HandRecognitionPage() {
           </section>
 
           <section className="hand-scan-copy">
-            <h1 id="hand-scan-title">将你的右手与参考对齐</h1>
-            <p>建议距离摄像头 25CM</p>
+            <h1 id="hand-scan-title">将右手掌心朝上对齐虚线</h1>
+            <p>点击扫描后将调用摄像头进行实时识别</p>
           </section>
 
           <div className="hand-scan-actions">
             <motion.button
               className="hand-scan-primary"
               type="button"
-              onClick={() => navigate('/hand-scanning')}
+              onClick={() => {
+                sessionStorage.setItem('gripfit-camera-scan-requested', '1');
+                navigate('/hand-scanning');
+              }}
               whileHover={{ y: -2, boxShadow: '0 18px 46px rgba(79, 123, 255, 0.34)' }}
               whileTap={{ scale: 0.99 }}
               transition={{ type: 'spring', stiffness: 320, damping: 24 }}

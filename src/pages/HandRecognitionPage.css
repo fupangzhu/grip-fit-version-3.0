@@ -40,15 +40,15 @@
 
 .hand-scan-brand {
   position: absolute;
-  top: 26px;
-  left: 32px;
+  top: 30px;
+  left: 38px;
   z-index: 3;
-  color: rgba(248, 250, 255, 0.96);
+  color: #ffffff;
   font-family: var(--font-brand);
   font-size: 14px;
-  font-weight: 800;
-  line-height: 1;
-  letter-spacing: 5px;
+  font-weight: 700;
+  line-height: 21px;
+  letter-spacing: 3.08px;
 }
 
 .hand-scan-menu {
@@ -130,10 +130,10 @@
   top: 50%;
   width: 579px;
   height: 684px;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -51%) scale(0.86);
   object-fit: contain;
-  opacity: 0.46;
-  filter: drop-shadow(0 0 8px rgba(159, 205, 255, 0.12));
+  opacity: 0.34;
+  filter: drop-shadow(0 0 7px rgba(159, 205, 255, 0.09));
   pointer-events: none;
 }
 

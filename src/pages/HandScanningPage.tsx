@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import './HandScanningPage.css';
@@ -6,10 +6,15 @@ import './HandScanningPage.css';
 const DESIGN_W = 1280;
 const DESIGN_H = 913;
 
+type CameraStatus = 'requesting' | 'active' | 'unavailable';
+
 export default function HandScanningPage() {
   const navigate = useNavigate();
+  const videoRef = useRef<HTMLVideoElement | null>(null);
   const [notice, setNotice] = useState('');
   const [ready, setReady] = useState(false);
+  const [cameraStatus, setCameraStatus] = useState<CameraStatus>('requesting');
+  const [cameraMessage, setCameraMessage] = useState('正在调用摄像头...');
   const [scale, setScale] = useState(1);
 
   useEffect(() => {
@@ -27,10 +32,103 @@ export default function HandScanningPage() {
     return () => window.clearTimeout(timer);
   }, []);
 
-  const showNotice = () => {
-    setNotice('手动输入页将在确认后继续实现');
-    window.setTimeout(() => setNotice(''), 1800);
-  };
+  useEffect(() => {
+    let stream: MediaStream | null = null;
+    let cancelled = false;
+
+    const stopCamera = () => {
+      stream?.getTracks().forEach((track) => track.stop());
+      stream = null;
+    };
+
+    const getCameraStream = (constraints: MediaStreamConstraints) =>
+      new Promise<MediaStream>((resolve, reject) => {
+        const timeoutId = window.setTimeout(() => {
+          reject(new DOMException('Camera request timed out', 'AbortError'));
+        }, 7000);
+
+        navigator.mediaDevices
+          .getUserMedia(constraints)
+          .then((nextStream) => {
+            window.clearTimeout(timeoutId);
+            resolve(nextStream);
+          })
+          .catch((error: unknown) => {
+            window.clearTimeout(timeoutId);
+            reject(error);
+          });
+      });
+
+    const requestCamera = async () => {
+      if (!navigator.mediaDevices?.getUserMedia) {
+        setCameraStatus('unavailable');
+        setCameraMessage('当前浏览器不支持摄像头调用，可继续使用手动输入。');
+        return;
+      }
+
+      const preferRearCamera = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      const preferredFacingMode = preferRearCamera ? 'environment' : 'user';
+      const fallbackFacingMode = preferRearCamera ? 'user' : 'environment';
+      const cameraRequests: MediaStreamConstraints[] = [
+        {
+          audio: false,
+          video: {
+            facingMode: { ideal: preferredFacingMode },
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+          },
+        },
+        {
+          audio: false,
+          video: {
+            facingMode: { ideal: fallbackFacingMode },
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+          },
+        },
+        { audio: false, video: true },
+      ];
+
+      for (const constraints of cameraRequests) {
+        try {
+          const nextStream = await getCameraStream(constraints);
+
+          if (cancelled) {
+            nextStream.getTracks().forEach((track) => track.stop());
+            return;
+          }
+
+          stream = nextStream;
+
+          if (videoRef.current) {
+            videoRef.current.srcObject = nextStream;
+            await videoRef.current.play().catch(() => undefined);
+          }
+
+          setCameraStatus('active');
+          setCameraMessage(preferRearCamera ? '已连接手机后置摄像头' : '已连接电脑前置摄像头');
+          return;
+        } catch {
+          stopCamera();
+        }
+      }
+
+      if (!cancelled) {
+        setCameraStatus('unavailable');
+        setCameraMessage('未检测到可用摄像头，请检查权限或改用手动输入。');
+      }
+    };
+
+    requestCamera();
+
+    return () => {
+      cancelled = true;
+      stopCamera();
+      if (videoRef.current) {
+        videoRef.current.srcObject = null;
+      }
+    };
+  }, []);
 
   return (
     <div className="page-shell hand-scanning-page">
@@ -38,11 +136,20 @@ export default function HandScanningPage() {
         <header className="hand-scanning-brand">GRIPFIT</header>
 
         <main className="hand-scanning-main" aria-labelledby="scan-title">
-          <section className="hand-scanning-feed" aria-label="手部扫描画面">
+          <section
+            className={`hand-scanning-feed ${cameraStatus === 'active' ? 'is-camera-active' : ''}`}
+            aria-label="手部扫描画面"
+          >
             <div className="hand-scanning-corner hand-scanning-corner--tl" />
             <div className="hand-scanning-corner hand-scanning-corner--tr" />
             <div className="hand-scanning-corner hand-scanning-corner--bl" />
             <div className="hand-scanning-corner hand-scanning-corner--br" />
+
+            <video ref={videoRef} className="hand-scanning-video" playsInline muted autoPlay />
+            <div className="hand-scanning-camera-status" role="status">
+              <strong>{cameraStatus === 'active' ? 'CAMERA ONLINE' : 'CAMERA'}</strong>
+              <span>{cameraMessage}</span>
+            </div>
 
             <motion.div
               className="hand-scanning-beam"
@@ -56,10 +163,11 @@ export default function HandScanningPage() {
               <div className="hand-scanning-mesh" />
               <div className="hand-scanning-hand-glow" />
             </div>
+            <img className="hand-scanning-guide" src="/assets/hand-guide-outline.png" alt="" />
           </section>
 
           <section className="hand-scanning-progress" aria-labelledby="scan-title">
-            <p>校对进程</p>
+            <p>请将右手掌心朝上，并与虚线轮廓对齐</p>
             <h1 id="scan-title">64.18%</h1>
             <div className="hand-scanning-progressbar" aria-hidden>
               <motion.span
