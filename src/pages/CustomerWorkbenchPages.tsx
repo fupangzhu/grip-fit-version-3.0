@@ -343,6 +343,7 @@ function CurveInput({
 type IntakeStage = 'profile' | 'scan-active' | 'scan-confirm';
 type IntakeCameraStatus = 'requesting' | 'active' | 'unavailable';
 type MpStatus = 'idle' | 'loading' | 'ready' | 'failed';
+type ScanPhase = 'alignment' | 'analyzing';
 
 const CAROUSEL_IMAGES = [
   '/assets/profile-grip-slim.png',
@@ -370,6 +371,7 @@ function ProfileInfoPage() {
   const [alignProgress, setAlignProgress] = useState(0);
   const [revealedCount, setRevealedCount] = useState(0);
   const [mpStatus, setMpStatus] = useState<MpStatus>('idle');
+  const [scanPhase, setScanPhase] = useState<ScanPhase>('alignment');
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
@@ -401,6 +403,7 @@ function ProfileInfoPage() {
     if (stage !== 'scan-active') {
       setAlignProgress(0);
       setMpStatus('idle');
+      setScanPhase('alignment');
       return;
     }
 
@@ -410,6 +413,7 @@ function ProfileInfoPage() {
     let handLandmarker: any = null;
     let rafId = 0;
     let fallbackTimerId = 0;
+    let analyzingTimerId = 0;
     let alignedStableTime = 0;
     let lastFrameTime = 0;
 
@@ -418,10 +422,11 @@ function ProfileInfoPage() {
       stream = null;
     };
 
-    const cleanup = () => {
-      cancelled = true;
+    // Release camera + MediaPipe without marking the effect as cancelled,
+    // so the analyzing phase timer can still drive progress to scan-confirm.
+    const stopCameraAndMp = () => {
       if (rafId) cancelAnimationFrame(rafId);
-      if (fallbackTimerId) window.clearInterval(fallbackTimerId);
+      rafId = 0;
       try {
         handLandmarker?.close?.();
       } catch {
@@ -432,8 +437,39 @@ function ProfileInfoPage() {
       if (videoRef.current) videoRef.current.srcObject = null;
     };
 
+    const startAnalyzingPhase = () => {
+      if (cancelled) return;
+      setScanPhase('analyzing');
+      setAlignProgress(0);
+      setCameraMessage('MediaPipe 正在解算 21 个关键点尺寸，请保持稳定');
+      const start = Date.now();
+      const duration = 3600;
+      analyzingTimerId = window.setInterval(() => {
+        if (cancelled) return;
+        const pct = Math.min(100, ((Date.now() - start) / duration) * 100);
+        setAlignProgress(pct);
+        if (pct >= 100) {
+          window.clearInterval(analyzingTimerId);
+          analyzingTimerId = 0;
+          window.setTimeout(() => {
+            if (!cancelled) setStage('scan-confirm');
+          }, 320);
+        }
+      }, 90);
+    };
+
+    const handleAlignmentSuccess = () => {
+      setAlignProgress(100);
+      stopCameraAndMp();
+      window.setTimeout(() => {
+        if (cancelled) return;
+        startAnalyzingPhase();
+      }, 400);
+    };
+
     const startFallbackTimer = () => {
-      // No MediaPipe → fall back to fixed-time alignment animation
+      // No MediaPipe → fall back to fixed-time alignment animation,
+      // then chain into the analyzing phase like the success branch.
       const start = Date.now();
       const duration = 4400;
       fallbackTimerId = window.setInterval(() => {
@@ -445,8 +481,8 @@ function ProfileInfoPage() {
           window.clearInterval(fallbackTimerId);
           fallbackTimerId = 0;
           window.setTimeout(() => {
-            if (!cancelled) setStage('scan-confirm');
-          }, 360);
+            if (!cancelled) handleAlignmentSuccess();
+          }, 320);
         }
       }, 90);
     };
@@ -489,26 +525,27 @@ function ProfileInfoPage() {
             const sizeScore = Math.max(0, 1 - Math.abs(size - 0.55) * 2.2);
             const score = centerScore * 0.55 + sizeScore * 0.45; // 0-1
 
-            if (score >= 0.72) {
+            const ALIGN_THRESHOLD = 0.65;
+            const STABLE_DURATION = 1.2;
+
+            if (score >= ALIGN_THRESHOLD) {
               const dt = lastFrameTime ? Math.min(0.12, (now - lastFrameTime) / 1000) : 0;
               alignedStableTime += dt;
-              if (alignedStableTime >= 1.4) {
-                setAlignProgress(100);
-                cleanup();
-                window.setTimeout(() => setStage('scan-confirm'), 320);
+              if (alignedStableTime >= STABLE_DURATION) {
+                handleAlignmentSuccess();
                 return;
               }
             } else {
               alignedStableTime *= 0.9;
             }
 
-            const stableProgress = (alignedStableTime / 1.4) * 100;
-            const liveScore = score * 80;
+            const stableProgress = (alignedStableTime / STABLE_DURATION) * 100;
+            const liveScore = score * 95;
             setAlignProgress(Math.max(stableProgress, liveScore));
 
-            if (score >= 0.72) {
-              setCameraMessage('对齐稳定中，请保持 1.5 秒...');
-            } else if (score >= 0.45) {
+            if (score >= ALIGN_THRESHOLD) {
+              setCameraMessage('对齐稳定中，请保持 1.2 秒...');
+            } else if (score >= 0.4) {
               setCameraMessage('继续调整位置，让右手填满虚线轮廓');
             } else {
               setCameraMessage('请将右手掌心朝上对齐虚线');
@@ -614,7 +651,13 @@ function ProfileInfoPage() {
     };
 
     requestCamera();
-    return cleanup;
+    return () => {
+      cancelled = true;
+      if (rafId) cancelAnimationFrame(rafId);
+      if (fallbackTimerId) window.clearInterval(fallbackTimerId);
+      if (analyzingTimerId) window.clearInterval(analyzingTimerId);
+      stopCameraAndMp();
+    };
   }, [stage]);
 
   useEffect(() => {
@@ -720,6 +763,7 @@ function ProfileInfoPage() {
               cameraMessage={cameraMessage}
               alignProgress={alignProgress}
               mpStatus={mpStatus}
+              scanPhase={scanPhase}
               onCancel={() => setStage('profile')}
             />
           ) : null}
@@ -759,6 +803,7 @@ function ScanActiveStage({
   cameraMessage,
   alignProgress,
   mpStatus,
+  scanPhase,
   onCancel,
 }: {
   videoRef: MutableRefObject<HTMLVideoElement | null>;
@@ -766,10 +811,14 @@ function ScanActiveStage({
   cameraMessage: string;
   alignProgress: number;
   mpStatus: MpStatus;
+  scanPhase: ScanPhase;
   onCancel: () => void;
 }) {
-  const statusLabel =
-    cameraStatus === 'active'
+  const isAnalyzing = scanPhase === 'analyzing';
+
+  const statusLabel = isAnalyzing
+    ? 'ANALYZING DIMENSIONS'
+    : cameraStatus === 'active'
       ? mpStatus === 'loading'
         ? 'LOADING MEDIAPIPE'
         : mpStatus === 'ready'
@@ -780,6 +829,11 @@ function ScanActiveStage({
       : cameraStatus === 'unavailable'
         ? 'CAMERA OFFLINE'
         : 'CAMERA INITIALIZING';
+
+  const progressLabel = isAnalyzing ? 'DIMENSION SCAN' : 'HAND ALIGNMENT';
+  const footnote = isAnalyzing
+    ? 'MediaPipe 正在解算 21 个关键点尺寸，请保持稳定。'
+    : '请将右手掌心朝上对齐虚线，保持稳定。MediaPipe 检测到对齐稳定后将自动采集数据。';
 
   return (
     <div className="profile-scan-camera">
@@ -797,13 +851,13 @@ function ScanActiveStage({
       </div>
       <div className="profile-scan-camera__align">
         <div className="profile-scan-camera__align-head">
-          <span>HAND ALIGNMENT</span>
+          <span>{progressLabel}</span>
           <strong>{Math.round(alignProgress)}%</strong>
         </div>
         <div className="profile-scan-camera__align-track">
           <span style={{ width: `${alignProgress}%` }} />
         </div>
-        <p>请将右手掌心朝上对齐虚线，保持稳定。MediaPipe 检测到对齐稳定后将自动采集数据。</p>
+        <p>{footnote}</p>
         <button type="button" className="profile-scan-camera__cancel" onClick={onCancel}>
           取消扫描
         </button>

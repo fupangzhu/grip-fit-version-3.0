@@ -1077,6 +1077,7 @@
   background: #050810;
   opacity: 0.94;
   filter: contrast(1.04) brightness(0.92);
+  transform: scaleX(-1);
   transition: opacity 320ms ease;
 }
 
@@ -1091,7 +1092,7 @@
   top: 50%;
   width: clamp(280px, 38vw, 480px);
   max-width: none;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) scaleX(-1);
   opacity: 0.46;
   filter: drop-shadow(0 0 12px rgba(120, 170, 255, 0.32));
   pointer-events: none;
@@ -1119,9 +1120,9 @@
 }
 
 .profile-scan-camera__status span {
-  color: rgba(216, 224, 244, 0.78);
+  color: #8d90a1;
   font-family: var(--font-zh);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 400;
 }
 
@@ -1152,9 +1153,9 @@
 }
 
 .profile-scan-camera__align-head strong {
-  color: #b4c5ff;
+  color: #e0e2e8;
   font-family: var(--font-en);
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 700;
   letter-spacing: 0;
 }
@@ -1180,7 +1181,7 @@
 
 .profile-scan-camera__align p {
   margin: 4px 0 0;
-  color: rgba(199, 210, 239, 0.66);
+  color: #8d90a1;
   font-family: var(--font-zh);
   font-size: 12px;
   line-height: 18px;
@@ -1191,8 +1192,8 @@
   margin-top: 6px;
   padding: 6px 14px;
   border-radius: 3px;
-  border: 1px solid rgba(180, 197, 255, 0.24);
-  color: rgba(199, 210, 239, 0.72);
+  border: 1px solid rgba(66, 70, 85, 0.4);
+  color: #8d90a1;
   font-family: var(--font-zh);
   font-size: 12px;
   letter-spacing: 0.4px;
@@ -1202,7 +1203,7 @@
 
 .profile-scan-camera__cancel:hover {
   border-color: rgba(180, 197, 255, 0.5);
-  color: #e0e2e8;
+  color: #b4c5ff;
 }
 
 /* ────────────── 阶段 4：测量数据逐条呈现 ────────────── */
