@@ -426,40 +426,107 @@ type CapturedHand = {
 function captureHandFrame(
   video: HTMLVideoElement,
   landmarks: { x: number; y: number }[],
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  segmenter: any | null,
 ): CapturedHand | null {
-  const w = video.videoWidth;
-  const h = video.videoHeight;
-  if (!w || !h) return null;
+  const W = video.videoWidth;
+  const H = video.videoHeight;
+  if (!W || !H) return null;
+
+  // 1. 算关键点轴对齐 bbox，外扩 50%（25% padding × 两侧），再 clamp 到画面
+  let minX = 1;
+  let maxX = 0;
+  let minY = 1;
+  let maxY = 0;
+  for (const p of landmarks) {
+    if (p.x < minX) minX = p.x;
+    if (p.x > maxX) maxX = p.x;
+    if (p.y < minY) minY = p.y;
+    if (p.y > maxY) maxY = p.y;
+  }
+  const cx = (minX + maxX) / 2;
+  const cy = (minY + maxY) / 2;
+  const half = (Math.max(maxX - minX, maxY - minY) / 2) * 1.5;
+  let lx = Math.max(0, cx - half);
+  let rx = Math.min(1, cx + half);
+  let ty = Math.max(0, cy - half);
+  let by = Math.min(1, cy + half);
+  const bw = rx - lx;
+  const bh = by - ty;
+  if (bw < 0.1 || bh < 0.1) return null;
+
+  const cw = Math.round(bw * W);
+  const ch = Math.round(bh * H);
   const canvas = document.createElement('canvas');
-  canvas.width = w;
-  canvas.height = h;
+  canvas.width = cw;
+  canvas.height = ch;
   const ctx = canvas.getContext('2d');
   if (!ctx) return null;
 
-  // 镜像绘制（和用户在画面里看到的方向一致）
-  ctx.save();
-  ctx.translate(w, 0);
-  ctx.scale(-1, 1);
-  ctx.drawImage(video, 0, 0, w, h);
-  ctx.restore();
-
-  // 关键点也镜像（x' = 1 - x），转像素坐标后做凸包 + 扩边
-  const mirrored: Pt[] = landmarks.map((p) => ({ x: (1 - p.x) * w, y: p.y * h }));
-  const hull = convexHull(mirrored);
-  const expanded = expandHull(hull, Math.max(36, Math.min(w, h) * 0.05));
-
-  // 仅保留多边形内像素，外部透明
-  ctx.globalCompositeOperation = 'destination-in';
-  ctx.beginPath();
-  ctx.moveTo(expanded[0].x, expanded[0].y);
-  for (let i = 1; i < expanded.length; i++) ctx.lineTo(expanded[i].x, expanded[i].y);
-  ctx.closePath();
-  ctx.fill();
-
-  return {
-    dataUrl: canvas.toDataURL('image/png'),
-    landmarks: landmarks.map((p) => ({ x: 1 - p.x, y: p.y })),
+  const drawMirroredCrop = () => {
+    ctx.save();
+    ctx.translate(cw, 0);
+    ctx.scale(-1, 1);
+    ctx.drawImage(video, lx * W, ty * H, bw * W, bh * H, 0, 0, cw, ch);
+    ctx.restore();
   };
+  drawMirroredCrop();
+
+  // 关键点 → 镜像后裁剪后的归一化坐标（用于后续 SVG 引线）
+  const canvasLandmarks: Pt[] = landmarks.map((p) => ({
+    x: (rx - p.x) / bw,
+    y: (p.y - ty) / bh,
+  }));
+
+  // 2. 优先：MediaPipe ImageSegmenter（Selfie 模型）像素级抠图
+  if (segmenter) {
+    try {
+      const result = segmenter.segment(canvas);
+      const mask = result?.categoryMask;
+      if (mask) {
+        const maskArr = mask.getAsUint8Array();
+        const mw = mask.width;
+        const mh = mask.height;
+        const img = ctx.getImageData(0, 0, cw, ch);
+        const px = img.data;
+        for (let y = 0; y < ch; y++) {
+          const my = Math.min(mh - 1, Math.floor((y / ch) * mh));
+          for (let x = 0; x < cw; x++) {
+            const mxi = Math.min(mw - 1, Math.floor((x / cw) * mw));
+            // selfie_segmenter: 0 = background → 透明；非 0 = 前景保留
+            if (maskArr[my * mw + mxi] === 0) {
+              const i = (y * cw + x) * 4;
+              px[i + 3] = 0;
+            }
+          }
+        }
+        ctx.putImageData(img, 0, 0);
+        mask.close?.();
+        return { dataUrl: canvas.toDataURL('image/png'), landmarks: canvasLandmarks };
+      }
+    } catch (e) {
+      console.warn('ImageSegmenter 失败，回退到凸包：', e);
+      // 重绘一次以丢弃可能的部分修改
+      ctx.clearRect(0, 0, cw, ch);
+      drawMirroredCrop();
+    }
+  }
+
+  // 3. 兜底：在裁剪后的 canvas 内做凸包遮罩
+  const localPts: Pt[] = canvasLandmarks.map((p) => ({ x: p.x * cw, y: p.y * ch }));
+  const hull = convexHull(localPts);
+  if (hull.length >= 3) {
+    const margin = Math.max(20, Math.min(cw, ch) * 0.06);
+    const expanded = expandHull(hull, margin);
+    ctx.globalCompositeOperation = 'destination-in';
+    ctx.beginPath();
+    ctx.moveTo(expanded[0].x, expanded[0].y);
+    for (let i = 1; i < expanded.length; i++) ctx.lineTo(expanded[i].x, expanded[i].y);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  return { dataUrl: canvas.toDataURL('image/png'), landmarks: canvasLandmarks };
 }
 
 function ProfileInfoPage() {
@@ -517,6 +584,8 @@ function ProfileInfoPage() {
     let cancelled = false;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let handLandmarker: any = null;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let imageSegmenter: any = null;
     let rafId = 0;
     let fallbackTimerId = 0;
     let analyzingTimerId = 0;
@@ -539,6 +608,12 @@ function ProfileInfoPage() {
         /* ignore */
       }
       handLandmarker = null;
+      try {
+        imageSegmenter?.close?.();
+      } catch {
+        /* ignore */
+      }
+      imageSegmenter = null;
       stopCamera();
       if (videoRef.current) videoRef.current.srcObject = null;
     };
@@ -627,21 +702,21 @@ function ProfileInfoPage() {
             const cy = sy / landmarks.length;
             const size = Math.max(maxX - minX, maxY - minY);
 
-            // Score against target: centroid near (0.5, 0.5), hand fills ~0.55 of viewport
+            // 评分（宽松档）：手心居中度 + 手大小合适度
             const centerDist = Math.hypot(cx - 0.5, cy - 0.5);
-            const centerScore = Math.max(0, 1 - centerDist * 2.4);
-            const sizeScore = Math.max(0, 1 - Math.abs(size - 0.55) * 2.2);
+            const centerScore = Math.max(0, 1 - centerDist * 1.8);       // 中心容差 0.56
+            const sizeScore = Math.max(0, 1 - Math.abs(size - 0.55) * 1.6); // 大小容差 0.63
             const score = centerScore * 0.55 + sizeScore * 0.45; // 0-1
 
-            const ALIGN_THRESHOLD = 0.65;
-            const STABLE_DURATION = 1.2;
+            const ALIGN_THRESHOLD = 0.50;
+            const STABLE_DURATION = 0.8;
 
             if (score >= ALIGN_THRESHOLD) {
               const dt = lastFrameTime ? Math.min(0.12, (now - lastFrameTime) / 1000) : 0;
               alignedStableTime += dt;
               if (alignedStableTime >= STABLE_DURATION) {
-                // 在释放摄像头之前抓帧 + 抠图
-                const captured = video ? captureHandFrame(video, landmarks) : null;
+                // 在释放摄像头之前抓帧 + 抠图（优先 ImageSegmenter，失败回退凸包）
+                const captured = video ? captureHandFrame(video, landmarks, imageSegmenter) : null;
                 if (captured) setCapturedHand(captured);
                 setHandMeasure(sampleHandSize(gender, ageGroup));
                 handleAlignmentSuccess();
@@ -656,9 +731,9 @@ function ProfileInfoPage() {
             setAlignProgress(Math.max(stableProgress, liveScore));
 
             if (score >= ALIGN_THRESHOLD) {
-              setCameraMessage('对齐稳定中，请保持 1.2 秒...');
-            } else if (score >= 0.4) {
-              setCameraMessage('继续调整位置，让右手填满虚线轮廓');
+              setCameraMessage('对齐稳定中，请保持 0.8 秒...');
+            } else if (score >= 0.30) {
+              setCameraMessage('继续调整位置，让右手伸入画面中央');
             } else {
               setCameraMessage('请将右手掌心朝上对齐虚线');
             }
@@ -680,7 +755,7 @@ function ProfileInfoPage() {
       setMpStatus('loading');
       setCameraMessage('已连接摄像头，正在加载手部识别模型...');
       try {
-        const { HandLandmarker, FilesetResolver } = await import('@mediapipe/tasks-vision');
+        const { HandLandmarker, ImageSegmenter, FilesetResolver } = await import('@mediapipe/tasks-vision');
         const vision = await FilesetResolver.forVisionTasks(
           'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/wasm',
         );
@@ -698,6 +773,29 @@ function ProfileInfoPage() {
           handLandmarker?.close?.();
           return;
         }
+
+        // 并行加载 ImageSegmenter（Selfie 模型），失败也不影响主流程，会自动 fallback 到凸包
+        try {
+          imageSegmenter = await ImageSegmenter.createFromOptions(vision, {
+            baseOptions: {
+              modelAssetPath:
+                'https://storage.googleapis.com/mediapipe-models/image_segmenter/selfie_segmenter/float16/1/selfie_segmenter.tflite',
+              delegate: 'GPU',
+            },
+            runningMode: 'IMAGE',
+            outputCategoryMask: true,
+            outputConfidenceMasks: false,
+          });
+          if (cancelled) {
+            imageSegmenter?.close?.();
+            imageSegmenter = null;
+          }
+        } catch (segErr) {
+          console.warn('ImageSegmenter 不可用，抠图将回退到凸包方案：', segErr);
+          imageSegmenter = null;
+        }
+
+        if (cancelled) return;
         setMpStatus('ready');
         setCameraMessage('请将右手掌心朝上对齐虚线');
         startDetectionLoop();
