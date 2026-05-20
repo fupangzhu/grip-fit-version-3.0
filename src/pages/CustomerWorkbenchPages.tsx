@@ -340,8 +340,9 @@ function CurveInput({
   );
 }
 
-type IntakeStage = 'profile' | 'scan-idle' | 'scan-active' | 'scan-confirm';
+type IntakeStage = 'profile' | 'scan-active' | 'scan-confirm';
 type IntakeCameraStatus = 'requesting' | 'active' | 'unavailable';
+type MpStatus = 'idle' | 'loading' | 'ready' | 'failed';
 
 const CAROUSEL_IMAGES = [
   '/assets/profile-grip-slim.png',
@@ -368,6 +369,7 @@ function ProfileInfoPage() {
   const [cameraMessage, setCameraMessage] = useState('正在调用摄像头...');
   const [alignProgress, setAlignProgress] = useState(0);
   const [revealedCount, setRevealedCount] = useState(0);
+  const [mpStatus, setMpStatus] = useState<MpStatus>('idle');
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
@@ -396,13 +398,167 @@ function ProfileInfoPage() {
   }, [stage]);
 
   useEffect(() => {
-    if (stage !== 'scan-active') return;
+    if (stage !== 'scan-active') {
+      setAlignProgress(0);
+      setMpStatus('idle');
+      return;
+    }
+
     let stream: MediaStream | null = null;
     let cancelled = false;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let handLandmarker: any = null;
+    let rafId = 0;
+    let fallbackTimerId = 0;
+    let alignedStableTime = 0;
+    let lastFrameTime = 0;
 
     const stopCamera = () => {
       stream?.getTracks().forEach((t) => t.stop());
       stream = null;
+    };
+
+    const cleanup = () => {
+      cancelled = true;
+      if (rafId) cancelAnimationFrame(rafId);
+      if (fallbackTimerId) window.clearInterval(fallbackTimerId);
+      try {
+        handLandmarker?.close?.();
+      } catch {
+        /* ignore */
+      }
+      handLandmarker = null;
+      stopCamera();
+      if (videoRef.current) videoRef.current.srcObject = null;
+    };
+
+    const startFallbackTimer = () => {
+      // No MediaPipe → fall back to fixed-time alignment animation
+      const start = Date.now();
+      const duration = 4400;
+      fallbackTimerId = window.setInterval(() => {
+        if (cancelled) return;
+        const elapsed = Date.now() - start;
+        const pct = Math.min(100, (elapsed / duration) * 100);
+        setAlignProgress(pct);
+        if (pct >= 100) {
+          window.clearInterval(fallbackTimerId);
+          fallbackTimerId = 0;
+          window.setTimeout(() => {
+            if (!cancelled) setStage('scan-confirm');
+          }, 360);
+        }
+      }, 90);
+    };
+
+    const startDetectionLoop = () => {
+      const detect = () => {
+        if (cancelled || !handLandmarker) return;
+        const video = videoRef.current;
+        if (!video || video.readyState < 2 || video.paused || video.ended) {
+          rafId = requestAnimationFrame(detect);
+          return;
+        }
+        const now = performance.now();
+        try {
+          const result = handLandmarker.detectForVideo(video, now);
+          const landmarks = result?.landmarks?.[0];
+          if (landmarks && landmarks.length >= 21) {
+            // Compute centroid + bounding box in normalized [0,1] coords
+            let sx = 0;
+            let sy = 0;
+            let minX = 1;
+            let maxX = 0;
+            let minY = 1;
+            let maxY = 0;
+            for (const p of landmarks) {
+              sx += p.x;
+              sy += p.y;
+              if (p.x < minX) minX = p.x;
+              if (p.x > maxX) maxX = p.x;
+              if (p.y < minY) minY = p.y;
+              if (p.y > maxY) maxY = p.y;
+            }
+            const cx = sx / landmarks.length;
+            const cy = sy / landmarks.length;
+            const size = Math.max(maxX - minX, maxY - minY);
+
+            // Score against target: centroid near (0.5, 0.5), hand fills ~0.55 of viewport
+            const centerDist = Math.hypot(cx - 0.5, cy - 0.5);
+            const centerScore = Math.max(0, 1 - centerDist * 2.4);
+            const sizeScore = Math.max(0, 1 - Math.abs(size - 0.55) * 2.2);
+            const score = centerScore * 0.55 + sizeScore * 0.45; // 0-1
+
+            if (score >= 0.72) {
+              const dt = lastFrameTime ? Math.min(0.12, (now - lastFrameTime) / 1000) : 0;
+              alignedStableTime += dt;
+              if (alignedStableTime >= 1.4) {
+                setAlignProgress(100);
+                cleanup();
+                window.setTimeout(() => setStage('scan-confirm'), 320);
+                return;
+              }
+            } else {
+              alignedStableTime *= 0.9;
+            }
+
+            const stableProgress = (alignedStableTime / 1.4) * 100;
+            const liveScore = score * 80;
+            setAlignProgress(Math.max(stableProgress, liveScore));
+
+            if (score >= 0.72) {
+              setCameraMessage('对齐稳定中，请保持 1.5 秒...');
+            } else if (score >= 0.45) {
+              setCameraMessage('继续调整位置，让右手填满虚线轮廓');
+            } else {
+              setCameraMessage('请将右手掌心朝上对齐虚线');
+            }
+          } else {
+            alignedStableTime *= 0.88;
+            setAlignProgress((prev) => prev * 0.92);
+            setCameraMessage('未检测到手部，请把右手伸入画面中央');
+          }
+        } catch {
+          /* skip frame on detection error */
+        }
+        lastFrameTime = now;
+        rafId = requestAnimationFrame(detect);
+      };
+      detect();
+    };
+
+    const initMediaPipe = async () => {
+      setMpStatus('loading');
+      setCameraMessage('已连接摄像头，正在加载手部识别模型...');
+      try {
+        const { HandLandmarker, FilesetResolver } = await import('@mediapipe/tasks-vision');
+        const vision = await FilesetResolver.forVisionTasks(
+          'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/wasm',
+        );
+        if (cancelled) return;
+        handLandmarker = await HandLandmarker.createFromOptions(vision, {
+          baseOptions: {
+            modelAssetPath:
+              'https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task',
+            delegate: 'GPU',
+          },
+          runningMode: 'VIDEO',
+          numHands: 1,
+        });
+        if (cancelled) {
+          handLandmarker?.close?.();
+          return;
+        }
+        setMpStatus('ready');
+        setCameraMessage('请将右手掌心朝上对齐虚线');
+        startDetectionLoop();
+      } catch (err) {
+        console.warn('MediaPipe Hands 加载失败，回退到基础计时模式：', err);
+        if (cancelled) return;
+        setMpStatus('failed');
+        setCameraMessage('手部识别模型加载失败，使用基础对齐计时');
+        startFallbackTimer();
+      }
     };
 
     const requestCamera = async () => {
@@ -424,6 +580,7 @@ function ProfileInfoPage() {
         { audio: false, video: true },
       ];
 
+      let acquired = false;
       for (const constraints of requests) {
         try {
           const next = await navigator.mediaDevices.getUserMedia(constraints);
@@ -437,47 +594,28 @@ function ProfileInfoPage() {
             await videoRef.current.play().catch(() => undefined);
           }
           setCameraStatus('active');
-          setCameraMessage(isMobile ? '已连接手机后置摄像头' : '已连接电脑前置摄像头');
-          return;
+          acquired = true;
+          break;
         } catch {
           stopCamera();
         }
       }
 
-      if (!cancelled) {
-        setCameraStatus('unavailable');
-        setCameraMessage('摄像头不可用，请检查浏览器权限');
+      if (!acquired) {
+        if (!cancelled) {
+          setCameraStatus('unavailable');
+          setCameraMessage('摄像头不可用，请检查浏览器权限');
+        }
+        return;
       }
+
+      // Camera ready → start MediaPipe
+      await initMediaPipe();
     };
 
     requestCamera();
-    return () => {
-      cancelled = true;
-      stopCamera();
-      if (videoRef.current) videoRef.current.srcObject = null;
-    };
+    return cleanup;
   }, [stage]);
-
-  useEffect(() => {
-    if (stage !== 'scan-active') {
-      setAlignProgress(0);
-      return;
-    }
-    if (cameraStatus !== 'active') return;
-    setAlignProgress(0);
-    const start = Date.now();
-    const duration = 4400;
-    const id = window.setInterval(() => {
-      const elapsed = Date.now() - start;
-      const pct = Math.min(100, (elapsed / duration) * 100);
-      setAlignProgress(pct);
-      if (pct >= 100) {
-        window.clearInterval(id);
-        window.setTimeout(() => setStage('scan-confirm'), 360);
-      }
-    }, 90);
-    return () => window.clearInterval(id);
-  }, [stage, cameraStatus]);
 
   useEffect(() => {
     if (stage !== 'scan-confirm') {
@@ -561,7 +699,7 @@ function ProfileInfoPage() {
             </div>
 
             {!formLocked ? (
-              <button className="profile-primary" type="button" onClick={() => setStage('scan-idle')}>
+              <button className="profile-primary" type="button" onClick={() => setStage('scan-active')}>
                 <span>确认提交</span>
                 <img src="/assets/profile-figma-icon-arrow.svg" alt="" />
               </button>
@@ -575,21 +713,21 @@ function ProfileInfoPage() {
 
         <section className="profile-visual" aria-hidden>
           {stage === 'profile' ? <ProfileCarousel idx={carouselIdx} /> : null}
-          {stage === 'scan-idle' ? <ScanIdleStage onStart={() => setStage('scan-active')} /> : null}
           {stage === 'scan-active' ? (
             <ScanActiveStage
               videoRef={videoRef}
               cameraStatus={cameraStatus}
               cameraMessage={cameraMessage}
               alignProgress={alignProgress}
-              onCancel={() => setStage('scan-idle')}
+              mpStatus={mpStatus}
+              onCancel={() => setStage('profile')}
             />
           ) : null}
           {stage === 'scan-confirm' ? (
             <ScanConfirmStage
               revealedCount={revealedCount}
               onConfirm={() => navigate('/measure/auto')}
-              onRetry={() => setStage('scan-idle')}
+              onRetry={() => setStage('scan-active')}
             />
           ) : null}
         </section>
@@ -615,41 +753,34 @@ function ProfileCarousel({ idx }: { idx: number }) {
   );
 }
 
-function ScanIdleStage({ onStart }: { onStart: () => void }) {
-  return (
-    <div className="profile-scan-preview">
-      <div className="profile-scan-capture">
-        <div className="profile-scan-corner profile-scan-corner--tl" />
-        <div className="profile-scan-corner profile-scan-corner--tr" />
-        <div className="profile-scan-corner profile-scan-corner--bl" />
-        <div className="profile-scan-corner profile-scan-corner--br" />
-        <img className="profile-scan-guide" src="/assets/hand-guide-outline.png" alt="" />
-        <div className="profile-scan-line" />
-      </div>
-      <div className="profile-scan-copy">
-        <h2>将右手掌心朝上对齐虚线</h2>
-        <p>建议距离摄像头 25CM</p>
-      </div>
-      <button className="profile-scan-button" type="button" onClick={onStart}>
-        进行扫描
-      </button>
-    </div>
-  );
-}
-
 function ScanActiveStage({
   videoRef,
   cameraStatus,
   cameraMessage,
   alignProgress,
+  mpStatus,
   onCancel,
 }: {
   videoRef: MutableRefObject<HTMLVideoElement | null>;
   cameraStatus: IntakeCameraStatus;
   cameraMessage: string;
   alignProgress: number;
+  mpStatus: MpStatus;
   onCancel: () => void;
 }) {
+  const statusLabel =
+    cameraStatus === 'active'
+      ? mpStatus === 'loading'
+        ? 'LOADING MEDIAPIPE'
+        : mpStatus === 'ready'
+          ? 'HAND DETECT · MEDIAPIPE'
+          : mpStatus === 'failed'
+            ? 'FALLBACK · TIMER ALIGN'
+            : 'CAMERA ONLINE'
+      : cameraStatus === 'unavailable'
+        ? 'CAMERA OFFLINE'
+        : 'CAMERA INITIALIZING';
+
   return (
     <div className="profile-scan-camera">
       <div className={`profile-scan-camera__viewport is-${cameraStatus}`}>
@@ -660,7 +791,7 @@ function ScanActiveStage({
         <video ref={videoRef} className="profile-scan-camera__video" playsInline muted autoPlay />
         <img className="profile-scan-camera__guide" src="/assets/hand-guide-outline.png" alt="" />
         <div className="profile-scan-camera__status">
-          <strong>{cameraStatus === 'active' ? 'CAMERA ONLINE' : cameraStatus === 'unavailable' ? 'CAMERA OFFLINE' : 'CAMERA INITIALIZING'}</strong>
+          <strong>{statusLabel}</strong>
           <span>{cameraMessage}</span>
         </div>
       </div>
@@ -672,7 +803,7 @@ function ScanActiveStage({
         <div className="profile-scan-camera__align-track">
           <span style={{ width: `${alignProgress}%` }} />
         </div>
-        <p>请将右手掌心朝上对齐虚线，保持稳定。对齐完成后将自动采集数据。</p>
+        <p>请将右手掌心朝上对齐虚线，保持稳定。MediaPipe 检测到对齐稳定后将自动采集数据。</p>
         <button type="button" className="profile-scan-camera__cancel" onClick={onCancel}>
           取消扫描
         </button>
