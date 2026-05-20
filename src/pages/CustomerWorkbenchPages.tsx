@@ -351,14 +351,116 @@ const CAROUSEL_IMAGES = [
   '/assets/profile-grip-wide.png',
 ];
 
-const INTAKE_METRICS = [
-  { label: '手长 · HAND LENGTH', value: '188.5', unit: 'mm' },
-  { label: '手宽 · HAND WIDTH', value: '84.2', unit: 'mm' },
-  { label: '拇指可达 · THUMB REACH', value: '66', unit: '%' },
-  { label: '掌厚 · PALM DEPTH', value: '32.4', unit: 'mm' },
-  { label: '五指跨度 · FINGER SPAN', value: '215', unit: 'mm' },
-  { label: '数据置信度 · CONFIDENCE', value: '98.2', unit: '%' },
-];
+// GB/T 10000-1988《中国成年人人体尺寸》— 手长 / 手宽分组采样表（单位 mm）
+type DimSpec = { mean: number; std: number; min: number; max: number };
+type GenderKey = (typeof profileGenderOptions)[number]['key'];
+type AgeKey = (typeof profileAgeOptions)[number]['key'];
+
+const HAND_DIMENSIONS: Record<GenderKey, Record<AgeKey, { length: DimSpec; width: DimSpec }>> = {
+  male: {
+    '18-35': { length: { mean: 183, std: 8, min: 170, max: 196 }, width: { mean: 82, std: 4, min: 76, max: 89 } },
+    '36-55': { length: { mean: 184, std: 8, min: 171, max: 197 }, width: { mean: 83, std: 4, min: 77, max: 90 } },
+    '56+':   { length: { mean: 180, std: 8, min: 167, max: 193 }, width: { mean: 81, std: 4, min: 75, max: 88 } },
+  },
+  female: {
+    '18-35': { length: { mean: 171, std: 7, min: 159, max: 184 }, width: { mean: 76, std: 4, min: 70, max: 83 } },
+    '36-55': { length: { mean: 172, std: 7, min: 160, max: 185 }, width: { mean: 77, std: 4, min: 71, max: 84 } },
+    '56+':   { length: { mean: 169, std: 7, min: 157, max: 181 }, width: { mean: 75, std: 4, min: 69, max: 82 } },
+  },
+};
+
+function sampleNormal(spec: DimSpec): number {
+  // Box-Muller 正态分布采样 → clamp 到 P5-P95 范围
+  const u1 = Math.random() || 1e-9;
+  const u2 = Math.random();
+  const z = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+  const raw = spec.mean + z * spec.std;
+  return Math.min(spec.max, Math.max(spec.min, raw));
+}
+
+function sampleHandSize(gender: GenderKey, age: AgeKey) {
+  const spec = HAND_DIMENSIONS[gender][age];
+  return {
+    length: Math.round(sampleNormal(spec.length) * 10) / 10,
+    width: Math.round(sampleNormal(spec.width) * 10) / 10,
+  };
+}
+
+type Pt = { x: number; y: number };
+
+function convexHull(points: Pt[]): Pt[] {
+  if (points.length <= 2) return points.slice();
+  const pts = [...points].sort((a, b) => a.x - b.x || a.y - b.y);
+  const cross = (o: Pt, a: Pt, b: Pt) => (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x);
+  const lower: Pt[] = [];
+  for (const p of pts) {
+    while (lower.length >= 2 && cross(lower[lower.length - 2], lower[lower.length - 1], p) <= 0) lower.pop();
+    lower.push(p);
+  }
+  const upper: Pt[] = [];
+  for (let i = pts.length - 1; i >= 0; i--) {
+    const p = pts[i];
+    while (upper.length >= 2 && cross(upper[upper.length - 2], upper[upper.length - 1], p) <= 0) upper.pop();
+    upper.push(p);
+  }
+  return [...lower.slice(0, -1), ...upper.slice(0, -1)];
+}
+
+function expandHull(hull: Pt[], margin: number): Pt[] {
+  const cx = hull.reduce((s, p) => s + p.x, 0) / hull.length;
+  const cy = hull.reduce((s, p) => s + p.y, 0) / hull.length;
+  return hull.map((p) => {
+    const dx = p.x - cx;
+    const dy = p.y - cy;
+    const d = Math.hypot(dx, dy) || 1;
+    return { x: p.x + (dx / d) * margin, y: p.y + (dy / d) * margin };
+  });
+}
+
+type CapturedHand = {
+  dataUrl: string;
+  /** 镜像后的归一化 [0,1] 关键点（与 dataUrl 显示方向一致） */
+  landmarks: Pt[];
+};
+
+function captureHandFrame(
+  video: HTMLVideoElement,
+  landmarks: { x: number; y: number }[],
+): CapturedHand | null {
+  const w = video.videoWidth;
+  const h = video.videoHeight;
+  if (!w || !h) return null;
+  const canvas = document.createElement('canvas');
+  canvas.width = w;
+  canvas.height = h;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return null;
+
+  // 镜像绘制（和用户在画面里看到的方向一致）
+  ctx.save();
+  ctx.translate(w, 0);
+  ctx.scale(-1, 1);
+  ctx.drawImage(video, 0, 0, w, h);
+  ctx.restore();
+
+  // 关键点也镜像（x' = 1 - x），转像素坐标后做凸包 + 扩边
+  const mirrored: Pt[] = landmarks.map((p) => ({ x: (1 - p.x) * w, y: p.y * h }));
+  const hull = convexHull(mirrored);
+  const expanded = expandHull(hull, Math.max(36, Math.min(w, h) * 0.05));
+
+  // 仅保留多边形内像素，外部透明
+  ctx.globalCompositeOperation = 'destination-in';
+  ctx.beginPath();
+  ctx.moveTo(expanded[0].x, expanded[0].y);
+  for (let i = 1; i < expanded.length; i++) ctx.lineTo(expanded[i].x, expanded[i].y);
+  ctx.closePath();
+  ctx.fill();
+
+  return {
+    dataUrl: canvas.toDataURL('image/png'),
+    landmarks: landmarks.map((p) => ({ x: 1 - p.x, y: p.y })),
+  };
+}
 
 function ProfileInfoPage() {
   const navigate = useNavigate();
@@ -369,9 +471,10 @@ function ProfileInfoPage() {
   const [cameraStatus, setCameraStatus] = useState<IntakeCameraStatus>('requesting');
   const [cameraMessage, setCameraMessage] = useState('正在调用摄像头...');
   const [alignProgress, setAlignProgress] = useState(0);
-  const [revealedCount, setRevealedCount] = useState(0);
   const [mpStatus, setMpStatus] = useState<MpStatus>('idle');
   const [scanPhase, setScanPhase] = useState<ScanPhase>('alignment');
+  const [capturedHand, setCapturedHand] = useState<CapturedHand | null>(null);
+  const [handMeasure, setHandMeasure] = useState<{ length: number; width: number } | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
@@ -406,6 +509,9 @@ function ProfileInfoPage() {
       setScanPhase('alignment');
       return;
     }
+    // 进入扫描时清空上一次的捕获结果
+    setCapturedHand(null);
+    setHandMeasure(null);
 
     let stream: MediaStream | null = null;
     let cancelled = false;
@@ -480,6 +586,8 @@ function ProfileInfoPage() {
         if (pct >= 100) {
           window.clearInterval(fallbackTimerId);
           fallbackTimerId = 0;
+          // 没有 MediaPipe 关键点，仍按 GB/T 采样数据；capturedHand 保持 null → 渲染静态图
+          setHandMeasure(sampleHandSize(gender, ageGroup));
           window.setTimeout(() => {
             if (!cancelled) handleAlignmentSuccess();
           }, 320);
@@ -532,6 +640,10 @@ function ProfileInfoPage() {
               const dt = lastFrameTime ? Math.min(0.12, (now - lastFrameTime) / 1000) : 0;
               alignedStableTime += dt;
               if (alignedStableTime >= STABLE_DURATION) {
+                // 在释放摄像头之前抓帧 + 抠图
+                const captured = video ? captureHandFrame(video, landmarks) : null;
+                if (captured) setCapturedHand(captured);
+                setHandMeasure(sampleHandSize(gender, ageGroup));
                 handleAlignmentSuccess();
                 return;
               }
@@ -660,21 +772,6 @@ function ProfileInfoPage() {
     };
   }, [stage]);
 
-  useEffect(() => {
-    if (stage !== 'scan-confirm') {
-      setRevealedCount(0);
-      return;
-    }
-    setRevealedCount(0);
-    let count = 0;
-    const id = window.setInterval(() => {
-      count += 1;
-      setRevealedCount(count);
-      if (count >= INTAKE_METRICS.length) window.clearInterval(id);
-    }, 460);
-    return () => window.clearInterval(id);
-  }, [stage]);
-
   const stepNumber = stage === 'profile' ? 1 : 2;
   const stepLabel = stepNumber === 1 ? '01' : '02';
   const trackPercent = stepNumber === 1 ? 50 : 100;
@@ -769,7 +866,8 @@ function ProfileInfoPage() {
           ) : null}
           {stage === 'scan-confirm' ? (
             <ScanConfirmStage
-              revealedCount={revealedCount}
+              captured={capturedHand}
+              measure={handMeasure}
               onConfirm={() => navigate('/measure/auto')}
               onRetry={() => setStage('scan-active')}
             />
@@ -866,40 +964,106 @@ function ScanActiveStage({
   );
 }
 
+function AnimatedNumber({ value, decimals = 1, duration = 800 }: { value: number; decimals?: number; duration?: number }) {
+  const [display, setDisplay] = useState(0);
+  useEffect(() => {
+    const start = performance.now();
+    let raf = 0;
+    const tick = (t: number) => {
+      const p = Math.min(1, (t - start) / duration);
+      const eased = 1 - Math.pow(1 - p, 3);
+      setDisplay(value * eased);
+      if (p < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [value, duration]);
+  return <>{display.toFixed(decimals)}</>;
+}
+
 function ScanConfirmStage({
-  revealedCount,
+  captured,
+  measure,
   onConfirm,
   onRetry,
 }: {
-  revealedCount: number;
+  captured: CapturedHand | null;
+  measure: { length: number; width: number } | null;
   onConfirm: () => void;
   onRetry: () => void;
 }) {
-  const allRevealed = revealedCount >= INTAKE_METRICS.length;
+  const safeMeasure = measure ?? { length: 0, width: 0 };
+  // 关键点索引：0=wrist, 12=middle_tip, 5=index_mcp, 17=pinky_mcp
+  const lm = captured?.landmarks;
+  const wrist = lm?.[0];
+  const middleTip = lm?.[12];
+  const indexMcp = lm?.[5];
+  const pinkyMcp = lm?.[17];
+  const haveOverlay = !!(wrist && middleTip && indexMcp && pinkyMcp);
+
   return (
     <div className="profile-scan-data">
       <div className="profile-scan-data__head">
         <span>CAPTURED METRICS</span>
-        <strong>
-          {revealedCount} / {INTAKE_METRICS.length}
-        </strong>
+        <strong>2 / 2</strong>
       </div>
-      <ul className="profile-scan-data__list">
-        {INTAKE_METRICS.slice(0, revealedCount).map((item) => (
-          <motion.li
-            key={item.label}
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.46, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <span className="profile-scan-data__label">{item.label}</span>
-            <strong className="profile-scan-data__value">
-              {item.value}
-              <small>{item.unit}</small>
-            </strong>
-          </motion.li>
-        ))}
-      </ul>
+
+      <div className={`profile-scan-result ${captured ? '' : 'is-fallback'}`}>
+        <div className="profile-scan-result__frame">
+          {captured ? (
+            <img src={captured.dataUrl} className="profile-scan-result__hand" alt="" />
+          ) : (
+            <img src="/assets/measurement-auto-hand.png" className="profile-scan-result__hand profile-scan-result__hand--fallback" alt="" />
+          )}
+
+          {haveOverlay && wrist && middleTip && indexMcp && pinkyMcp ? (
+            <svg className="profile-scan-result__overlay" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden>
+              {/* 手长引线：wrist (0) ↔ middle_tip (12) */}
+              <line
+                x1={middleTip.x * 100}
+                y1={middleTip.y * 100}
+                x2={wrist.x * 100}
+                y2={wrist.y * 100}
+                stroke="rgba(180,197,255,0.78)"
+                strokeWidth="0.35"
+                strokeDasharray="0.9 0.9"
+                vectorEffect="non-scaling-stroke"
+              />
+              <circle cx={middleTip.x * 100} cy={middleTip.y * 100} r="0.6" fill="#b4c5ff" />
+              <circle cx={wrist.x * 100} cy={wrist.y * 100} r="0.6" fill="#b4c5ff" />
+              {/* 手宽引线：index_mcp (5) ↔ pinky_mcp (17) */}
+              <line
+                x1={indexMcp.x * 100}
+                y1={indexMcp.y * 100}
+                x2={pinkyMcp.x * 100}
+                y2={pinkyMcp.y * 100}
+                stroke="rgba(180,197,255,0.78)"
+                strokeWidth="0.35"
+                strokeDasharray="0.9 0.9"
+                vectorEffect="non-scaling-stroke"
+              />
+              <circle cx={indexMcp.x * 100} cy={indexMcp.y * 100} r="0.6" fill="#b4c5ff" />
+              <circle cx={pinkyMcp.x * 100} cy={pinkyMcp.y * 100} r="0.6" fill="#b4c5ff" />
+            </svg>
+          ) : null}
+        </div>
+
+        <div className="profile-scan-result__chip profile-scan-result__chip--length">
+          <span>手长 · HAND LENGTH</span>
+          <strong>
+            <AnimatedNumber value={safeMeasure.length} />
+            <small>mm</small>
+          </strong>
+        </div>
+        <div className="profile-scan-result__chip profile-scan-result__chip--width">
+          <span>手宽 · HAND WIDTH</span>
+          <strong>
+            <AnimatedNumber value={safeMeasure.width} />
+            <small>mm</small>
+          </strong>
+        </div>
+      </div>
+
       <div className="profile-scan-data__actions">
         <button type="button" className="profile-scan-data__retry" onClick={onRetry}>
           重新扫描
@@ -908,7 +1072,7 @@ function ScanConfirmStage({
           type="button"
           className="profile-scan-data__confirm"
           onClick={onConfirm}
-          disabled={!allRevealed}
+          disabled={!measure}
         >
           确认进入测量
         </button>

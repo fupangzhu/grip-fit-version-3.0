@@ -1239,52 +1239,95 @@
   font-weight: 700;
 }
 
-.profile-scan-data__list {
+/* 已捕获手图 + 标注式呈现（替换原 6 项列表） */
+.profile-scan-result {
+  position: relative;
   flex: 1 1 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 6px 0;
-  margin: 0;
-  list-style: none;
-  overflow-y: auto;
-}
-
-.profile-scan-data__list li {
+  min-height: 0;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 16px 18px;
-  border: 1px solid rgba(75, 110, 195, 0.18);
+  justify-content: center;
+  padding: 8px 0;
+}
+
+.profile-scan-result__frame {
+  position: relative;
+  width: min(100%, 460px);
+  aspect-ratio: 3 / 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-scan-result__hand {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 14px 32px rgba(56, 104, 255, 0.16));
+}
+
+.profile-scan-result__hand--fallback {
+  opacity: 0.78;
+}
+
+.profile-scan-result__overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.profile-scan-result__chip {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 14px;
+  border: 1px solid var(--card-border);
   border-radius: 4px;
-  background: rgba(180, 197, 255, 0.04);
+  background: rgba(8, 12, 19, 0.78);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  min-width: 132px;
 }
 
-.profile-scan-data__label {
-  color: rgba(216, 224, 244, 0.82);
-  font-family: var(--font-zh);
-  font-size: 13px;
-  font-weight: 500;
-  letter-spacing: 0.3px;
-}
-
-.profile-scan-data__value {
-  color: #e0e6f6;
+.profile-scan-result__chip span {
+  color: var(--text-2);
   font-family: var(--font-en);
-  font-size: 26px;
+  font-size: 10.4px;
   font-weight: 700;
-  line-height: 1;
+  letter-spacing: 1.6px;
+  white-space: nowrap;
+}
+
+.profile-scan-result__chip strong {
   display: inline-flex;
   align-items: baseline;
-  gap: 5px;
+  gap: 4px;
+  color: var(--text-1);
+  font-family: var(--font-en);
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
 }
 
-.profile-scan-data__value small {
-  color: rgba(180, 197, 255, 0.66);
+.profile-scan-result__chip strong small {
+  color: var(--text-2);
   font-family: var(--font-en);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
-  letter-spacing: 1.4px;
+  letter-spacing: 1.2px;
+}
+
+.profile-scan-result__chip--length {
+  top: 12%;
+  right: 4%;
+}
+
+.profile-scan-result__chip--width {
+  bottom: 14%;
+  right: 4%;
 }
 
 .profile-scan-data__actions {
@@ -1298,9 +1341,9 @@
   padding: 0 22px;
   height: 52px;
   border-radius: 4px;
-  border: 1px solid rgba(180, 197, 255, 0.28);
+  border: 1px solid var(--card-border);
   background: rgba(255, 255, 255, 0.02);
-  color: rgba(216, 224, 244, 0.82);
+  color: var(--text-2);
   font-family: var(--font-zh);
   font-size: 14px;
   font-weight: 500;
@@ -1310,8 +1353,8 @@
 }
 
 .profile-scan-data__retry:hover {
-  border-color: rgba(180, 197, 255, 0.58);
-  color: #ffffff;
+  border-color: rgba(180, 197, 255, 0.5);
+  color: var(--accent);
 }
 
 .profile-scan-data__confirm {
