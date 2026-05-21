@@ -1090,11 +1090,10 @@
   position: absolute;
   left: 50%;
   top: 50%;
-  width: clamp(280px, 38vw, 480px);
-  max-width: none;
-  transform: translate(-50%, -50%) scaleX(-1);
-  opacity: 0.46;
-  filter: drop-shadow(0 0 12px rgba(120, 170, 255, 0.32));
+  width: clamp(180px, 26vw, 320px);
+  height: auto;
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(0 0 10px rgba(120, 170, 255, 0.28));
   pointer-events: none;
 }
 
