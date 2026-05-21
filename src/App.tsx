@@ -10,14 +10,12 @@ import AppShell from './layouts/AppShell';
 import MeasurementPage from './pages/MeasurementPage';
 import BestPhonePage from './pages/BestPhonePage';
 import TuningPage from './pages/TuningPage';
-import {
-  ComparePage,
-  DashboardPage,
-  MyDataPage,
-  PhoneDetailPage,
-  PhoneLibraryPage,
-  ReportPage,
-} from './pages/_placeholders';
+import ReportPage from './pages/ReportPage';
+import PhoneLibraryPage from './pages/PhoneLibraryPage';
+import PhoneDetailPage from './pages/PhoneDetailPage';
+import ComparePage from './pages/ComparePage';
+import MyDataPage from './pages/MyDataPage';
+import DashboardPage from './pages/DashboardPage';
 
 const RedirectHome = () => <Navigate to="/" replace />;
 

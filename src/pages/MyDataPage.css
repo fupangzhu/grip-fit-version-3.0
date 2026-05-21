@@ -1,0 +1,417 @@
+/* MyDataPage — hi-fi 29 */
+
+.my-data-page {
+  padding: 28px 36px 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.my-data-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.my-data-head h1 {
+  margin: 0;
+  color: var(--text-1);
+  font-family: var(--font-zh);
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.my-data-head__id {
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--card-border);
+  background: rgba(180, 197, 255, 0.08);
+  color: var(--accent);
+  font-family: var(--font-en);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+}
+
+.my-data-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 0.7fr 1fr;
+  grid-template-rows: auto auto;
+  grid-template-areas:
+    'hand profile summary'
+    'history history plans';
+  gap: 16px;
+}
+
+.my-data-card {
+  padding: 22px 24px;
+}
+
+.my-data-card h2 {
+  margin: 0 0 16px;
+  color: var(--text-1);
+  font-family: var(--font-zh);
+  font-size: 15px;
+  font-weight: 500;
+}
+
+/* —— Hand card —— */
+.my-data-card--hand {
+  grid-area: hand;
+  display: flex;
+  flex-direction: column;
+}
+
+.my-data-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 16px;
+}
+
+.my-data-metric {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.my-data-metric__label {
+  color: var(--text-2);
+  font-family: var(--font-zh);
+  font-size: 12px;
+}
+
+.my-data-metric__value {
+  color: var(--accent);
+  font-family: var(--font-en);
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.my-data-metric__value small {
+  margin-left: 4px;
+  color: var(--text-2);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.my-data-metric__desc {
+  color: var(--text-2);
+  font-family: var(--font-zh);
+  font-size: 11px;
+  font-style: normal;
+}
+
+.my-data-metric__curve {
+  margin-top: 10px;
+}
+
+.my-data-metric__curve svg {
+  width: 100%;
+  height: 56px;
+}
+
+.my-data-metric__scale {
+  display: flex;
+  justify-content: space-between;
+  color: var(--text-2);
+  font-family: var(--font-en);
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+
+.my-data-metric__scale span:nth-child(2) {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.my-data-handtype {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.my-data-handtype button {
+  height: 36px;
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-2);
+  font-family: var(--font-zh);
+  font-size: 12px;
+  cursor: default;
+  opacity: 0.5;
+}
+
+.my-data-handtype button.is-active {
+  background: linear-gradient(104deg, rgba(180, 197, 255, 0.22), rgba(76, 124, 255, 0.18));
+  border-color: rgba(180, 197, 255, 0.5);
+  color: var(--accent);
+  font-weight: 700;
+  opacity: 1;
+}
+
+.my-data-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: auto;
+}
+
+.my-data-actions .glass-button {
+  flex: 1 1 0;
+  height: 42px;
+  color: var(--text-2);
+  font-size: 12px;
+}
+
+.my-data-actions__primary {
+  flex: 1 1 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 42px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(104deg, #b4c5ff, #4c7cff);
+  color: #002a78;
+  font-family: var(--font-zh);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* —— Profile —— */
+.my-data-card--profile {
+  grid-area: profile;
+}
+
+.my-data-profile-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(180, 197, 255, 0.16), rgba(76, 124, 255, 0.08));
+  border: 1px solid rgba(180, 197, 255, 0.32);
+  color: var(--accent);
+  margin: 0 auto 14px;
+}
+
+.my-data-profile-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.my-data-profile-list p {
+  display: flex;
+  justify-content: space-between;
+  margin: 0;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.my-data-profile-list p:last-child {
+  border-bottom: none;
+}
+
+.my-data-profile-list p span {
+  color: var(--text-2);
+  font-family: var(--font-zh);
+  font-size: 12px;
+}
+
+.my-data-profile-list p strong {
+  color: var(--text-1);
+  font-family: var(--font-zh);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* —— Summary —— */
+.my-data-card--summary {
+  grid-area: summary;
+  display: flex;
+  flex-direction: column;
+}
+
+.my-data-summary-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.my-data-summary-grid div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px;
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.my-data-summary-grid div span {
+  color: var(--text-2);
+  font-family: var(--font-zh);
+  font-size: 11px;
+}
+
+.my-data-summary-grid div strong {
+  color: var(--accent);
+  font-family: var(--font-en);
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.my-data-summary-grid div strong small {
+  margin-left: 3px;
+  color: var(--text-2);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.my-data-summary-cta {
+  margin-top: auto;
+  height: 38px;
+  border-radius: 6px;
+  border: 1px solid var(--card-border);
+  background: rgba(180, 197, 255, 0.08);
+  color: var(--accent);
+  font-family: var(--font-zh);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* —— History & plans —— */
+.my-data-card--history { grid-area: history; }
+.my-data-card--plans { grid-area: plans; }
+
+.my-data-card--history header,
+.my-data-card--plans header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.my-data-card--history header h2,
+.my-data-card--plans header h2 {
+  margin: 0;
+}
+
+.my-data-card--history header button,
+.my-data-card--plans header button {
+  border: none;
+  background: transparent;
+  color: var(--accent);
+  font-family: var(--font-zh);
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.my-data-history-list, .my-data-plan-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.my-data-history-list button, .my-data-plan-list button {
+  display: grid;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.02);
+  text-align: left;
+  cursor: pointer;
+  transition: all 180ms ease;
+  width: 100%;
+}
+
+.my-data-history-list button {
+  grid-template-columns: 32px 1fr auto;
+}
+
+.my-data-plan-list button {
+  grid-template-columns: auto 1fr auto;
+}
+
+.my-data-history-list button:hover, .my-data-plan-list button:hover {
+  border-color: rgba(180, 197, 255, 0.32);
+  background: rgba(39, 42, 47, 0.62);
+}
+
+.my-data-history-mock {
+  width: 32px;
+  height: 50px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #4e5560, #1a1c22);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.my-data-history-list button div, .my-data-plan-list button div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.my-data-history-list button strong, .my-data-plan-list button strong {
+  color: var(--text-1);
+  font-family: var(--font-zh);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.my-data-history-list button em, .my-data-plan-list button em {
+  color: var(--text-2);
+  font-family: var(--font-zh);
+  font-size: 11px;
+  font-style: normal;
+}
+
+.my-data-history-list button svg {
+  color: var(--text-2);
+}
+
+.my-data-plan-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  background: rgba(180, 197, 255, 0.16);
+  color: var(--accent);
+  font-family: var(--font-en);
+  font-size: 10.4px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.my-data-plan-status {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-family: var(--font-zh);
+  font-size: 11px;
+  font-weight: 600;
+  font-style: normal;
+}
+
+.my-data-plan-status--0 { background: rgba(122, 219, 160, 0.16); color: #7adba0; }
+.my-data-plan-status--1 { background: rgba(255, 176, 96, 0.16); color: #ffb060; }
+.my-data-plan-status--2 { background: rgba(141, 144, 161, 0.16); color: var(--text-2); }
+
+/* —— Dashboard placeholder —— */
+.my-data-card--hand h2 {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
