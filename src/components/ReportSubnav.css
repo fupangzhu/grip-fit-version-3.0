@@ -1,0 +1,51 @@
+/* 左侧 5 项文字子导航 — 在 BestPhonePage / TuningPage 共用 */
+
+.report-subnav {
+  flex: 0 0 auto;
+  width: 168px;
+  padding: 28px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-right: 1px solid var(--card-border);
+  background: rgba(8, 12, 19, 0.36);
+}
+
+.report-subnav__item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 40px;
+  padding: 0 14px;
+  border-radius: 6px;
+  color: var(--text-2);
+  font-family: var(--font-zh);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  text-decoration: none;
+  transition: all 180ms ease;
+}
+
+.report-subnav__item:hover:not(.is-active) {
+  color: var(--text-1);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.report-subnav__item.is-active {
+  color: var(--accent);
+  background: rgba(180, 197, 255, 0.08);
+  font-weight: 600;
+}
+
+.report-subnav__item.is-active::before {
+  content: '';
+  position: absolute;
+  left: -14px;
+  top: 50%;
+  width: 3px;
+  height: 18px;
+  background: var(--accent);
+  border-radius: 0 4px 4px 0;
+  transform: translateY(-50%);
+}

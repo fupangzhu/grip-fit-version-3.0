@@ -1,0 +1,608 @@
+/* TuningPage — hi-fi 15-19 */
+
+.tuning-page {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+.tuning-page__main {
+  flex: 1 1 auto;
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 24px;
+  padding: 24px 32px;
+  min-width: 0;
+}
+
+/* ─────────────────── 中央 stage ─────────────────── */
+.tuning-stage {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  background: rgba(8, 12, 19, 0.42);
+  overflow: hidden;
+}
+
+.tuning-stage::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 58% 50% at 50% 48%, rgba(43, 78, 121, 0.36), transparent 70%);
+  pointer-events: none;
+}
+
+.tuning-stage__hint {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--card-border);
+  color: var(--text-2);
+  font-family: var(--font-zh);
+  font-size: 11px;
+  letter-spacing: 0.4px;
+  z-index: 4;
+}
+
+.tuning-stage__hint span {
+  margin: 0 4px;
+  opacity: 0.4;
+}
+
+.tuning-stage__score {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  z-index: 4;
+}
+
+.tuning-stage__score p {
+  margin: 0;
+  color: var(--text-2);
+  font-family: var(--font-zh);
+  font-size: 11px;
+  letter-spacing: 1.2px;
+}
+
+/* —— Phone mock —— */
+.tuning-device {
+  position: relative;
+  z-index: 2;
+  width: 240px;
+  height: 480px;
+  transition: transform 460ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.tuning-device--front { transform: rotateY(0deg); }
+.tuning-device--back { transform: rotateY(180deg); }
+.tuning-device--hand { transform: rotateZ(-8deg) translateY(0); }
+.tuning-device--risk { transform: rotateZ(-8deg); }
+
+.tuning-device__phone {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 36px;
+  background: linear-gradient(160deg, #2a2f38 0%, #1c2028 100%);
+  box-shadow:
+    0 30px 70px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.tuning-device--back .tuning-device__phone {
+  background: linear-gradient(160deg, #1c2028 0%, #2a2f38 100%);
+}
+
+.tuning-device__camera {
+  position: absolute;
+  top: 22px;
+  left: 22px;
+  width: 96px;
+  height: 96px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 14px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  justify-items: center;
+  gap: 6px;
+}
+
+.tuning-device__camera span {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #4e5560 0%, #1a1c22 80%);
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.06);
+}
+
+.tuning-device__camera em {
+  position: absolute;
+  bottom: -22px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: var(--accent);
+  font-family: var(--font-en);
+  font-size: 10.4px;
+  font-style: normal;
+  letter-spacing: 0.8px;
+}
+
+.tuning-device__screen {
+  position: absolute;
+  inset: 100px 16px 16px;
+  border-radius: 24px;
+  background: linear-gradient(180deg, rgba(180, 197, 255, 0.05), rgba(76, 124, 255, 0.02));
+  border: 1px solid rgba(180, 197, 255, 0.08);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 18px;
+}
+
+.tuning-device__screen span {
+  color: rgba(180, 197, 255, 0.62);
+  font-family: var(--font-en);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.4px;
+}
+
+.tuning-device__hand {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0.42;
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* —— Risk dots —— */
+.tuning-risk-dot {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  margin: -11px;
+  border: none;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, rgba(255, 90, 90, 0.96), rgba(170, 40, 40, 0.55) 60%, transparent 80%);
+  box-shadow: 0 0 16px rgba(255, 80, 80, 0.6);
+  cursor: pointer;
+  z-index: 6;
+  animation: tuning-risk-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes tuning-risk-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.18); }
+}
+
+.tuning-risk-callout {
+  position: absolute;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  width: min(360px, 80%);
+  padding: 14px 18px;
+  color: var(--text-1);
+  font-family: var(--font-zh);
+  font-size: 13px;
+  line-height: 1.6;
+  z-index: 7;
+}
+
+/* —— View tabs + 显示手部 toggle —— */
+.tuning-views {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 999px;
+  background: rgba(8, 12, 19, 0.72);
+  border: 1px solid var(--card-border);
+  backdrop-filter: blur(10px);
+  z-index: 5;
+}
+
+.tuning-views__btn {
+  height: 30px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: none;
+  background: transparent;
+  color: var(--text-2);
+  font-family: var(--font-zh);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 180ms ease;
+}
+
+.tuning-views__btn:hover:not(.is-active) {
+  color: var(--text-1);
+}
+
+.tuning-views__btn.is-active {
+  background: linear-gradient(104deg, #b4c5ff, #4c7cff);
+  color: #002a78;
+  font-weight: 700;
+}
+
+.tuning-hand-toggle {
+  position: absolute;
+  bottom: 18px;
+  right: 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(8, 12, 19, 0.72);
+  border: 1px solid var(--card-border);
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+  z-index: 5;
+}
+
+.tuning-hand-toggle:has(input:disabled) {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.tuning-hand-toggle span:first-child {
+  color: var(--text-2);
+  font-family: var(--font-zh);
+  font-size: 12px;
+}
+
+.tuning-hand-toggle input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.tuning-hand-toggle__track {
+  position: relative;
+  width: 32px;
+  height: 18px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  transition: background 180ms ease;
+}
+
+.tuning-hand-toggle__thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--text-2);
+  transition: all 180ms ease;
+}
+
+.tuning-hand-toggle input:checked + .tuning-hand-toggle__track {
+  background: var(--accent);
+}
+
+.tuning-hand-toggle input:checked + .tuning-hand-toggle__track .tuning-hand-toggle__thumb {
+  left: 16px;
+  background: #002a78;
+}
+
+/* ─────────────────── 右侧参数微调面板 ─────────────────── */
+.tuning-panel {
+  display: flex;
+  flex-direction: column;
+  padding: 22px 18px;
+  min-width: 0;
+  overflow-y: auto;
+}
+
+.tuning-panel__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.tuning-panel__head h1 {
+  margin: 0;
+  color: var(--text-1);
+  font-family: var(--font-zh);
+  font-size: 17px;
+  font-weight: 500;
+}
+
+.tuning-panel__head .glass-button {
+  height: 30px;
+  padding: 0 12px;
+  font-size: 11px;
+  color: var(--accent);
+  gap: 6px;
+}
+
+/* —— Folder section —— */
+.tuning-section {
+  border-top: 1px solid var(--card-border);
+}
+
+.tuning-section__head {
+  width: 100%;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 12px 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: var(--text-1);
+  font-family: var(--font-zh);
+}
+
+.tuning-section__head h2 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.tuning-section__head span {
+  color: var(--text-2);
+  font-family: var(--font-en);
+  font-size: 10.4px;
+  letter-spacing: 1.4px;
+}
+
+.tuning-section__body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-bottom: 14px;
+}
+
+/* —— Range row —— */
+.tuning-range {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tuning-range__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.tuning-range__head span {
+  color: var(--text-2);
+  font-family: var(--font-zh);
+  font-size: 12px;
+}
+
+.tuning-range__head strong {
+  color: var(--text-1);
+  font-family: var(--font-en);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.tuning-range__head strong small {
+  margin-left: 3px;
+  color: var(--text-2);
+  font-family: var(--font-en);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+}
+
+.tuning-range__track {
+  position: relative;
+  height: 22px;
+}
+
+.tuning-range__track::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 999px;
+  transform: translateY(-50%);
+}
+
+.tuning-range__fill {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  height: 3px;
+  background: linear-gradient(90deg, rgba(180, 197, 255, 0.78), rgba(86, 130, 255, 0.92));
+  border-radius: 999px;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.tuning-range__ideal {
+  position: absolute;
+  top: 50%;
+  width: 2px;
+  height: 14px;
+  background: rgba(120, 220, 140, 0.9);
+  transform: translate(-50%, -50%);
+  border-radius: 1px;
+  pointer-events: none;
+}
+
+.tuning-range__thumb {
+  position: absolute;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--accent);
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 0 3px rgba(180, 197, 255, 0.22);
+  pointer-events: none;
+}
+
+.tuning-range__track input[type='range'] {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  opacity: 0;
+}
+
+.tuning-range__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--text-2);
+  font-family: var(--font-en);
+  font-size: 10px;
+  letter-spacing: 1px;
+  opacity: 0.7;
+}
+
+/* —— Choice row —— */
+.tuning-choice {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tuning-choice p {
+  margin: 0;
+  color: var(--text-2);
+  font-family: var(--font-zh);
+  font-size: 12px;
+}
+
+.tuning-choice__group {
+  display: flex;
+  gap: 6px;
+}
+
+.tuning-choice__group button {
+  flex: 1 1 0;
+  height: 30px;
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--text-2);
+  font-family: var(--font-zh);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 180ms ease;
+}
+
+.tuning-choice__group button:hover:not(.is-active) {
+  color: var(--text-1);
+  border-color: rgba(180, 197, 255, 0.32);
+}
+
+.tuning-choice__group button.is-active {
+  background: linear-gradient(104deg, rgba(180, 197, 255, 0.18), rgba(76, 124, 255, 0.18));
+  border-color: rgba(180, 197, 255, 0.5);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* —— Toggle row —— */
+.tuning-toggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.02);
+  cursor: pointer;
+}
+
+.tuning-toggle div {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tuning-toggle div span {
+  color: var(--text-1);
+  font-family: var(--font-zh);
+  font-size: 13px;
+}
+
+.tuning-toggle div small {
+  color: var(--text-2);
+  font-family: var(--font-zh);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.tuning-toggle input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.tuning-toggle__track {
+  position: relative;
+  width: 32px;
+  height: 18px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  transition: background 180ms ease;
+  flex: 0 0 auto;
+}
+
+.tuning-toggle__thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--text-2);
+  transition: all 180ms ease;
+}
+
+.tuning-toggle input:checked + .tuning-toggle__track {
+  background: var(--accent);
+}
+
+.tuning-toggle input:checked + .tuning-toggle__track .tuning-toggle__thumb {
+  left: 16px;
+  background: #002a78;
+}
