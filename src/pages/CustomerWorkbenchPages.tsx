@@ -2,20 +2,11 @@ import { useEffect, useLayoutEffect, useRef, useState, type MutableRefObject } f
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import HandGuideOutline from '../components/HandGuideOutline';
+import { writeFlowState } from '../hooks/useFlowState';
 import './CustomerWorkbenchPages.css';
 
 // Phase 0：删除后续所有页面，仅保留 ProfileInfoPage 的 onboarding intake 流程。
-// FlowState 系列保留给后续 phase 1+ 重建后续页面使用。
-type FlowState = {
-  handLength: number;
-  handWidth: number;
-  thumbReach: number;
-  width: number;
-  height: number;
-  thickness: number;
-  weight: number;
-  cameraBump: number;
-};
+// FlowState / readFlowState / writeFlowState 已迁移到 src/hooks/useFlowState.ts（Phase 1）
 
 const profileGenderOptions = [
   { key: 'male', label: '男 / Male', icon: '/assets/profile-figma-icon-male.svg' },
@@ -27,35 +18,6 @@ const profileAgeOptions = [
   { key: '36-55', label: '36-55', meta: 'EXPERIENCED' },
   { key: '56+', label: '56+', meta: 'SENIOR' },
 ] as const;
-
-const FLOW_KEY = 'gripfit-flow-state-v2';
-
-const defaultFlow: FlowState = {
-  handLength: 188.5,
-  handWidth: 84.2,
-  thumbReach: 66,
-  width: 70.6,
-  height: 151.4,
-  thickness: 7.6,
-  weight: 180,
-  cameraBump: 1.6,
-};
-
-function readFlowState(): FlowState {
-  if (typeof window === 'undefined') return defaultFlow;
-  try {
-    const parsed = JSON.parse(window.localStorage.getItem(FLOW_KEY) ?? '{}') as Partial<FlowState>;
-    return { ...defaultFlow, ...parsed };
-  } catch {
-    return defaultFlow;
-  }
-}
-
-function writeFlowState(patch: Partial<FlowState>) {
-  if (typeof window === 'undefined') return;
-  const next = { ...readFlowState(), ...patch };
-  window.localStorage.setItem(FLOW_KEY, JSON.stringify(next));
-}
 
 // GB/T 10000-1988《中国成年人人体尺寸》— 手长 / 手宽分组采样表（单位 mm）
 type DimSpec = { mean: number; std: number; min: number; max: number };
@@ -291,7 +253,9 @@ function ProfileInfoPage() {
           window.clearInterval(fallbackTimerId);
           fallbackTimerId = 0;
           // 没有 MediaPipe 关键点，仍按 GB/T 采样数据；capturedHand 保持 null → 渲染静态图
-          setHandMeasure(sampleHandSize(gender, ageGroup));
+          const measure = sampleHandSize(gender, ageGroup);
+          setHandMeasure(measure);
+          writeFlowState({ handLength: measure.length, handWidth: measure.width, gender, ageGroup });
           window.setTimeout(() => {
             if (!cancelled) handleAlignmentSuccess();
           }, 320);
@@ -347,7 +311,9 @@ function ProfileInfoPage() {
                 // 在释放摄像头之前抓帧（纯 bbox 裁剪，不抠图）
                 const captured = video ? captureHandFrame(video, landmarks) : null;
                 if (captured) setCapturedHand(captured);
-                setHandMeasure(sampleHandSize(gender, ageGroup));
+                const measure = sampleHandSize(gender, ageGroup);
+                setHandMeasure(measure);
+                writeFlowState({ handLength: measure.length, handWidth: measure.width, gender, ageGroup });
                 handleAlignmentSuccess();
                 return;
               }

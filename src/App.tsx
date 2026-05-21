@@ -7,10 +7,10 @@ import OnboardingPage from './pages/OnboardingPage';
 import RoleSelectPage from './pages/RoleSelectPage';
 import { ProfileInfoPage } from './pages/CustomerWorkbenchPages';
 import AppShell from './layouts/AppShell';
+import MeasurementPage from './pages/MeasurementPage';
 import {
   ComparePage,
   DashboardPage,
-  MeasurementPage,
   MyDataPage,
   PhoneDetailPage,
   PhoneLibraryPage,
@@ -41,6 +41,7 @@ export default function App() {
         <Route path="/library" element={<PhoneLibraryPage />} />
         <Route path="/phone/:id" element={<PhoneDetailPage />} />
         <Route path="/report" element={<ReportPage />} />
+        <Route path="/report/best-phone" element={<TuningPage />} />
         <Route path="/compare" element={<ComparePage />} />
         <Route path="/my-data" element={<MyDataPage />} />
       </Route>
