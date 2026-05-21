@@ -6,13 +6,24 @@ import LoginPage from './pages/LoginPage';
 import OnboardingPage from './pages/OnboardingPage';
 import RoleSelectPage from './pages/RoleSelectPage';
 import { ProfileInfoPage } from './pages/CustomerWorkbenchPages';
+import AppShell from './layouts/AppShell';
+import {
+  ComparePage,
+  DashboardPage,
+  MeasurementPage,
+  MyDataPage,
+  PhoneDetailPage,
+  PhoneLibraryPage,
+  ReportPage,
+  TuningPage,
+} from './pages/_placeholders';
 
-// Phase 0：删除手部识别后所有页面的路由。后续 Phase 2-6 重建时按模块加回。
 const RedirectHome = () => <Navigate to="/" replace />;
 
 export default function App() {
   return (
     <Routes>
+      {/* 保留路由：onboarding 流程 */}
       <Route path="/" element={<HomePage />} />
       <Route path="/role-select" element={<RoleSelectPage />} />
       <Route path="/login" element={<LoginPage />} />
@@ -21,7 +32,19 @@ export default function App() {
       <Route path="/onboarding/profile" element={<ProfileInfoPage />} />
       <Route path="/hand-recognition" element={<HandRecognitionPage />} />
       <Route path="/hand-scanning" element={<HandScanningPage />} />
-      {/* 已删除：/measure/* /tuning /report/* /phones /models/* /compare /compare-report /my-data /profile/data */}
+
+      {/* Phase 1：AppShell 包裹的后续页面（目前是占位，Phase 2+ 替换实际内容） */}
+      <Route element={<AppShell />}>
+        <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/measure" element={<MeasurementPage />} />
+        <Route path="/tuning" element={<TuningPage />} />
+        <Route path="/library" element={<PhoneLibraryPage />} />
+        <Route path="/phone/:id" element={<PhoneDetailPage />} />
+        <Route path="/report" element={<ReportPage />} />
+        <Route path="/compare" element={<ComparePage />} />
+        <Route path="/my-data" element={<MyDataPage />} />
+      </Route>
+
       <Route path="*" element={<RedirectHome />} />
     </Routes>
   );
