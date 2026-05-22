@@ -177,6 +177,12 @@
   border-color: rgba(180, 197, 255, 0.45);
 }
 
+.dashboard-top__head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .dashboard-top__rank {
   color: var(--accent);
   font-family: var(--font-en);

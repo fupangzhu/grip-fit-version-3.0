@@ -3,8 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Move3D, ZoomIn } from 'lucide-react';
 import ReportSubnav from '../components/ReportSubnav';
+import PhoneVisual from '../components/PhoneVisual';
 import { useFlowState } from '../hooks/useFlowState';
 import { deriveIdealSpec } from '../data/scoring';
+import { phones } from '../data/phones';
 import './BestPhonePage.css';
 
 export default function BestPhonePage() {
@@ -62,14 +64,8 @@ export default function BestPhonePage() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           >
-            <div className="best-phone-mock">
-              <div className="best-phone-mock__camera">
-                <span /><span /><span />
-              </div>
-              <div className="best-phone-mock__screen">
-                <span className="best-phone-mock__size">{ideal.width.toFixed(1)} × {ideal.height.toFixed(1)} mm</span>
-              </div>
-            </div>
+            <PhoneVisual phone={phones[0]} size="xl" />
+            <span className="best-phone-stage__size-label">{ideal.width.toFixed(1)} × {ideal.height.toFixed(1)} mm</span>
             {showHand ? (
               <img className="best-phone-stage__hand" src="/assets/hero-phone-cut.png" alt="" />
             ) : null}

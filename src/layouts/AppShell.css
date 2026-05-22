@@ -211,6 +211,57 @@
   border-color: rgba(180, 197, 255, 0.5);
 }
 
+/* ─────────────────── 全局共享评分环 ─────────────────── */
+.score-ring {
+  position: relative;
+  width: 86px;
+  height: 86px;
+  border-radius: 50%;
+  background: conic-gradient(var(--accent) var(--score-deg, 0deg), rgba(255, 255, 255, 0.06) var(--score-deg, 0deg));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 0 18px rgba(180, 197, 255, 0.22));
+}
+
+.score-ring::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(180, 197, 255, 0.18), transparent 70%);
+  pointer-events: none;
+}
+
+.score-ring__inner {
+  position: relative;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 30%, #1a2030, #08111d 80%);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 2px;
+  z-index: 1;
+}
+
+.score-ring__inner strong {
+  color: var(--text-1);
+  font-family: var(--font-en);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.score-ring__inner span {
+  color: var(--text-2);
+  font-family: var(--font-en);
+  font-size: 10px;
+  font-weight: 600;
+}
+
 /* ─────────────────── placeholder 占位 ─────────────────── */
 .shell-placeholder {
   width: min(820px, calc(100% - 64px));

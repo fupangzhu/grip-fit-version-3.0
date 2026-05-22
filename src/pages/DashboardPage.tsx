@@ -5,6 +5,7 @@ import { Scan, SlidersHorizontal, Smartphone, FileText, Database, ChevronRight, 
 import { useFlowState } from '../hooks/useFlowState';
 import { scorePhoneForHand } from '../data/scoring';
 import { phones } from '../data/phones';
+import PhoneVisual from '../components/PhoneVisual';
 import './DashboardPage.css';
 
 const QUICK_LINKS = [
@@ -98,7 +99,10 @@ export default function DashboardPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.06 }}
             >
-              <strong className="dashboard-top__rank">#{idx + 1}</strong>
+              <div className="dashboard-top__head">
+                <strong className="dashboard-top__rank">#{idx + 1}</strong>
+                <PhoneVisual phone={entry.phone} size="sm" />
+              </div>
               <h3>{entry.phone.name}</h3>
               <p>{entry.phone.releaseDate} · {entry.phone.brand}</p>
               <div className="dashboard-top__metrics">

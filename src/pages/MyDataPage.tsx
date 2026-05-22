@@ -5,6 +5,7 @@ import { UserCircle, Trophy, RotateCcw, Edit3, ChevronRight } from 'lucide-react
 import { useFlowState } from '../hooks/useFlowState';
 import { deriveIdealSpec } from '../data/scoring';
 import { phones } from '../data/phones';
+import PhoneVisual from '../components/PhoneVisual';
 import './MyDataPage.css';
 
 const HAND_TYPES = ['小手型', '中手型', '大手型'] as const;
@@ -111,7 +112,7 @@ export default function MyDataPage() {
                 transition={{ delay: idx * 0.05 }}
                 onClick={() => navigate(`/phone/${phone.id}`)}
               >
-                <div className="my-data-history-mock" />
+                <PhoneVisual phone={phone} size="xs" />
                 <div>
                   <strong>{phone.name}</strong>
                   <em>vs 自定义方案 A · {2024 - idx}-05-{22 - idx * 2}</em>

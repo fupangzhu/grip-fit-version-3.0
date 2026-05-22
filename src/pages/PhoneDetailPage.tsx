@@ -4,8 +4,9 @@ import { motion } from 'framer-motion';
 import { ChevronLeft, Star, Plus, ChevronRight } from 'lucide-react';
 import { useFlowState } from '../hooks/useFlowState';
 import { scorePhoneForHand } from '../data/scoring';
-import { phones, type Phone } from '../data/phones';
+import { phones } from '../data/phones';
 import { dimensionGroups } from '../data/dimensions';
+import PhoneVisual from '../components/PhoneVisual';
 import './PhoneDetailPage.css';
 
 export default function PhoneDetailPage() {
@@ -30,15 +31,6 @@ export default function PhoneDetailPage() {
     updateFlow({ compareIds: cur });
   };
 
-  const colorMap: Record<Phone['color'], string> = {
-    titanium: 'linear-gradient(135deg, #9da3ad, #565c66)',
-    navy: 'linear-gradient(135deg, #3e5285, #1e2a4a)',
-    graphite: 'linear-gradient(135deg, #3a3f48, #1a1d22)',
-    silver: 'linear-gradient(135deg, #c8ccd1, #797f88)',
-    ivory: 'linear-gradient(135deg, #d2c5b0, #8d8472)',
-    green: 'linear-gradient(135deg, #5e8b7c, #2d4a40)',
-  };
-
   return (
     <div className="phone-detail-page">
       <button type="button" className="phone-detail__back" onClick={() => navigate('/library')}>
@@ -47,8 +39,8 @@ export default function PhoneDetailPage() {
 
       <div className="phone-detail__grid">
         <article className="phone-detail__hero glass-card">
-          <div className="phone-detail__device" style={{ background: colorMap[phone.color] }}>
-            <div className="phone-detail__device-cam" />
+          <div className="phone-detail__device">
+            <PhoneVisual phone={phone} size="lg" />
           </div>
           <div className="phone-detail__hero-info">
             <p className="phone-detail__brand">{phone.brand}</p>

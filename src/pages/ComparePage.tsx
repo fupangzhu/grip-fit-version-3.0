@@ -5,6 +5,7 @@ import { Plus, X, Download, FileText, Image as ImageIcon, Link2 } from 'lucide-r
 import { useFlowState } from '../hooks/useFlowState';
 import { scorePhoneForHand, deriveIdealSpec } from '../data/scoring';
 import { phones, type Phone } from '../data/phones';
+import PhoneVisual from '../components/PhoneVisual';
 import './ComparePage.css';
 
 type ExportFormat = 'pdf' | 'image' | 'link';
@@ -85,7 +86,7 @@ export default function ComparePage() {
               <button type="button" className="compare-card__close" onClick={() => removePhone(phone.id)} aria-label="移除">
                 <X size={14} strokeWidth={1.8} />
               </button>
-              <ComparePhoneMock phone={phone} />
+              <ComparePhoneMock phone={phone} size="sm" />
               <h2>{phone.name}</h2>
               <p>{phone.releaseDate}</p>
               <CompareMiniStats phone={phone} />
@@ -146,20 +147,8 @@ function CompareToggle({ label, checked, onChange }: { label: string; checked: b
   );
 }
 
-function ComparePhoneMock({ phone }: { phone: Phone }) {
-  const colorMap: Record<Phone['color'], string> = {
-    titanium: 'linear-gradient(135deg, #9da3ad, #565c66)',
-    navy: 'linear-gradient(135deg, #3e5285, #1e2a4a)',
-    graphite: 'linear-gradient(135deg, #3a3f48, #1a1d22)',
-    silver: 'linear-gradient(135deg, #c8ccd1, #797f88)',
-    ivory: 'linear-gradient(135deg, #d2c5b0, #8d8472)',
-    green: 'linear-gradient(135deg, #5e8b7c, #2d4a40)',
-  };
-  return (
-    <div className="compare-mock" style={{ background: colorMap[phone.color] }}>
-      <div className="compare-mock__cam" />
-    </div>
-  );
+function ComparePhoneMock({ phone, size = 'md' }: { phone: Phone; size?: 'sm' | 'md' }) {
+  return <PhoneVisual phone={phone} size={size} />;
 }
 
 function CompareMiniStats({ phone }: { phone: Phone }) {
@@ -211,7 +200,7 @@ function CompareReport({
         ) : null}
         {list.map((phone, i) => (
           <div className="compare-strip-item" key={phone.id}>
-            <ComparePhoneMock phone={phone} />
+            <ComparePhoneMock phone={phone} size="sm" />
             <span>{phone.name}</span>
             <strong>{scores[i].total.toFixed(1)}</strong>
             <em>/10</em>

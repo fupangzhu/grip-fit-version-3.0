@@ -5,6 +5,7 @@ import { Filter, ArrowUpDown, Star, ChevronRight, ChevronLeft, X, Sparkles, Trop
 import { useFlowState } from '../hooks/useFlowState';
 import { scorePhoneForHand } from '../data/scoring';
 import { phones, phoneBrands, type Phone } from '../data/phones';
+import PhoneVisual from '../components/PhoneVisual';
 import './PhoneLibraryPage.css';
 
 type SortMode = 'match' | 'price-asc' | 'weight-asc';
@@ -251,19 +252,7 @@ export default function PhoneLibraryPage() {
 }
 
 function PhoneAvatar({ phone }: { phone: Phone }) {
-  const colorMap: Record<Phone['color'], string> = {
-    titanium: 'linear-gradient(135deg, #9da3ad, #565c66)',
-    navy: 'linear-gradient(135deg, #3e5285, #1e2a4a)',
-    graphite: 'linear-gradient(135deg, #3a3f48, #1a1d22)',
-    silver: 'linear-gradient(135deg, #c8ccd1, #797f88)',
-    ivory: 'linear-gradient(135deg, #d2c5b0, #8d8472)',
-    green: 'linear-gradient(135deg, #5e8b7c, #2d4a40)',
-  };
-  return (
-    <div className="phone-avatar" style={{ background: colorMap[phone.color] }} aria-hidden>
-      <div className="phone-avatar__cam" />
-    </div>
-  );
+  return <PhoneVisual phone={phone} size="sm" />;
 }
 
 function MatchPie({ value }: { value: number }) {
