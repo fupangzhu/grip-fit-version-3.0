@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Move3D, ZoomIn, Save } from 'lucide-react';
 import ReportSubnav from '../components/ReportSubnav';
-import PhoneVisual from '../components/PhoneVisual';
 import { useFlowState } from '../hooks/useFlowState';
 import { deriveIdealSpec, scorePhoneForHand } from '../data/scoring';
 import type { Phone } from '../data/phones';
@@ -93,9 +92,14 @@ export default function TuningPage() {
             <p>当前方案</p>
           </div>
 
-          <div className={`tuning-device tuning-device--${view} ${handVisible ? 'is-hand-visible' : ''}`}>
+          <div className={`tuning-device tuning-device--${view}`}>
             <div className="tuning-device__phone-wrap">
-              <PhoneVisual phone={customPhone} size="xl" front={view === 'front'} />
+              <img
+                className="tuning-device__photo"
+                src={view === 'front' ? '/assets/hero-phone-cut.png' : '/assets/profile-grip-normal.png'}
+                alt="当前方案"
+                draggable={false}
+              />
               {view === 'back' || view === 'risk' ? (
                 <em className="tuning-device__cam-label">凸起 {flow.custom.cameraBump.toFixed(1)} mm</em>
               ) : (

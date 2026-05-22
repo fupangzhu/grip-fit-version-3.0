@@ -82,31 +82,34 @@
 .tuning-device {
   position: relative;
   z-index: 2;
-  filter: drop-shadow(0 30px 60px rgba(0, 0, 0, 0.55));
   transition: transform 460ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.tuning-device--front { transform: rotateY(0deg); }
-.tuning-device--back { transform: rotateY(180deg); }
-.tuning-device--hand { transform: rotateZ(-8deg) translateY(0); }
-.tuning-device--risk { transform: rotateZ(-8deg); }
+.tuning-device--front { transform: scale(1); }
+.tuning-device--back { transform: scale(1); }
+.tuning-device--hand { transform: rotateZ(-3deg) scale(1); }
+.tuning-device--risk { transform: rotateZ(-3deg) scale(1); }
 
 .tuning-device__phone-wrap {
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
 }
 
-.tuning-device--back .tuning-device__phone-wrap,
-.tuning-device--risk .tuning-device__phone-wrap {
-  transform: rotateY(180deg);
+.tuning-device__photo {
+  width: auto;
+  height: min(72vh, 520px);
+  object-fit: contain;
+  filter: drop-shadow(0 26px 50px rgba(0, 0, 0, 0.55));
+  user-select: none;
+  pointer-events: none;
+  transition: opacity 320ms ease;
 }
 
-.tuning-device--back .tuning-device__cam-label,
-.tuning-device--risk .tuning-device__cam-label {
-  transform: rotateY(180deg);
+.tuning-device--front .tuning-device__photo {
+  filter: drop-shadow(0 26px 50px rgba(0, 0, 0, 0.55)) brightness(1.04);
 }
 
 .tuning-device__cam-label, .tuning-device__size-label {
