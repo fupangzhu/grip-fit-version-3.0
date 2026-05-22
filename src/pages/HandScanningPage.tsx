@@ -185,7 +185,7 @@ export default function HandScanningPage() {
               aria-disabled={!ready}
               onClick={() => {
                 if (ready) {
-                  navigate('/measure/auto');
+                  navigate('/measure');
                 } else {
                   setNotice('扫描仍在校对中，请稍后查看测量结果');
                   window.setTimeout(() => setNotice(''), 1600);
@@ -197,7 +197,7 @@ export default function HandScanningPage() {
             <motion.button
               className="hand-scanning-secondary"
               type="button"
-              onClick={() => navigate('/measure/manual')}
+              onClick={() => navigate('/measure')}
               whileHover={{ borderColor: 'rgba(180, 197, 255, 0.32)', color: 'rgba(232, 237, 250, 0.72)' }}
               whileTap={{ scale: 0.98 }}
             >

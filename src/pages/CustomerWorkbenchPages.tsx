@@ -538,7 +538,7 @@ function ProfileInfoPage() {
             <ScanConfirmStage
               captured={capturedHand}
               measure={handMeasure}
-              onConfirm={() => navigate('/measure/auto')}
+              onConfirm={() => navigate('/measure')}
               onRetry={() => setStage('scan-active')}
             />
           ) : null}

@@ -83,7 +83,7 @@ export default function HandRecognitionPage() {
             <motion.button
               className="hand-scan-secondary"
               type="button"
-              onClick={() => navigate('/measure/manual')}
+              onClick={() => navigate('/measure')}
               whileHover={{ borderColor: 'rgba(180, 197, 255, 0.32)', color: 'rgba(232, 237, 250, 0.78)' }}
               whileTap={{ scale: 0.98 }}
             >
