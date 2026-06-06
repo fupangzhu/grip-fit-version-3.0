@@ -1,19 +1,13 @@
-import { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Suspense, lazy, useId, useMemo, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowRight, RotateCcw, Camera } from 'lucide-react';
-import { useFlowState, defaultFlow } from '../hooks/useFlowState';
+import { ArrowRight, RotateCcw } from 'lucide-react';
+import { useFlowState } from '../hooks/useFlowState';
 import './MeasurementPage.css';
 
-type MeasurementMode = 'smart' | 'manual';
-type ViewportKey = 'top' | 'lateral' | 'palm' | 'wire';
+const HandStage = lazy(() => import('../components/three/HandStage'));
 
-const VIEWPORTS: { key: ViewportKey; label: string }[] = [
-  { key: 'top', label: 'TOP' },
-  { key: 'lateral', label: 'LATERAL' },
-  { key: 'palm', label: 'PALM' },
-  { key: 'wire', label: 'WIRE' },
-];
+type MeasurementMode = 'smart' | 'manual';
 
 // 手长/手宽的 P5-P95 范围（参考 GB/T 10000-1988 中国成年人）
 const HAND_LENGTH = { min: 150, max: 220, p5: 159, p95: 196 };
@@ -23,6 +17,24 @@ const HAND_WIDTH = { min: 65, max: 105, p5: 70, p95: 89 };
 function percentile(value: number, p5: number, p95: number): number {
   return Math.round(Math.min(100, Math.max(0, ((value - p5) / (p95 - p5)) * 100)));
 }
+
+// 正态分布钟形曲线（百分位为 x 轴，P5 左 / P95 右）。曲线静态，仅 marker 随数据移动。
+const CURVE = { cx: 50, sigma: 18, base: 86, peak: 14 };
+function gaussianY(xPct: number): number {
+  const amp = CURVE.base - CURVE.peak;
+  const t = (xPct - CURVE.cx) / CURVE.sigma;
+  return CURVE.base - amp * Math.exp(-(t * t) / 2);
+}
+const CURVE_LINE = (() => {
+  const N = 64;
+  let d = '';
+  for (let i = 0; i <= N; i += 1) {
+    const x = (i / N) * 100;
+    d += `${i === 0 ? 'M' : 'L'}${x.toFixed(2)} ${gaussianY(x).toFixed(2)} `;
+  }
+  return d.trim();
+})();
+const CURVE_AREA = `${CURVE_LINE} L100 ${CURVE.base} L0 ${CURVE.base} Z`;
 
 // 计算当前值在滑条全范围内的位置（0-100）
 function markerPosition(value: number, min: number, max: number): number {
@@ -48,9 +60,12 @@ function resetToGBT(gender: 'male' | 'female', age: '18-35' | '36-55' | '56+') {
 
 export default function MeasurementPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [flow, updateFlow] = useFlowState();
-  const [mode, setMode] = useState<MeasurementMode>('smart');
-  const [viewport, setViewport] = useState<ViewportKey>('top');
+  // 从 /profile-info「跳过识别」进入时，默认手动调整模式
+  const initialMode: MeasurementMode =
+    (location.state as { mode?: MeasurementMode } | null)?.mode === 'manual' ? 'manual' : 'smart';
+  const [mode, setMode] = useState<MeasurementMode>(initialMode);
 
   const handLength = flow.handLength;
   const handWidth = flow.handWidth;
@@ -60,10 +75,6 @@ export default function MeasurementPage() {
   const widthMarker = markerPosition(handWidth, HAND_WIDTH.min, HAND_WIDTH.max);
   const confidence = mode === 'smart' ? '98.2' : '94.6';
   const gbtRank = useMemo(() => `P${Math.round((lengthPct + widthPct) / 2)}`, [lengthPct, widthPct]);
-
-  const handAsset = mode === 'smart'
-    ? '/assets/measurement-auto-hand.png'
-    : '/assets/measurement-manual-hand.png';
 
   const handleSubmit = () => {
     navigate('/report/best-phone');
@@ -116,7 +127,6 @@ export default function MeasurementPage() {
           marker={lengthMarker}
           percentile={lengthPct}
           mode={mode}
-          curveAsset={mode === 'smart' ? '/assets/measurement-auto-curve-length.svg' : '/assets/measurement-manual-curve.svg'}
           onChange={(v) => updateFlow({ handLength: Math.round(v * 10) / 10 })}
         />
 
@@ -131,7 +141,6 @@ export default function MeasurementPage() {
           marker={widthMarker}
           percentile={widthPct}
           mode={mode}
-          curveAsset={mode === 'smart' ? '/assets/measurement-auto-curve-width.svg' : '/assets/measurement-manual-curve.svg'}
           onChange={(v) => updateFlow({ handWidth: Math.round(v * 10) / 10 })}
         />
 
@@ -159,31 +168,10 @@ export default function MeasurementPage() {
 
       <section className="measure-visual" aria-label="手部模型预览">
         <div className="measure-visual__stage">
-          <img
-            className={`measure-visual__hand measure-visual__hand--${viewport}`}
-            src={handAsset}
-            alt="手部模型预览"
-          />
-        </div>
-
-        <div className="measure-viewport glass-card" role="group" aria-label="视角选择">
-          <div className="measure-viewport__head">
-            <span>VIEWPORT</span>
-            <Camera size={14} strokeWidth={1.6} />
-          </div>
-          <div className="measure-viewport__grid">
-            {VIEWPORTS.map((item) => (
-              <button
-                key={item.key}
-                type="button"
-                className={`measure-viewport__btn ${viewport === item.key ? 'is-active' : ''}`}
-                onClick={() => setViewport(item.key)}
-                aria-pressed={viewport === item.key}
-              >
-                {item.label}
-              </button>
-            ))}
-          </div>
+          <Suspense fallback={<div className="measure-visual__loading">加载手部模型…</div>}>
+            <HandStage view="top" dimensions={{ length: handLength, width: handWidth }} />
+          </Suspense>
+          <div className="measure-visual__hint">拖拽旋转</div>
         </div>
 
         <div className="measure-stats">
@@ -216,7 +204,6 @@ function MetricCard({
   marker,
   percentile: pct,
   mode,
-  curveAsset,
   onChange,
 }: {
   title: string;
@@ -229,10 +216,11 @@ function MetricCard({
   marker: number;
   percentile: number;
   mode: MeasurementMode;
-  curveAsset: string;
   onChange: (value: number) => void;
 }) {
   const isManual = mode === 'manual';
+  const gid = useId();
+  const dotY = gaussianY(pct);
   return (
     <article className={`measure-metric ${isManual ? 'is-manual' : 'is-smart'}`}>
       <div className="measure-metric__head">
@@ -259,8 +247,19 @@ function MetricCard({
       ) : null}
 
       <div className="measure-metric__curve">
-        <img src={curveAsset} alt="" />
-        <span className="measure-metric__curve-marker" style={{ left: `${marker}%` }} />
+        <svg className="measure-metric__curve-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden>
+          <defs>
+            <linearGradient id={`mc-${gid}`} x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="rgba(180, 197, 255, 0.24)" />
+              <stop offset="100%" stopColor="rgba(180, 197, 255, 0)" />
+            </linearGradient>
+          </defs>
+          <line x1="0" y1={CURVE.base} x2="100" y2={CURVE.base} stroke="rgba(255, 255, 255, 0.06)" strokeWidth="1" vectorEffect="non-scaling-stroke" />
+          <path d={CURVE_AREA} fill={`url(#mc-${gid})`} />
+          <path d={CURVE_LINE} fill="none" stroke="rgba(180, 197, 255, 0.82)" strokeWidth="1.5" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+        </svg>
+        <span className="measure-metric__curve-drop" style={{ left: `${pct}%`, top: `${dotY}%` }} />
+        <span className="measure-metric__curve-dot" style={{ left: `${pct}%`, top: `${dotY}%` }} />
       </div>
 
       <div className="measure-metric__percentiles">

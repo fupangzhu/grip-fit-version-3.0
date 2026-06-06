@@ -19,6 +19,15 @@
   overflow-y: auto;
   background: rgba(8, 12, 19, 0.36);
   border-right: 1px solid var(--card-border);
+  /* 内容能滚但不显示滚动条（全屏内容能放下时本就无需，短窗口下用滚轮即可）*/
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.measure-panel::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
 }
 
 .measure-panel__title {
@@ -31,19 +40,43 @@
   line-height: 1.2;
 }
 
-/* —— Mode tab —— */
+/* —— Mode tab（滑动指示器）—— */
 .measure-mode {
+  position: relative;
   display: grid;
   grid-template-columns: 1fr 1fr;
   height: 44px;
+  min-height: 44px;
   border: 1px solid var(--card-border);
   border-radius: 4px;
   overflow: hidden;
   background: rgba(255, 255, 255, 0.02);
 }
 
+/* 滑动的高亮指示器：在两个 tab 间平滑滑动，而非生硬切换底色 */
+.measure-mode::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(104deg, #b4c5ff 22.5%, #4c7cff 88.2%);
+  border-radius: 3px;
+  z-index: 0;
+  transition: transform 260ms var(--ease-out);
+}
+
+.measure-page--manual .measure-mode::before {
+  transform: translateX(100%);
+}
+
 .measure-mode__tab {
   position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  min-height: 44px;
   border: none;
   background: transparent;
   color: var(--text-2);
@@ -52,7 +85,7 @@
   font-weight: 500;
   letter-spacing: 0.4px;
   cursor: pointer;
-  transition: all 180ms ease;
+  transition: color 260ms var(--ease-out), font-weight 0ms;
   outline: none;
 }
 
@@ -63,7 +96,12 @@
 .measure-mode__tab.is-active {
   color: #002a78;
   font-weight: 700;
-  background: linear-gradient(104deg, #b4c5ff 22.5%, #4c7cff 88.2%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .measure-mode::before {
+    transition: none;
+  }
 }
 
 /* —— Section head —— */
@@ -91,16 +129,14 @@
   font-size: 13px;
 }
 
-/* —— Metric card —— */
+/* —— Metric 行（扁平，不做卡片框）—— */
 .measure-metric {
   position: relative;
   display: flex;
   flex-direction: column;
   gap: 10px;
-  padding: 16px 18px 18px;
-  border: 1px solid var(--card-border);
-  border-radius: 6px;
-  background: rgba(39, 42, 47, 0.42);
+  padding: 8px 2px 18px;
+  border-bottom: 1px solid var(--card-border);
 }
 
 .measure-metric__head h2 {
@@ -126,8 +162,8 @@
 
 .measure-metric__value {
   position: absolute;
-  top: 16px;
-  right: 18px;
+  top: 4px;
+  right: 2px;
   color: var(--accent);
   font-family: var(--font-en);
   font-size: 28px;
@@ -192,42 +228,43 @@
   opacity: 0;
 }
 
-/* —— 曲线图 —— */
+/* —— 正态分布钟形曲线（inline SVG，dot 落在曲线上）—— */
 .measure-metric__curve {
   position: relative;
   width: 100%;
-  height: 76px;
-  margin-top: 4px;
+  height: 84px;
+  margin-top: 6px;
 }
 
-.measure-metric__curve img {
+.measure-metric__curve-svg {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  opacity: 0.88;
+  display: block;
+  overflow: visible;
+}
+
+/* 从曲线上的点垂直落到基线的虚线 */
+.measure-metric__curve-drop {
+  position: absolute;
+  bottom: 14%;
+  width: 1px;
+  transform: translateX(-50%);
+  background: linear-gradient(180deg, rgba(180, 197, 255, 0.6), rgba(180, 197, 255, 0.1));
   pointer-events: none;
 }
 
-.measure-metric__curve-marker {
+/* 当前值在曲线上的发光圆点 */
+.measure-metric__curve-dot {
   position: absolute;
-  top: 4px;
-  bottom: 4px;
-  width: 1px;
-  background: linear-gradient(180deg, rgba(180, 197, 255, 0), rgba(180, 197, 255, 0.95) 30%, rgba(180, 197, 255, 0.95) 70%, rgba(180, 197, 255, 0));
-  transform: translateX(-0.5px);
-}
-
-.measure-metric__curve-marker::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  bottom: -3px;
-  width: 8px;
-  height: 8px;
-  background: var(--accent);
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
-  transform: translateX(-50%);
-  box-shadow: 0 0 8px rgba(180, 197, 255, 0.6);
+  background: var(--accent);
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 0 4px rgba(180, 197, 255, 0.16), 0 0 12px rgba(180, 197, 255, 0.7);
+  pointer-events: none;
 }
 
 .measure-metric__percentiles {
@@ -304,82 +341,45 @@
 
 .measure-visual__stage {
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   overflow: hidden;
+  min-height: 0;
 }
 
-.measure-visual__hand {
-  max-width: min(620px, 90%);
-  max-height: 100%;
-  object-fit: contain;
-  filter: drop-shadow(0 24px 56px rgba(0, 0, 0, 0.42));
-  transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1), filter 320ms ease;
-  transform-origin: center;
-}
-
-.measure-visual__hand--top { transform: rotate(0deg) scale(1); }
-.measure-visual__hand--lateral { transform: rotateY(60deg) scale(0.92); }
-.measure-visual__hand--palm { transform: rotateY(180deg) scale(1); }
-.measure-visual__hand--wire { transform: scale(1); filter: drop-shadow(0 24px 56px rgba(0, 0, 0, 0.42)) saturate(0.5) brightness(1.05); }
-
-/* —— VIEWPORT 卡 (右上角浮层) —— */
-.measure-viewport {
+/* 3D Canvas 撑满舞台 */
+.measure-visual__stage .three-canvas {
   position: absolute;
-  top: 32px;
-  right: 44px;
-  width: 196px;
-  padding: 12px 14px;
-  z-index: 3;
+  inset: 0;
 }
 
-.measure-viewport__head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  color: var(--text-2);
-  font-family: var(--font-en);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 2.4px;
-  margin-bottom: 8px;
+.measure-visual__stage .three-canvas canvas {
+  width: 100% !important;
+  height: 100% !important;
 }
 
-.measure-viewport__head svg {
-  color: var(--accent);
-}
-
-.measure-viewport__grid {
+.measure-visual__loading {
+  position: absolute;
+  inset: 0;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6px;
+  place-items: center;
+  color: var(--text-2);
+  font-family: var(--font-zh);
+  font-size: 13px;
+  letter-spacing: 0.4px;
 }
 
-.measure-viewport__btn {
-  height: 30px;
-  border: 1px solid var(--card-border);
-  border-radius: 4px;
-  background: rgba(255, 255, 255, 0.02);
+.measure-visual__hint {
+  position: absolute;
+  left: 50%;
+  bottom: 10px;
+  transform: translateX(-50%);
+  z-index: 2;
   color: var(--text-2);
   font-family: var(--font-en);
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 600;
-  letter-spacing: 1.4px;
-  cursor: pointer;
-  transition: all 180ms ease;
-}
-
-.measure-viewport__btn:hover:not(.is-active) {
-  color: var(--text-1);
-  border-color: rgba(180, 197, 255, 0.32);
-}
-
-.measure-viewport__btn.is-active {
-  color: #002a78;
-  font-weight: 700;
-  background: linear-gradient(104deg, #b4c5ff, #4c7cff);
-  border-color: transparent;
+  letter-spacing: 1.6px;
+  opacity: 0.7;
+  pointer-events: none;
 }
 
 /* —— 底部统计行 —— */
@@ -424,4 +424,36 @@
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 1.2px;
+}
+
+/* ─────────────────── 进场动效：左栏 + 统计错落淡入上移 ─────────────────── */
+@keyframes measure-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+.measure-panel > *,
+.measure-stats__item {
+  animation: measure-enter 0.5s var(--ease-out) both;
+}
+
+.measure-panel > *:nth-child(1) { animation-delay: 0.03s; }
+.measure-panel > *:nth-child(2) { animation-delay: 0.07s; }
+.measure-panel > *:nth-child(3) { animation-delay: 0.11s; }
+.measure-panel > *:nth-child(4) { animation-delay: 0.15s; }
+.measure-panel > *:nth-child(5) { animation-delay: 0.19s; }
+.measure-panel > *:nth-child(6) { animation-delay: 0.23s; }
+
+.measure-stats__item:nth-child(1) { animation-delay: 0.26s; }
+.measure-stats__item:nth-child(2) { animation-delay: 0.30s; }
+.measure-stats__item:nth-child(3) { animation-delay: 0.34s; }
+
+@media (prefers-reduced-motion: reduce) {
+  @keyframes measure-enter {
+    from {
+      opacity: 0;
+    }
+  }
 }

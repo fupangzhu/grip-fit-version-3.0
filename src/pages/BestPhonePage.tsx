@@ -1,25 +1,26 @@
-import { useMemo, useState } from 'react';
+﻿import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Move3D, ZoomIn } from 'lucide-react';
-import ReportSubnav from '../components/ReportSubnav';
-import { useFlowState } from '../hooks/useFlowState';
+import { ChevronLeft, ChevronRight, Move3D, ZoomIn } from 'lucide-react';
+import ShapeDiverPhoneViewer from '../components/shapediver/ShapeDiverPhoneViewer';
 import { deriveIdealSpec } from '../data/scoring';
+import { useFlowState } from '../hooks/useFlowState';
+import { usePanelCollapse } from '../hooks/usePanelCollapse';
 import './BestPhonePage.css';
 
 export default function BestPhonePage() {
   const navigate = useNavigate();
   const [flow] = useFlowState();
-  const [showHand, setShowHand] = useState(false);
+  const [panelCollapsed, togglePanel] = usePanelCollapse('gripfit-bestphone-panel-collapsed');
 
   const ideal = useMemo(
     () => deriveIdealSpec(flow.handLength, flow.handWidth),
     [flow.handLength, flow.handWidth],
   );
 
-  // 理论最优总分（接近 9.0，因为完全匹配用户）
   const optimalScore = 8.9;
-  const scoreDeg = optimalScore * 36; // 0-10 → 0-360°
+  const scoreDeg = optimalScore * 36;
+
 
   const idealParams = [
     { label: '宽度', value: ideal.width.toFixed(1), unit: 'mm' },
@@ -36,12 +37,20 @@ export default function BestPhonePage() {
 
   return (
     <div className="best-phone-page">
-      <ReportSubnav />
+      <main className={`best-phone-page__main ${panelCollapsed ? 'is-panel-collapsed' : ''}`}>
+        <button
+          type="button"
+          className="panel-handle"
+          onClick={togglePanel}
+          aria-label={panelCollapsed ? '展开参数面板' : '收起参数面板'}
+          title={panelCollapsed ? '展开' : '收起'}
+        >
+          {panelCollapsed ? <ChevronLeft size={15} strokeWidth={2} /> : <ChevronRight size={15} strokeWidth={2} />}
+        </button>
 
-      <main className="best-phone-page__main">
         <section className="best-phone-stage">
           <div className="best-phone-stage__hint">
-            <Move3D size={12} strokeWidth={1.6} /> 拖曳旋转
+            <Move3D size={12} strokeWidth={1.6} /> 拖拽旋转
             <span className="best-phone-stage__hint-sep">·</span>
             <ZoomIn size={12} strokeWidth={1.6} /> 滚轮缩放
           </div>
@@ -57,53 +66,58 @@ export default function BestPhonePage() {
           </div>
 
           <motion.div
-            className={`best-phone-stage__device ${showHand ? 'is-hand-visible' : ''}`}
-            initial={{ opacity: 0, scale: 0.94 }}
-            animate={{ opacity: 1, scale: 1 }}
+            className="best-phone-stage__device"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           >
-            <img className="best-phone-stage__photo" src="/assets/profile-grip-normal.png" alt="理论最优机型" draggable={false} />
-            <span className="best-phone-stage__size-label">{ideal.width.toFixed(1)} × {ideal.height.toFixed(1)} mm</span>
+            <ShapeDiverPhoneViewer
+              spec={{
+                width: ideal.width,
+                height: ideal.height,
+                thickness: ideal.thickness,
+                cornerRadius: ideal.cornerRadius,
+                weight: ideal.weight,
+                cameraBump: ideal.cameraBump,
+                backArc: ideal.backArc,
+                centerOfMassOffset: ideal.centerOfMassOffset,
+              }}
+            />
+            <span className="best-phone-stage__size-label">
+              {ideal.width.toFixed(1)} x {ideal.height.toFixed(1)} mm
+            </span>
           </motion.div>
 
-          <label className="best-phone-stage__toggle">
-            <span>显示手部</span>
-            <input
-              type="checkbox"
-              checked={showHand}
-              onChange={(e) => setShowHand(e.currentTarget.checked)}
-            />
-            <span className="best-phone-stage__toggle-track">
-              <span className="best-phone-stage__toggle-thumb" />
-            </span>
-          </label>
         </section>
 
         <aside className="best-phone-panel glass-card">
-          <header className="best-phone-panel__head">
-            <h1>理论最优参数</h1>
-            <button type="button" className="glass-button" onClick={() => navigate('/tuning')}>
-              参数微调 →
-            </button>
-          </header>
+          <div className="best-phone-panel__inner">
+            <header className="best-phone-panel__head">
+              <h1>理论最优参数</h1>
+              <button type="button" className="best-phone-panel__tune" onClick={() => navigate('/tuning')}>
+                参数微调
+              </button>
+            </header>
 
-          <ol className="best-phone-panel__list">
-            {idealParams.map((item, index) => (
-              <motion.li
-                key={item.label}
-                initial={{ opacity: 0, x: 12 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.06 * index, duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
-              >
-                <span className="best-phone-panel__index">{String(index + 1).padStart(2, '0')}</span>
-                <strong>{item.label}</strong>
-                <em>{item.value}</em>
-                {item.unit ? <small>{item.unit}</small> : null}
-              </motion.li>
-            ))}
-          </ol>
+            <ol className="best-phone-panel__list">
+              {idealParams.map((item, index) => (
+                <motion.li
+                  key={item.label}
+                  initial={{ opacity: 0, x: 12 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.06 * index, duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <span className="best-phone-panel__index">{String(index + 1).padStart(2, '0')}</span>
+                  <strong>{item.label}</strong>
+                  <em>{item.value}</em>
+                  {item.unit ? <small>{item.unit}</small> : null}
+                </motion.li>
+              ))}
+            </ol>
+          </div>
         </aside>
       </main>
     </div>
   );
 }
+

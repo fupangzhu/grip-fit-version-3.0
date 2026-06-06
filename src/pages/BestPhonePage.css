@@ -9,12 +9,40 @@
 }
 
 .best-phone-page__main {
+  position: relative;
   flex: 1 1 auto;
   display: grid;
   grid-template-columns: 1fr 360px;
-  gap: 24px;
-  padding: 24px 32px;
+  gap: 0;
+  padding: 0;
   min-width: 0;
+  background: linear-gradient(90deg, #000 0%, #000 calc(100% - 360px), #081528 100%);
+  transition: grid-template-columns 520ms cubic-bezier(0.22, 1, 0.36, 1),
+    background 520ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.best-phone-page__main.is-panel-collapsed {
+  grid-template-columns: 1fr 0px;
+  background: #000;
+}
+
+.best-phone-page__main .panel-handle {
+  right: 360px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  transition: right 520ms cubic-bezier(0.22, 1, 0.36, 1),
+    color 180ms ease, opacity 180ms ease;
+}
+.best-phone-page__main.is-panel-collapsed .panel-handle {
+  right: 21px;
+}
+
+.best-phone-page__main .panel-handle:hover {
+  border-color: transparent;
+  background: transparent;
 }
 
 /* ─────────────────── 中央舞台 ─────────────────── */
@@ -23,9 +51,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid var(--card-border);
-  border-radius: 12px;
-  background: rgba(8, 12, 19, 0.42);
+  border: 0;
+  border-radius: 0;
+  background: #000;
   overflow: hidden;
 }
 
@@ -33,7 +61,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(43, 78, 121, 0.36), transparent 70%);
+  background: #000;
   pointer-events: none;
 }
 
@@ -47,7 +75,7 @@
   padding: 6px 12px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--card-border);
+  border: 0;
   color: var(--text-2);
   font-family: var(--font-zh);
   font-size: 11px;
@@ -84,12 +112,12 @@
 
 /* —— Phone mock —— */
 .best-phone-stage__device {
-  position: relative;
+  position: absolute;
+  inset: 0;
   z-index: 2;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 14px;
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .best-phone-stage__photo {
@@ -101,7 +129,78 @@
   pointer-events: none;
 }
 
+.shapediver-phone-viewer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  background: #000;
+  filter: none;
+}
+
+.shapediver-phone-viewer__canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  border: 0;
+  outline: none;
+}
+
+.shapediver-phone-viewer__status {
+  position: absolute;
+  inset: auto 50% 34px auto;
+  transform: translateX(50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  max-width: min(86%, 560px);
+  padding: 8px 14px;
+  border: 1px solid rgba(180, 197, 255, 0.24);
+  border-radius: 999px;
+  background: rgba(8, 12, 19, 0.72);
+  color: var(--text-2);
+  font-family: var(--font-zh);
+  font-size: 12px;
+  line-height: 1.4;
+  backdrop-filter: blur(10px);
+  z-index: 3;
+}
+
+.shapediver-phone-viewer__status strong {
+  color: var(--text-1);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.shapediver-phone-viewer__status span:not(.shapediver-phone-viewer__spinner) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.shapediver-phone-viewer__spinner {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 14px;
+  border: 2px solid rgba(180, 197, 255, 0.24);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: best-phone-spin 0.8s linear infinite;
+}
+
+@keyframes best-phone-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .best-phone-stage__size-label {
+  position: absolute;
+  left: 50%;
+  bottom: 22px;
+  transform: translateX(-50%);
   padding: 4px 12px;
   border-radius: 999px;
   background: rgba(180, 197, 255, 0.1);
@@ -124,70 +223,35 @@
 }
 
 /* —— 显示手部 toggle —— */
-.best-phone-stage__toggle {
-  position: absolute;
-  bottom: 18px;
-  right: 18px;
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 6px 12px;
-  border-radius: 999px;
-  background: rgba(8, 12, 19, 0.72);
-  border: 1px solid var(--card-border);
-  backdrop-filter: blur(8px);
-  cursor: pointer;
-  z-index: 4;
-}
-
-.best-phone-stage__toggle span:first-child {
-  color: var(--text-2);
-  font-family: var(--font-zh);
-  font-size: 12px;
-}
-
-.best-phone-stage__toggle input {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.best-phone-stage__toggle-track {
-  position: relative;
-  width: 32px;
-  height: 18px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
-  transition: background 180ms ease;
-}
-
-.best-phone-stage__toggle-thumb {
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: var(--text-2);
-  transition: all 180ms ease;
-}
-
-.best-phone-stage__toggle input:checked + .best-phone-stage__toggle-track {
-  background: var(--accent);
-}
-
-.best-phone-stage__toggle input:checked + .best-phone-stage__toggle-track .best-phone-stage__toggle-thumb {
-  left: 16px;
-  background: #002a78;
-}
-
-/* ─────────────────── 右侧参数面板 ─────────────────── */
+/* ─────────────────── 右侧参数面板（可抽屉收起）─────────────────── */
 .best-phone-panel {
+  min-width: 0;
+  overflow: hidden;
+  transition: opacity 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 520ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.best-phone-page__main.is-panel-collapsed .best-phone-panel {
+  opacity: 0;
+  transform: translateX(18px);
+}
+
+.best-phone-panel.glass-card {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.best-phone-panel__inner {
+  width: 360px;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  padding: 24px 22px;
-  min-width: 0;
+  padding: 32px 22px 24px;
   overflow-y: auto;
+  box-sizing: border-box;
 }
 
 .best-phone-panel__head {
@@ -206,11 +270,30 @@
   letter-spacing: 0;
 }
 
-.best-phone-panel__head .glass-button {
-  height: 32px;
-  padding: 0 14px;
+.best-phone-panel__tune {
+  height: 36px;
+  padding: 0 26px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(168deg, #b4c5ff 0%, #618bff 100%);
+  box-shadow: 0 10px 15px rgba(180, 197, 255, 0.2);
+  color: #002a78;
+  cursor: pointer;
+  font-family: var(--font-zh);
   font-size: 12px;
-  color: var(--accent);
+  font-weight: 500;
+  letter-spacing: 1.6px;
+  transition: filter 160ms var(--ease-out), transform 140ms var(--ease-out),
+    box-shadow 160ms var(--ease-out);
+}
+
+.best-phone-panel__tune:hover {
+  filter: brightness(1.05);
+  box-shadow: 0 12px 22px rgba(180, 197, 255, 0.3);
+}
+
+.best-phone-panel__tune:active {
+  transform: scale(0.97);
 }
 
 .best-phone-panel__list {
@@ -219,18 +302,20 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 6px;
 }
 
+/* 扁平参数行（无卡片托底），仅用细分隔线 */
 .best-phone-panel__list li {
   display: grid;
-  grid-template-columns: 28px 1fr auto auto;
+  grid-template-columns: 26px 1fr auto auto;
   align-items: baseline;
   gap: 10px;
-  padding: 11px 12px;
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid var(--card-border);
+  padding: 13px 4px;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.best-phone-panel__list li:last-child {
+  border-bottom: none;
 }
 
 .best-phone-panel__index {

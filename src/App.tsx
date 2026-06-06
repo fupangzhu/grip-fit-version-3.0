@@ -1,5 +1,9 @@
+import { lazy, Suspense } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import HomePage from './pages/HomePage';
+const ThreeDemoPage = lazy(() => import('./pages/ThreeDemoPage'));
+// DEV-only 页面跳转工具（生产构建中 import.meta.env.DEV 为 false，自动剔除）。上线前删除此行 + 下方渲染即可。
+const DevNav = lazy(() => import('./components/DevNav'));
 import HandRecognitionPage from './pages/HandRecognitionPage';
 import HandScanningPage from './pages/HandScanningPage';
 import LoginPage from './pages/LoginPage';
@@ -21,6 +25,8 @@ const RedirectHome = () => <Navigate to="/" replace />;
 
 export default function App() {
   return (
+    <Suspense fallback={null}>
+    {import.meta.env.DEV ? <DevNav /> : null}
     <Routes>
       {/* 保留路由：onboarding 流程 */}
       <Route path="/" element={<HomePage />} />
@@ -45,7 +51,10 @@ export default function App() {
         <Route path="/my-data" element={<MyDataPage />} />
       </Route>
 
+      <Route path="/three-demo" element={<ThreeDemoPage />} />
+
       <Route path="*" element={<RedirectHome />} />
     </Routes>
+    </Suspense>
   );
 }

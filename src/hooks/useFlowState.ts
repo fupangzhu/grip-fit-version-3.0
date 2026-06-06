@@ -14,6 +14,7 @@ export type FlowState = {
     weight: number;
     cameraBump: number;
     cornerRadius: number;
+    sideArc: number;
     backArc: number;
     centerOfMassOffset: number;
   };
@@ -44,6 +45,7 @@ export const defaultFlow: FlowState = {
     weight: 180,
     cameraBump: 1.6,
     cornerRadius: 12,
+    sideArc: 3,
     backArc: 60,
     centerOfMassOffset: 2.5,
   },

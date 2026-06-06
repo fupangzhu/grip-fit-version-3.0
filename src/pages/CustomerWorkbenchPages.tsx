@@ -128,6 +128,13 @@ const CAROUSEL_IMAGES = [
   '/assets/profile-grip-wide.png',
 ];
 
+// 轮播每张图对应的「手尺寸 / 机型尺寸」，随图切换（slim / normal / wide 三档）
+const CAROUSEL_SPECS = [
+  { hand: { length: 170.4, width: 75.6 }, phone: { weight: 168, width: 71.5 } },
+  { hand: { length: 183.2, width: 82.0 }, phone: { weight: 189, width: 74.1 } },
+  { hand: { length: 195.0, width: 88.4 }, phone: { weight: 224, width: 78.3 } },
+];
+
 function ProfileInfoPage() {
   const navigate = useNavigate();
   const [gender, setGender] = useState<(typeof profileGenderOptions)[number]['key']>('male');
@@ -531,7 +538,17 @@ function ProfileInfoPage() {
               alignProgress={alignProgress}
               mpStatus={mpStatus}
               scanPhase={scanPhase}
-              onCancel={() => setStage('profile')}
+              onSkip={() => {
+                // 跳过摄像头识别：用所选性别/年龄的 GB/T 均值作为手动输入起点
+                const spec = HAND_DIMENSIONS[gender][ageGroup];
+                writeFlowState({
+                  handLength: spec.length.mean,
+                  handWidth: spec.width.mean,
+                  gender,
+                  ageGroup,
+                });
+                navigate('/measure', { state: { mode: 'manual' } });
+              }}
             />
           ) : null}
           {stage === 'scan-confirm' ? (
@@ -549,6 +566,7 @@ function ProfileInfoPage() {
 }
 
 function ProfileCarousel({ idx }: { idx: number }) {
+  const spec = CAROUSEL_SPECS[idx] ?? CAROUSEL_SPECS[1];
   return (
     <>
       <div className="profile-corner-dots">
@@ -561,6 +579,36 @@ function ProfileCarousel({ idx }: { idx: number }) {
           <img key={src} src={src} alt="" className={i === idx ? 'is-active' : ''} />
         ))}
       </div>
+
+      {/* 左卡：当前图对应的手部尺寸（随图切换） */}
+      <div className="profile-spec-card profile-spec-card--left">
+        <span className="profile-spec-card__label">手部尺寸 · HAND SIZE</span>
+        <div className="profile-spec-card__metrics" key={idx}>
+          <div className="profile-spec-card__metric">
+            <em>手长</em>
+            <strong>{spec.hand.length.toFixed(1)}<small>mm</small></strong>
+          </div>
+          <div className="profile-spec-card__metric">
+            <em>手宽</em>
+            <strong>{spec.hand.width.toFixed(1)}<small>mm</small></strong>
+          </div>
+        </div>
+      </div>
+
+      {/* 右卡：当前图对应的机型尺寸（随图切换） */}
+      <div className="profile-spec-card profile-spec-card--right">
+        <span className="profile-spec-card__label">机型尺寸 · DEVICE</span>
+        <div className="profile-spec-card__metrics" key={idx}>
+          <div className="profile-spec-card__metric">
+            <em>重量</em>
+            <strong>{spec.phone.weight}<small>g</small></strong>
+          </div>
+          <div className="profile-spec-card__metric">
+            <em>宽度</em>
+            <strong>{spec.phone.width.toFixed(1)}<small>mm</small></strong>
+          </div>
+        </div>
+      </div>
     </>
   );
 }
@@ -572,7 +620,7 @@ function ScanActiveStage({
   alignProgress,
   mpStatus,
   scanPhase,
-  onCancel,
+  onSkip,
 }: {
   videoRef: MutableRefObject<HTMLVideoElement | null>;
   cameraStatus: IntakeCameraStatus;
@@ -580,7 +628,7 @@ function ScanActiveStage({
   alignProgress: number;
   mpStatus: MpStatus;
   scanPhase: ScanPhase;
-  onCancel: () => void;
+  onSkip: () => void;
 }) {
   const isAnalyzing = scanPhase === 'analyzing';
 
@@ -626,8 +674,8 @@ function ScanActiveStage({
           <span style={{ width: `${alignProgress}%` }} />
         </div>
         <p>{footnote}</p>
-        <button type="button" className="profile-scan-camera__cancel" onClick={onCancel}>
-          取消扫描
+        <button type="button" className="profile-scan-camera__cancel" onClick={onSkip}>
+          手动输入
         </button>
       </div>
     </div>

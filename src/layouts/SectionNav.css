@@ -1,0 +1,117 @@
+/* 上下文子导航：报告产出 / 机型库 分区的左侧文字导航，可抽屉式收起 */
+.section-nav {
+  position: relative;
+  flex: 0 0 200px;
+  width: 200px;
+  /* 关键：flex item 默认 min-width:auto 会被内容(200px)撑住，导致收起无效 */
+  min-width: 0;
+  height: 100%;
+  box-sizing: border-box;
+  background: rgba(8, 12, 19, 0.5);
+  border-right: 1px solid var(--card-border);
+  overflow: hidden;
+}
+
+.section-nav.is-collapsed {
+  flex: 0 0 18px;
+  width: 18px;
+}
+
+/* 抽屉宽度过渡放在内层包裹上，避免 flex item 尺寸过渡在切换时不生效 */
+.section-nav__inner {
+  transition: opacity 0.2s ease;
+}
+.section-nav.is-collapsed .section-nav__inner {
+  opacity: 0;
+}
+
+.section-nav__toggle {
+  position: absolute;
+  top: 16px;
+  right: 6px;
+  z-index: 2;
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  background: rgba(20, 24, 33, 0.8);
+  color: var(--text-2);
+  cursor: pointer;
+  transition: color 160ms ease, border-color 160ms ease, background 160ms ease;
+}
+.section-nav__toggle:hover {
+  color: var(--accent);
+  border-color: rgba(180, 197, 255, 0.45);
+  background: rgba(180, 197, 255, 0.08);
+}
+
+.section-nav.is-collapsed .section-nav__toggle {
+  right: 50%;
+  transform: translateX(50%);
+}
+
+.section-nav__inner {
+  width: 200px;
+  padding: 52px 16px 24px;
+  box-sizing: border-box;
+}
+
+.section-nav__title {
+  margin: 0 0 14px;
+  padding-left: 12px;
+  font-family: var(--font-en);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2.2px;
+  color: var(--text-2);
+  text-transform: uppercase;
+}
+
+.section-nav__list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.section-nav__item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-family: var(--font-zh);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.4px;
+  color: var(--text-2);
+  text-decoration: none;
+  transition: color 160ms ease, background 160ms ease;
+}
+.section-nav__item:hover {
+  color: var(--text-1);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.section-nav__dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--text-2);
+  opacity: 0.4;
+  transition: background 160ms ease, opacity 160ms ease, box-shadow 160ms ease;
+}
+
+.section-nav__item.is-active {
+  color: var(--text-1);
+  font-weight: 600;
+  background: rgba(180, 197, 255, 0.08);
+}
+.section-nav__item.is-active .section-nav__dot {
+  opacity: 1;
+  background: var(--accent-blue);
+  box-shadow: 0 0 8px rgba(97, 139, 255, 0.7);
+}

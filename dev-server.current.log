@@ -1,0 +1,103 @@
+
+> gripfit-onboarding@0.1.0 dev
+> vite --host 127.0.0.1 --port 5177
+
+
+  [32m[1mVITE[22m v5.4.21[39m  [2mready in [0m[1m5776[22m[2m[0m ms[22m
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://127.0.0.1:[1m5177[22m/[39m
+[2m15:12:10[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/three/HandModel.tsx[22m
+[2m15:12:30[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/three/HandStage.tsx[22m
+[2m15:17:37[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/three/HandModel.tsx[22m
+[2m15:20:15[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/MeasurementPage.css[22m
+[2m15:21:33[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/MeasurementPage.css[22m
+[2m15:25:18[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/three/HandModel.tsx[22m
+[2m15:27:13[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/three/HandModel.tsx[22m
+[2m15:27:13[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/three/HandModel.tsx[22m
+[2m15:51:04[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/three/HandModel.tsx[22m
+[2m16:38:05[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/three/Viewer.tsx[22m
+[2m16:38:43[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/three/HandModel.tsx[22m
+[2m16:39:20[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/three/HandStage.tsx[22m
+[2m16:39:46[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/MeasurementPage.tsx[22m
+[2m16:42:36[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/three/HandModel.tsx[22m
+[2m16:47:55[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/MeasurementPage.css[22m
+[2m16:52:10[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/three/HandStage.tsx[22m
+[2m16:54:54[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/three/HandStage.tsx[22m
+[2m17:01:23[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/three/HandModel.tsx[22m
+[2m17:02:02[22m [36m[1m[vite][22m[39m [32m✨ new dependencies optimized: [33mthree/examples/jsm/utils/SkeletonUtils.js[32m[39m
+[2m17:02:02[22m [36m[1m[vite][22m[39m [32m✨ optimized dependencies changed. reloading[39m
+[2m17:06:04[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/three/HandModel.tsx[22m
+[2m17:06:29[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/three/HandModel.tsx[22m
+[2m18:31:22[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/BestPhonePage.tsx[22m
+[2m18:31:22[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/BestPhonePage.tsx[22m
+[2m18:31:47[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/BestPhonePage.tsx[22m
+[2m18:33:30[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/BestPhonePage.tsx[22m
+[2m18:34:21[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/BestPhonePage.tsx[22m
+[2m18:34:52[22m [36m[1m[vite][22m[39m [32m✨ new dependencies optimized: [33m@shapediver/viewer[32m[39m
+[2m18:34:52[22m [36m[1m[vite][22m[39m [32m✨ optimized dependencies changed. reloading[39m
+[2m18:35:01[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/BestPhonePage.css[22m
+[2m18:39:01[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/shapediver/ShapeDiverPhoneViewer.tsx[22m
+[2m18:39:22[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/BestPhonePage.css[22m
+[2m18:48:52[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/shapediver/ShapeDiverPhoneViewer.tsx[22m
+[2m18:50:06[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/BestPhonePage.tsx[22m
+[2m18:50:06[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/BestPhonePage.tsx[22m
+[2m18:50:32[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/BestPhonePage.css[22m
+[2m18:51:28[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/shapediver/ShapeDiverPhoneViewer.tsx[22m
+[2m18:53:23[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/shapediver/ShapeDiverPhoneViewer.tsx[22m
+[2m18:57:03[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/shapediver/ShapeDiverPhoneViewer.tsx[22m
+[2m18:59:12[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/shapediver/ShapeDiverPhoneViewer.tsx[22m
+[2m19:00:17[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/shapediver/ShapeDiverPhoneViewer.tsx[22m
+[2m19:03:58[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/shapediver/ShapeDiverPhoneViewer.tsx, /src/components/shapediver/ShapeDiverPhoneViewer.tsx?t=codexcheck[22m
+[2m19:06:11[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/shapediver/ShapeDiverPhoneViewer.tsx, /src/components/shapediver/ShapeDiverPhoneViewer.tsx?t=codexcheck[22m
+[2m19:09:26[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/shapediver/ShapeDiverPhoneViewer.tsx, /src/components/shapediver/ShapeDiverPhoneViewer.tsx?t=codexcheck[22m
+[2m19:12:17[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/shapediver/ShapeDiverPhoneViewer.tsx, /src/components/shapediver/ShapeDiverPhoneViewer.tsx?t=codexcheck[22m
+[2m19:13:27[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/shapediver/ShapeDiverPhoneViewer.tsx, /src/components/shapediver/ShapeDiverPhoneViewer.tsx?t=codexcheck[22m
+[2m19:16:00[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/shapediver/ShapeDiverPhoneViewer.tsx, /src/components/shapediver/ShapeDiverPhoneViewer.tsx?t=codexcheck[22m
+[2m19:18:08[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/shapediver/ShapeDiverPhoneViewer.tsx, /src/components/shapediver/ShapeDiverPhoneViewer.tsx?t=codexcheck[22m
+[2m19:53:40[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/BestPhonePage.tsx[22m
+[2m19:53:40[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/BestPhonePage.tsx[22m
+[2m19:55:26[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/BestPhonePage.tsx[22m
+[2m19:55:27[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/BestPhonePage.tsx[22m
+[2m19:55:56[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/BestPhonePage.css[22m
+[2m19:56:17[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/layouts/AppShell.css[22m
+[2m19:56:59[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/shapediver/ShapeDiverPhoneViewer.tsx, /src/components/shapediver/ShapeDiverPhoneViewer.tsx?t=codexcheck[22m
+[2m19:58:09[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/BestPhonePage.tsx[22m
+[2m19:58:32[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/BestPhonePage.tsx[22m
+[2m19:59:39[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/BestPhonePage.tsx[22m
+[2m20:00:26[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/BestPhonePage.tsx[22m
+[2m20:02:43[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/BestPhonePage.css[22m
+[2m20:04:01[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/BestPhonePage.tsx[22m
+[2m20:04:01[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/BestPhonePage.tsx[22m
+[2m20:08:52[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/BestPhonePage.tsx[22m
+[2m20:11:41[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/BestPhonePage.tsx[22m
+[2m20:21:23[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/BestPhonePage.tsx[22m
+[2m20:21:24[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/BestPhonePage.tsx[22m
+[2m20:21:55[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/BestPhonePage.css[22m
+[2m20:39:50[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/BestPhonePage.tsx[22m
+[2m20:54:12[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/BestPhonePage.css[22m
+[2m20:54:48[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/TuningPage.css[22m
+[2m20:57:14[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/BestPhonePage.tsx[22m
+[2m21:10:31[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/shapediver/ShapeDiverPhoneViewer.tsx, /src/components/shapediver/ShapeDiverPhoneViewer.tsx?t=codexcheck[22m
+[2m21:12:24[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/TuningPage.tsx[22m
+[2m21:12:56[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/TuningPage.tsx[22m
+[2m21:13:22[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/TuningPage.tsx[22m
+[2m21:15:55[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/TuningPage.tsx[22m
+[2m21:17:26[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/TuningPage.tsx[22m
+[2m21:17:26[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/TuningPage.tsx[22m
+[2m21:17:50[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/TuningPage.tsx[22m
+[2m21:18:31[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/TuningPage.css[22m
+[2m21:19:03[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/BestPhonePage.css[22m
+[2m21:25:03[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/TuningPage.tsx[22m
+[2m21:25:03[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/TuningPage.tsx[22m
+[2m21:27:46[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/shapediver/ShapeDiverPhoneViewer.tsx, /src/components/shapediver/ShapeDiverPhoneViewer.tsx?t=codexcheck[22m
+[2m21:28:11[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/TuningPage.tsx[22m
+[2m21:31:32[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/shapediver/ShapeDiverPhoneViewer.tsx, /src/components/shapediver/ShapeDiverPhoneViewer.tsx?t=codexcheck[22m
+[2m21:32:00[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/TuningPage.tsx[22m
+[2m21:32:26[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/BestPhonePage.tsx[22m
+[2m21:36:25[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/ReportPage.tsx, /src/pages/DashboardPage.tsx, /src/pages/ComparePage.tsx, /src/pages/MyDataPage.tsx, /src/pages/PhoneDetailPage.tsx, /src/pages/MeasurementPage.tsx, /src/pages/TuningPage.tsx, /src/pages/PhoneLibraryPage.tsx, /src/pages/CustomerWorkbenchPages.tsx, /src/pages/BestPhonePage.tsx[22m
+[2m21:36:49[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/shapediver/ShapeDiverPhoneViewer.tsx, /src/components/shapediver/ShapeDiverPhoneViewer.tsx?t=codexcheck[22m
+[2m21:37:28[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/TuningPage.tsx[22m
+[2m21:37:57[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/TuningPage.tsx[22m
+[2m21:49:50[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/shapediver/ShapeDiverPhoneViewer.tsx, /src/components/shapediver/ShapeDiverPhoneViewer.tsx?t=codexcheck[22m
+[2m22:02:58[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/shapediver/ShapeDiverPhoneViewer.tsx, /src/components/shapediver/ShapeDiverPhoneViewer.tsx?t=codexcheck[22m
+[2m22:22:41[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/shapediver/ShapeDiverPhoneViewer.tsx, /src/components/shapediver/ShapeDiverPhoneViewer.tsx?t=codexcheck[22m

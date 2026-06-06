@@ -1,0 +1,402 @@
+[2m18:31:47[22m [31m[1m[vite][22m[39m [31mInternal server error: F:\毕业设计2\gripfit-onboarding\src\pages\BestPhonePage.tsx: Identifier 'displayScore' has already been declared. (29:9)
+
+[0m [90m 27 |[31m   [90m// 进场：分数从 0 滚动到目标，与评分环扫描同步（0.9s ease-out）[31m
+ [90m 28 |[31m   [36mconst[31m [displayScore[33m,[31m setDisplayScore] [33m=[31m useState([35m0[31m)[33m;[31m
+[31m[1m>[22m[31m[90m 29 |[31m   [36mconst[31m [displayScore[33m,[31m setDisplayScore] [33m=[31m useState([35m0[31m)[33m;[31m
+ [90m    |[31m          [31m[1m^[22m[31m
+ [90m 30 |[31m
+ [90m 31 |[31m   useEffect(() [33m=>[31m {
+ [90m 32 |[31m     [36mconst[31m start [33m=[31m performance[33m.[31mnow()[33m;[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mF:/毕业设计2/gripfit-onboarding/src/pages/BestPhonePage.tsx[39m:29:9
+[33m  27 |    // 进场：分数从 0 滚动到目标，与评分环扫描同步（0.9s ease-out）
+  28 |    const [displayScore, setDisplayScore] = useState(0);
+  29 |    const [displayScore, setDisplayScore] = useState(0);
+     |           ^
+  30 |  
+  31 |    useEffect(() => {[39m
+      at constructor (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:365:19)
+      at TypeScriptParserMixin.raise (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:6599:19)
+      at TypeScriptScopeHandler.checkRedeclarationInScope (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:1619:19)
+      at TypeScriptScopeHandler.declareName (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:1585:12)
+      at TypeScriptScopeHandler.declareName (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:4880:11)
+      at TypeScriptParserMixin.declareNameFromIdentifier (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:7567:16)
+      at TypeScriptParserMixin.checkIdentifier (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:7563:12)
+      at TypeScriptParserMixin.checkLVal (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:7500:12)
+      at TypeScriptParserMixin.checkLVal (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:7540:16)
+      at TypeScriptParserMixin.parseVarId (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:13412:10)
+      at TypeScriptParserMixin.parseVarId (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:9752:11)
+      at TypeScriptParserMixin.parseVar (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:13383:12)
+      at TypeScriptParserMixin.parseVarStatement (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:13230:10)
+      at TypeScriptParserMixin.parseVarStatement (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:9408:31)
+      at TypeScriptParserMixin.parseStatementContent (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12851:23)
+      at TypeScriptParserMixin.parseStatementContent (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:9508:18)
+      at TypeScriptParserMixin.parseStatementLike (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12767:17)
+      at TypeScriptParserMixin.parseStatementListItem (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12747:17)
+      at TypeScriptParserMixin.parseBlockOrModuleBlockBody (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:13316:61)
+      at TypeScriptParserMixin.parseBlockBody (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:13309:10)
+      at TypeScriptParserMixin.parseBlock (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:13297:10)
+      at TypeScriptParserMixin.parseFunctionBody (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12100:24)
+      at TypeScriptParserMixin.parseFunctionBodyAndFinish (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12086:10)
+      at TypeScriptParserMixin.parseFunctionBodyAndFinish (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:9172:18)
+      at F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:13445:12
+      at TypeScriptParserMixin.withSmartMixTopicForbiddingContext (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12403:14)
+      at TypeScriptParserMixin.parseFunction (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:13444:10)
+      at TypeScriptParserMixin.parseExportDefaultExpression (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:13907:19)
+      at TypeScriptParserMixin.parseExportDefaultExpression (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:9402:18)
+      at TypeScriptParserMixin.parseExport (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:13828:25)
+      at TypeScriptParserMixin.parseExport (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:9385:20)
+      at TypeScriptParserMixin.parseStatementContent (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12878:27)
+      at TypeScriptParserMixin.parseStatementContent (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:9508:18)
+      at TypeScriptParserMixin.parseStatementLike (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12767:17)
+      at TypeScriptParserMixin.parseModuleItem (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12744:17)
+      at TypeScriptParserMixin.parseBlockOrModuleBlockBody (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:13316:36)
+      at TypeScriptParserMixin.parseBlockBody (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:13309:10)
+      at TypeScriptParserMixin.parseProgram (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12622:10)
+      at TypeScriptParserMixin.parseTopLevel (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12612:25)
+      at TypeScriptParserMixin.parse (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:14488:25)
+      at TypeScriptParserMixin.parse (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10126:18)
+      at parse (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:14522:38)
+      at parser (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\core\lib\parser\index.js:41:34)
+      at parser.next (<anonymous>)
+      at normalizeFile (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+      at normalizeFile.next (<anonymous>)
+      at run (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\core\lib\transform.js:22:33)
+      at transform.next (<anonymous>)
+[2m18:31:47[22m [31m[1m[vite][22m[39m [31mInternal server error: F:\毕业设计2\gripfit-onboarding\src\pages\BestPhonePage.tsx: Identifier 'displayScore' has already been declared. (29:9)
+
+[0m [90m 27 |[31m   [90m// 进场：分数从 0 滚动到目标，与评分环扫描同步（0.9s ease-out）[31m
+ [90m 28 |[31m   [36mconst[31m [displayScore[33m,[31m setDisplayScore] [33m=[31m useState([35m0[31m)[33m;[31m
+[31m[1m>[22m[31m[90m 29 |[31m   [36mconst[31m [displayScore[33m,[31m setDisplayScore] [33m=[31m useState([35m0[31m)[33m;[31m
+ [90m    |[31m          [31m[1m^[22m[31m
+ [90m 30 |[31m
+ [90m 31 |[31m   useEffect(() [33m=>[31m {
+ [90m 32 |[31m     [36mconst[31m start [33m=[31m performance[33m.[31mnow()[33m;[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mF:/毕业设计2/gripfit-onboarding/src/pages/BestPhonePage.tsx[39m:29:9
+[33m  27 |    // 进场：分数从 0 滚动到目标，与评分环扫描同步（0.9s ease-out）
+  28 |    const [displayScore, setDisplayScore] = useState(0);
+  29 |    const [displayScore, setDisplayScore] = useState(0);
+     |           ^
+  30 |  
+  31 |    useEffect(() => {[39m
+      at constructor (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:365:19)
+      at TypeScriptParserMixin.raise (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:6599:19)
+      at TypeScriptScopeHandler.checkRedeclarationInScope (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:1619:19)
+      at TypeScriptScopeHandler.declareName (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:1585:12)
+      at TypeScriptScopeHandler.declareName (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:4880:11)
+      at TypeScriptParserMixin.declareNameFromIdentifier (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:7567:16)
+      at TypeScriptParserMixin.checkIdentifier (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:7563:12)
+      at TypeScriptParserMixin.checkLVal (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:7500:12)
+      at TypeScriptParserMixin.checkLVal (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:7540:16)
+      at TypeScriptParserMixin.parseVarId (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:13412:10)
+      at TypeScriptParserMixin.parseVarId (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:9752:11)
+      at TypeScriptParserMixin.parseVar (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:13383:12)
+      at TypeScriptParserMixin.parseVarStatement (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:13230:10)
+      at TypeScriptParserMixin.parseVarStatement (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:9408:31)
+      at TypeScriptParserMixin.parseStatementContent (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12851:23)
+      at TypeScriptParserMixin.parseStatementContent (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:9508:18)
+      at TypeScriptParserMixin.parseStatementLike (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12767:17)
+      at TypeScriptParserMixin.parseStatementListItem (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12747:17)
+      at TypeScriptParserMixin.parseBlockOrModuleBlockBody (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:13316:61)
+      at TypeScriptParserMixin.parseBlockBody (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:13309:10)
+      at TypeScriptParserMixin.parseBlock (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:13297:10)
+      at TypeScriptParserMixin.parseFunctionBody (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12100:24)
+      at TypeScriptParserMixin.parseFunctionBodyAndFinish (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12086:10)
+      at TypeScriptParserMixin.parseFunctionBodyAndFinish (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:9172:18)
+      at F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:13445:12
+      at TypeScriptParserMixin.withSmartMixTopicForbiddingContext (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12403:14)
+      at TypeScriptParserMixin.parseFunction (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:13444:10)
+      at TypeScriptParserMixin.parseExportDefaultExpression (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:13907:19)
+      at TypeScriptParserMixin.parseExportDefaultExpression (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:9402:18)
+      at TypeScriptParserMixin.parseExport (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:13828:25)
+      at TypeScriptParserMixin.parseExport (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:9385:20)
+      at TypeScriptParserMixin.parseStatementContent (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12878:27)
+      at TypeScriptParserMixin.parseStatementContent (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:9508:18)
+      at TypeScriptParserMixin.parseStatementLike (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12767:17)
+      at TypeScriptParserMixin.parseModuleItem (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12744:17)
+      at TypeScriptParserMixin.parseBlockOrModuleBlockBody (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:13316:36)
+      at TypeScriptParserMixin.parseBlockBody (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:13309:10)
+      at TypeScriptParserMixin.parseProgram (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12622:10)
+      at TypeScriptParserMixin.parseTopLevel (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12612:25)
+      at TypeScriptParserMixin.parse (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:14488:25)
+      at TypeScriptParserMixin.parse (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10126:18)
+      at parse (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:14522:38)
+      at parser (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\core\lib\parser\index.js:41:34)
+      at parser.next (<anonymous>)
+      at normalizeFile (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+      at normalizeFile.next (<anonymous>)
+      at run (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\core\lib\transform.js:22:33)
+      at transform.next (<anonymous>)
+[2m19:58:09[22m [31m[1m[vite][22m[39m [31mInternal server error: F:\毕业设计2\gripfit-onboarding\src\pages\BestPhonePage.tsx: Expected corresponding JSX closing tag for <section>. (112:10)
+
+[0m [90m 110 |[31m               [33m<[31m[33mspan[31m className[33m=[31m[32m"best-phone-stage__toggle-thumb"[31m [33m/[31m[33m>[31m
+ [90m 111 |[31m             [33m<[31m[33m/[31m[33mspan[31m[33m>[31m
+[31m[1m>[22m[31m[90m 112 |[31m           [33m<[31m[33m/[31m[33mlabel[31m[33m>[31m
+ [90m     |[31m           [31m[1m^[22m[31m
+ [90m 113 |[31m         [33m<[31m[33m/[31m[33msection[31m[33m>[31m
+ [90m 114 |[31m
+ [90m 115 |[31m         [33m<[31m[33maside[31m className[33m=[31m[32m"best-phone-panel glass-card"[31m[33m>[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mF:/毕业设计2/gripfit-onboarding/src/pages/BestPhonePage.tsx[39m:112:10
+[33m  110|                <span className="best-phone-stage__toggle-thumb" />
+  111|              </span>
+  112|            </label>
+     |            ^
+  113|          </section>
+  114|  [39m
+      at constructor (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:365:19)
+      at TypeScriptParserMixin.raise (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:6599:19)
+      at TypeScriptParserMixin.jsxParseElementAt (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:4727:16)
+      at TypeScriptParserMixin.jsxParseElementAt (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:4698:32)
+      at TypeScriptParserMixin.jsxParseElementAt (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:4698:32)
+      at TypeScriptParserMixin.jsxParseElement (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:4749:17)
+      at TypeScriptParserMixin.parseExprAtom (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:4759:19)
+      at TypeScriptParserMixin.parseExprSubscripts (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:11081:23)
+      at TypeScriptParserMixin.parseUpdate (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:11066:21)
+      at TypeScriptParserMixin.parseMaybeUnary (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:11046:23)
+      at TypeScriptParserMixin.parseMaybeUnary (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:9837:18)
+      at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10899:61)
+      at TypeScriptParserMixin.parseExprOps (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10904:23)
+      at TypeScriptParserMixin.parseMaybeConditional (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10881:23)
+      at TypeScriptParserMixin.parseMaybeAssign (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10831:21)
+      at F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:9775:39
+      at TypeScriptParserMixin.tryParse (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:6907:20)
+      at TypeScriptParserMixin.parseMaybeAssign (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:9775:18)
+      at F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10800:39
+      at TypeScriptParserMixin.allowInAnd (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12426:12)
+      at TypeScriptParserMixin.parseMaybeAssignAllowIn (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10800:17)
+      at TypeScriptParserMixin.parseMaybeAssignAllowInOrVoidPattern (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12493:17)
+      at TypeScriptParserMixin.parseParenAndDistinguishExpression (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:11675:28)
+      at TypeScriptParserMixin.parseExprAtom (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:11331:23)
+      at TypeScriptParserMixin.parseExprAtom (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:4764:20)
+      at TypeScriptParserMixin.parseExprSubscripts (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:11081:23)
+      at TypeScriptParserMixin.parseUpdate (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:11066:21)
+      at TypeScriptParserMixin.parseMaybeUnary (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:11046:23)
+      at TypeScriptParserMixin.parseMaybeUnary (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:9837:18)
+      at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10899:61)
+      at TypeScriptParserMixin.parseExprOps (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10904:23)
+      at TypeScriptParserMixin.parseMaybeConditional (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10881:23)
+      at TypeScriptParserMixin.parseMaybeAssign (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10831:21)
+      at TypeScriptParserMixin.parseMaybeAssign (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:9786:20)
+      at TypeScriptParserMixin.parseExpressionBase (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10784:23)
+      at F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10780:39
+      at TypeScriptParserMixin.allowInAnd (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12421:16)
+      at TypeScriptParserMixin.parseExpression (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10780:17)
+      at TypeScriptParserMixin.parseReturnStatement (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:13142:28)
+      at TypeScriptParserMixin.parseStatementContent (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12798:21)
+      at TypeScriptParserMixin.parseStatementContent (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:9508:18)
+      at TypeScriptParserMixin.parseStatementLike (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12767:17)
+      at TypeScriptParserMixin.parseStatementListItem (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12747:17)
+      at TypeScriptParserMixin.parseBlockOrModuleBlockBody (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:13316:61)
+      at TypeScriptParserMixin.parseBlockBody (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:13309:10)
+      at TypeScriptParserMixin.parseBlock (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:13297:10)
+      at TypeScriptParserMixin.parseFunctionBody (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12100:24)
+      at TypeScriptParserMixin.parseFunctionBodyAndFinish (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12086:10)
+      at TypeScriptParserMixin.parseFunctionBodyAndFinish (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:9172:18)
+      at F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:13445:12
+[2m19:58:09[22m [31m[1m[vite][22m[39m [31mInternal server error: F:\毕业设计2\gripfit-onboarding\src\pages\BestPhonePage.tsx: Expected corresponding JSX closing tag for <section>. (112:10)
+
+[0m [90m 110 |[31m               [33m<[31m[33mspan[31m className[33m=[31m[32m"best-phone-stage__toggle-thumb"[31m [33m/[31m[33m>[31m
+ [90m 111 |[31m             [33m<[31m[33m/[31m[33mspan[31m[33m>[31m
+[31m[1m>[22m[31m[90m 112 |[31m           [33m<[31m[33m/[31m[33mlabel[31m[33m>[31m
+ [90m     |[31m           [31m[1m^[22m[31m
+ [90m 113 |[31m         [33m<[31m[33m/[31m[33msection[31m[33m>[31m
+ [90m 114 |[31m
+ [90m 115 |[31m         [33m<[31m[33maside[31m className[33m=[31m[32m"best-phone-panel glass-card"[31m[33m>[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mF:/毕业设计2/gripfit-onboarding/src/pages/BestPhonePage.tsx[39m:112:10
+[33m  110|                <span className="best-phone-stage__toggle-thumb" />
+  111|              </span>
+  112|            </label>
+     |            ^
+  113|          </section>
+  114|  [39m
+      at constructor (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:365:19)
+      at TypeScriptParserMixin.raise (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:6599:19)
+      at TypeScriptParserMixin.jsxParseElementAt (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:4727:16)
+      at TypeScriptParserMixin.jsxParseElementAt (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:4698:32)
+      at TypeScriptParserMixin.jsxParseElementAt (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:4698:32)
+      at TypeScriptParserMixin.jsxParseElement (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:4749:17)
+      at TypeScriptParserMixin.parseExprAtom (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:4759:19)
+      at TypeScriptParserMixin.parseExprSubscripts (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:11081:23)
+      at TypeScriptParserMixin.parseUpdate (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:11066:21)
+      at TypeScriptParserMixin.parseMaybeUnary (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:11046:23)
+      at TypeScriptParserMixin.parseMaybeUnary (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:9837:18)
+      at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10899:61)
+      at TypeScriptParserMixin.parseExprOps (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10904:23)
+      at TypeScriptParserMixin.parseMaybeConditional (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10881:23)
+      at TypeScriptParserMixin.parseMaybeAssign (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10831:21)
+      at F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:9775:39
+      at TypeScriptParserMixin.tryParse (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:6907:20)
+      at TypeScriptParserMixin.parseMaybeAssign (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:9775:18)
+      at F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10800:39
+      at TypeScriptParserMixin.allowInAnd (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12426:12)
+      at TypeScriptParserMixin.parseMaybeAssignAllowIn (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10800:17)
+      at TypeScriptParserMixin.parseMaybeAssignAllowInOrVoidPattern (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12493:17)
+      at TypeScriptParserMixin.parseParenAndDistinguishExpression (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:11675:28)
+      at TypeScriptParserMixin.parseExprAtom (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:11331:23)
+      at TypeScriptParserMixin.parseExprAtom (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:4764:20)
+      at TypeScriptParserMixin.parseExprSubscripts (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:11081:23)
+      at TypeScriptParserMixin.parseUpdate (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:11066:21)
+      at TypeScriptParserMixin.parseMaybeUnary (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:11046:23)
+      at TypeScriptParserMixin.parseMaybeUnary (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:9837:18)
+      at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10899:61)
+      at TypeScriptParserMixin.parseExprOps (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10904:23)
+      at TypeScriptParserMixin.parseMaybeConditional (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10881:23)
+      at TypeScriptParserMixin.parseMaybeAssign (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10831:21)
+      at TypeScriptParserMixin.parseMaybeAssign (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:9786:20)
+      at TypeScriptParserMixin.parseExpressionBase (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10784:23)
+      at F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10780:39
+      at TypeScriptParserMixin.allowInAnd (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12421:16)
+      at TypeScriptParserMixin.parseExpression (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10780:17)
+      at TypeScriptParserMixin.parseReturnStatement (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:13142:28)
+      at TypeScriptParserMixin.parseStatementContent (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12798:21)
+      at TypeScriptParserMixin.parseStatementContent (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:9508:18)
+      at TypeScriptParserMixin.parseStatementLike (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12767:17)
+      at TypeScriptParserMixin.parseStatementListItem (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12747:17)
+      at TypeScriptParserMixin.parseBlockOrModuleBlockBody (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:13316:61)
+      at TypeScriptParserMixin.parseBlockBody (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:13309:10)
+      at TypeScriptParserMixin.parseBlock (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:13297:10)
+      at TypeScriptParserMixin.parseFunctionBody (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12100:24)
+      at TypeScriptParserMixin.parseFunctionBodyAndFinish (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12086:10)
+      at TypeScriptParserMixin.parseFunctionBodyAndFinish (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:9172:18)
+      at F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:13445:12
+[2m20:00:26[22m [31m[1m[vite][22m[39m [31mInternal server error: F:\毕业设计2\gripfit-onboarding\src\pages\BestPhonePage.tsx: Expected corresponding JSX closing tag for <p>. (81:10)
+
+[0m [90m 79 |[31m             [33m<[31m[33m/[31m[33mdiv[31m[33m>[31m
+ [90m 80 |[31m             [33m<[31m[33mp[31m[33m>[31m鐞嗚鏈€浼[33m?[31m[33m/[31mp[33m>[31m
+[31m[1m>[22m[31m[90m 81 |[31m           [33m<[31m[33m/[31m[33mdiv[31m[33m>[31m
+ [90m    |[31m           [31m[1m^[22m[31m
+ [90m 82 |[31m
+ [90m 83 |[31m           [33m<[31m[33mmotion[31m[33m.[31mdiv
+ [90m 84 |[31m             className[33m=[31m[32m"best-phone-stage__device"[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mF:/毕业设计2/gripfit-onboarding/src/pages/BestPhonePage.tsx[39m:81:10
+[33m  83 |            <motion.div
+  84 |              className="best-phone-stage__device"
+  85 |              initial={{ opacity: 0, scale: 0.94 }}
+     |   ^
+  86 |              animate={{ opacity: 1, scale: 1 }}
+  87 |              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}[39m
+      at constructor (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:365:19)
+      at TypeScriptParserMixin.raise (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:6599:19)
+      at TypeScriptParserMixin.jsxParseElementAt (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:4727:16)
+      at TypeScriptParserMixin.jsxParseElementAt (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:4698:32)
+      at TypeScriptParserMixin.jsxParseElementAt (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:4698:32)
+      at TypeScriptParserMixin.jsxParseElementAt (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:4698:32)
+      at TypeScriptParserMixin.jsxParseElementAt (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:4698:32)
+      at TypeScriptParserMixin.jsxParseElement (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:4749:17)
+      at TypeScriptParserMixin.parseExprAtom (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:4759:19)
+      at TypeScriptParserMixin.parseExprSubscripts (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:11081:23)
+      at TypeScriptParserMixin.parseUpdate (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:11066:21)
+      at TypeScriptParserMixin.parseMaybeUnary (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:11046:23)
+      at TypeScriptParserMixin.parseMaybeUnary (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:9837:18)
+      at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10899:61)
+      at TypeScriptParserMixin.parseExprOps (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10904:23)
+      at TypeScriptParserMixin.parseMaybeConditional (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10881:23)
+      at TypeScriptParserMixin.parseMaybeAssign (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10831:21)
+      at F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:9775:39
+      at TypeScriptParserMixin.tryParse (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:6907:20)
+      at TypeScriptParserMixin.parseMaybeAssign (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:9775:18)
+      at F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10800:39
+      at TypeScriptParserMixin.allowInAnd (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12426:12)
+      at TypeScriptParserMixin.parseMaybeAssignAllowIn (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10800:17)
+      at TypeScriptParserMixin.parseMaybeAssignAllowInOrVoidPattern (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12493:17)
+      at TypeScriptParserMixin.parseParenAndDistinguishExpression (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:11675:28)
+      at TypeScriptParserMixin.parseExprAtom (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:11331:23)
+      at TypeScriptParserMixin.parseExprAtom (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:4764:20)
+      at TypeScriptParserMixin.parseExprSubscripts (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:11081:23)
+      at TypeScriptParserMixin.parseUpdate (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:11066:21)
+      at TypeScriptParserMixin.parseMaybeUnary (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:11046:23)
+      at TypeScriptParserMixin.parseMaybeUnary (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:9837:18)
+      at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10899:61)
+      at TypeScriptParserMixin.parseExprOps (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10904:23)
+      at TypeScriptParserMixin.parseMaybeConditional (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10881:23)
+      at TypeScriptParserMixin.parseMaybeAssign (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10831:21)
+      at TypeScriptParserMixin.parseMaybeAssign (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:9786:20)
+      at TypeScriptParserMixin.parseExpressionBase (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10784:23)
+      at F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10780:39
+      at TypeScriptParserMixin.allowInAnd (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12421:16)
+      at TypeScriptParserMixin.parseExpression (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10780:17)
+      at TypeScriptParserMixin.parseReturnStatement (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:13142:28)
+      at TypeScriptParserMixin.parseStatementContent (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12798:21)
+      at TypeScriptParserMixin.parseStatementContent (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:9508:18)
+      at TypeScriptParserMixin.parseStatementLike (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12767:17)
+      at TypeScriptParserMixin.parseStatementListItem (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12747:17)
+      at TypeScriptParserMixin.parseBlockOrModuleBlockBody (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:13316:61)
+      at TypeScriptParserMixin.parseBlockBody (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:13309:10)
+      at TypeScriptParserMixin.parseBlock (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:13297:10)
+      at TypeScriptParserMixin.parseFunctionBody (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12100:24)
+      at TypeScriptParserMixin.parseFunctionBodyAndFinish (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12086:10)
+[2m20:00:26[22m [31m[1m[vite][22m[39m [31mInternal server error: F:\毕业设计2\gripfit-onboarding\src\pages\BestPhonePage.tsx: Expected corresponding JSX closing tag for <p>. (81:10)
+
+[0m [90m 79 |[31m             [33m<[31m[33m/[31m[33mdiv[31m[33m>[31m
+ [90m 80 |[31m             [33m<[31m[33mp[31m[33m>[31m鐞嗚鏈€浼[33m?[31m[33m/[31mp[33m>[31m
+[31m[1m>[22m[31m[90m 81 |[31m           [33m<[31m[33m/[31m[33mdiv[31m[33m>[31m
+ [90m    |[31m           [31m[1m^[22m[31m
+ [90m 82 |[31m
+ [90m 83 |[31m           [33m<[31m[33mmotion[31m[33m.[31mdiv
+ [90m 84 |[31m             className[33m=[31m[32m"best-phone-stage__device"[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mF:/毕业设计2/gripfit-onboarding/src/pages/BestPhonePage.tsx[39m:81:10
+[33m  83 |            <motion.div
+  84 |              className="best-phone-stage__device"
+  85 |              initial={{ opacity: 0, scale: 0.94 }}
+     |   ^
+  86 |              animate={{ opacity: 1, scale: 1 }}
+  87 |              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}[39m
+      at constructor (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:365:19)
+      at TypeScriptParserMixin.raise (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:6599:19)
+      at TypeScriptParserMixin.jsxParseElementAt (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:4727:16)
+      at TypeScriptParserMixin.jsxParseElementAt (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:4698:32)
+      at TypeScriptParserMixin.jsxParseElementAt (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:4698:32)
+      at TypeScriptParserMixin.jsxParseElementAt (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:4698:32)
+      at TypeScriptParserMixin.jsxParseElementAt (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:4698:32)
+      at TypeScriptParserMixin.jsxParseElement (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:4749:17)
+      at TypeScriptParserMixin.parseExprAtom (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:4759:19)
+      at TypeScriptParserMixin.parseExprSubscripts (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:11081:23)
+      at TypeScriptParserMixin.parseUpdate (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:11066:21)
+      at TypeScriptParserMixin.parseMaybeUnary (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:11046:23)
+      at TypeScriptParserMixin.parseMaybeUnary (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:9837:18)
+      at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10899:61)
+      at TypeScriptParserMixin.parseExprOps (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10904:23)
+      at TypeScriptParserMixin.parseMaybeConditional (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10881:23)
+      at TypeScriptParserMixin.parseMaybeAssign (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10831:21)
+      at F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:9775:39
+      at TypeScriptParserMixin.tryParse (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:6907:20)
+      at TypeScriptParserMixin.parseMaybeAssign (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:9775:18)
+      at F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10800:39
+      at TypeScriptParserMixin.allowInAnd (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12426:12)
+      at TypeScriptParserMixin.parseMaybeAssignAllowIn (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10800:17)
+      at TypeScriptParserMixin.parseMaybeAssignAllowInOrVoidPattern (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12493:17)
+      at TypeScriptParserMixin.parseParenAndDistinguishExpression (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:11675:28)
+      at TypeScriptParserMixin.parseExprAtom (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:11331:23)
+      at TypeScriptParserMixin.parseExprAtom (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:4764:20)
+      at TypeScriptParserMixin.parseExprSubscripts (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:11081:23)
+      at TypeScriptParserMixin.parseUpdate (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:11066:21)
+      at TypeScriptParserMixin.parseMaybeUnary (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:11046:23)
+      at TypeScriptParserMixin.parseMaybeUnary (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:9837:18)
+      at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10899:61)
+      at TypeScriptParserMixin.parseExprOps (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10904:23)
+      at TypeScriptParserMixin.parseMaybeConditional (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10881:23)
+      at TypeScriptParserMixin.parseMaybeAssign (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10831:21)
+      at TypeScriptParserMixin.parseMaybeAssign (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:9786:20)
+      at TypeScriptParserMixin.parseExpressionBase (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10784:23)
+      at F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10780:39
+      at TypeScriptParserMixin.allowInAnd (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12421:16)
+      at TypeScriptParserMixin.parseExpression (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:10780:17)
+      at TypeScriptParserMixin.parseReturnStatement (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:13142:28)
+      at TypeScriptParserMixin.parseStatementContent (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12798:21)
+      at TypeScriptParserMixin.parseStatementContent (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:9508:18)
+      at TypeScriptParserMixin.parseStatementLike (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12767:17)
+      at TypeScriptParserMixin.parseStatementListItem (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12747:17)
+      at TypeScriptParserMixin.parseBlockOrModuleBlockBody (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:13316:61)
+      at TypeScriptParserMixin.parseBlockBody (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:13309:10)
+      at TypeScriptParserMixin.parseBlock (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:13297:10)
+      at TypeScriptParserMixin.parseFunctionBody (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12100:24)
+      at TypeScriptParserMixin.parseFunctionBodyAndFinish (F:\毕业设计2\gripfit-onboarding\node_modules\@babel\parser\lib\index.js:12086:10)

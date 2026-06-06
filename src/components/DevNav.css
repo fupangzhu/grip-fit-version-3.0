@@ -1,0 +1,114 @@
+/* DEV-only 页面跳转悬浮窗（上线前删除组件即可） */
+.dev-nav {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 99999;
+  width: 188px;
+  font-family: var(--font-zh, system-ui, sans-serif);
+  color: var(--text-1, #e0e2e8);
+  background: rgba(12, 16, 24, 0.88);
+  border: 1px solid rgba(180, 197, 255, 0.28);
+  border-radius: 10px;
+  box-shadow: 0 14px 38px rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  overflow: hidden;
+  user-select: none;
+}
+
+.dev-nav__bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 8px;
+  cursor: grab;
+  background: rgba(97, 139, 255, 0.16);
+  border-bottom: 1px solid rgba(180, 197, 255, 0.16);
+  touch-action: none;
+}
+.dev-nav__bar:active {
+  cursor: grabbing;
+}
+
+.dev-nav__grip {
+  color: var(--text-2, #8d90a1);
+  opacity: 0.6;
+}
+
+.dev-nav__title {
+  flex: 1;
+  font-family: var(--font-en, sans-serif);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  color: var(--accent, #b4c5ff);
+}
+
+.dev-nav__collapse {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: none;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--text-2, #8d90a1);
+  cursor: pointer;
+  transition: color 140ms ease, background 140ms ease;
+}
+.dev-nav__collapse:hover {
+  color: var(--text-1, #e0e2e8);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.dev-nav__body {
+  max-height: 62vh;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.dev-nav__group + .dev-nav__group {
+  margin-top: 9px;
+}
+
+.dev-nav__group-title {
+  margin: 0 0 5px;
+  font-family: var(--font-en, sans-serif);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  color: var(--text-2, #8d90a1);
+}
+
+.dev-nav__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.dev-nav__link {
+  font-family: var(--font-zh, sans-serif);
+  font-size: 11px;
+  line-height: 1.2;
+  padding: 5px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-3, #c3c6d8);
+  cursor: pointer;
+  transition: color 140ms ease, border-color 140ms ease, background 140ms ease;
+}
+.dev-nav__link:hover {
+  color: #fff;
+  border-color: rgba(180, 197, 255, 0.4);
+  background: rgba(180, 197, 255, 0.08);
+}
+.dev-nav__link.is-active {
+  color: #fff;
+  border-color: rgba(180, 197, 255, 0.5);
+  background: rgba(97, 139, 255, 0.24);
+}

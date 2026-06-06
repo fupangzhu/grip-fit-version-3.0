@@ -1,0 +1,67 @@
+.shapediver-phone-viewer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  background: #000;
+  filter: none;
+}
+
+.shapediver-phone-viewer__canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  border: 0;
+  outline: none;
+}
+
+.shapediver-phone-viewer__status {
+  position: absolute;
+  inset: auto 50% 34px auto;
+  transform: translateX(50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  max-width: min(86%, 560px);
+  padding: 8px 14px;
+  border: 1px solid rgba(180, 197, 255, 0.24);
+  border-radius: 999px;
+  background: rgba(8, 12, 19, 0.72);
+  color: var(--text-2);
+  font-family: var(--font-zh);
+  font-size: 12px;
+  line-height: 1.4;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 3;
+}
+
+.shapediver-phone-viewer__status strong {
+  color: var(--text-1);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.shapediver-phone-viewer__status span:not(.shapediver-phone-viewer__spinner) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.shapediver-phone-viewer__spinner {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 14px;
+  border: 2px solid rgba(180, 197, 255, 0.24);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: shapediver-phone-spin 0.8s linear infinite;
+}
+
+@keyframes shapediver-phone-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

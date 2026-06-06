@@ -1,11 +1,12 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type PointerEvent as ReactPointerEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Move3D, ZoomIn, Save } from 'lucide-react';
-import ReportSubnav from '../components/ReportSubnav';
+import { Move3D, ZoomIn, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
 import { useFlowState } from '../hooks/useFlowState';
+import { usePanelCollapse } from '../hooks/usePanelCollapse';
 import { deriveIdealSpec, scorePhoneForHand } from '../data/scoring';
 import type { Phone } from '../data/phones';
+import ShapeDiverPhoneViewer from '../components/shapediver/ShapeDiverPhoneViewer';
 import './TuningPage.css';
 
 type View = 'front' | 'back' | 'hand' | 'risk';
@@ -31,6 +32,22 @@ export default function TuningPage() {
   const [riskTip, setRiskTip] = useState<string | null>(null);
   const [cameraSide, setCameraSide] = useState('左上');
   const [cornerStyle, setCornerStyle] = useState('柔和过渡');
+  const [panelCollapsed, togglePanel] = usePanelCollapse('gripfit-tuning-panel-collapsed');
+  const [draftCustom, setDraftCustom] = useState(() => flow.custom);
+  const [submittedCustom, setSubmittedCustom] = useState(() => flow.custom);
+
+  useEffect(() => {
+    setDraftCustom(flow.custom);
+    setSubmittedCustom(flow.custom);
+  }, [flow.custom]);
+
+  const hasPendingModelUpdate = useMemo(
+    () => Object.keys(draftCustom).some((key) => {
+      const field = key as keyof typeof draftCustom;
+      return draftCustom[field] !== submittedCustom[field];
+    }),
+    [draftCustom, submittedCustom],
+  );
 
   // 把 custom 包装成 Phone 形状，喂给 scoring
   const customPhone: Phone = useMemo(() => ({
@@ -39,21 +56,21 @@ export default function TuningPage() {
     brand: '自定义',
     releaseDate: '2025-01',
     price: 0,
-    width: flow.custom.width,
-    height: flow.custom.height,
-    thickness: flow.custom.thickness,
-    weight: flow.custom.weight,
+    width: draftCustom.width,
+    height: draftCustom.height,
+    thickness: draftCustom.thickness,
+    weight: draftCustom.weight,
     screen: 6.2,
     ratio: '19.5:9',
-    cameraBump: flow.custom.cameraBump,
-    cornerRadius: flow.custom.cornerRadius,
-    centerOfMassOffset: flow.custom.centerOfMassOffset,
-    backArc: flow.custom.backArc,
+    cameraBump: draftCustom.cameraBump,
+    cornerRadius: draftCustom.cornerRadius,
+    centerOfMassOffset: draftCustom.centerOfMassOffset,
+    backArc: draftCustom.backArc,
     rearCamera: '',
     battery: '',
     imageUrl: '',
     color: 'graphite',
-  }), [flow.custom]);
+  }), [draftCustom]);
 
   const score = useMemo(
     () => scorePhoneForHand(customPhone, flow.handLength, flow.handWidth),
@@ -63,18 +80,45 @@ export default function TuningPage() {
     () => deriveIdealSpec(flow.handLength, flow.handWidth),
     [flow.handLength, flow.handWidth],
   );
+  const aspectRatio = draftCustom.height / draftCustom.width;
+  const idealAspectRatio = ideal.height / ideal.width;
 
-  const handVisible = showHand || view === 'hand' || view === 'risk';
+  const updateCustom = (patch: Partial<typeof draftCustom>) => {
+    setDraftCustom((current) => ({ ...current, ...patch }));
+  };
 
-  const updateCustom = (patch: Partial<typeof flow.custom>) => {
-    updateFlow({ custom: { ...flow.custom, ...patch } });
+  const updateWidth = (width: number) => {
+    const ratio = draftCustom.height / draftCustom.width;
+    updateCustom({ width, height: Number((width * ratio).toFixed(1)) });
+  };
+
+  const updateAspectRatio = (ratio: number) => {
+    updateCustom({ height: Number((draftCustom.width * ratio).toFixed(1)) });
+  };
+
+  const commitModelUpdate = () => {
+    setSubmittedCustom(draftCustom);
+    updateFlow({ custom: draftCustom });
+  };
+
+  const saveTuningScheme = () => {
+    updateFlow({ custom: draftCustom });
+    navigate('/report');
   };
 
   return (
     <div className="tuning-page">
-      <ReportSubnav />
+      <main className={`tuning-page__main ${panelCollapsed ? 'is-panel-collapsed' : ''}`}>
+        <button
+          type="button"
+          className="panel-handle"
+          onClick={togglePanel}
+          aria-label={panelCollapsed ? '展开参数面板' : '收起参数面板'}
+          title={panelCollapsed ? '展开' : '收起'}
+        >
+          {panelCollapsed ? <ChevronLeft size={15} strokeWidth={2} /> : <ChevronRight size={15} strokeWidth={2} />}
+        </button>
 
-      <main className="tuning-page__main">
         <section className="tuning-stage">
           <div className="tuning-stage__hint">
             <Move3D size={12} strokeWidth={1.6} /> 拖曳旋转
@@ -93,23 +137,23 @@ export default function TuningPage() {
           </div>
 
           <div className={`tuning-device tuning-device--${view}`}>
-            <div className="tuning-device__phone-wrap">
-              <img
-                className="tuning-device__photo"
-                src={view === 'front' ? '/assets/hero-phone-cut.png' : '/assets/profile-grip-normal.png'}
-                alt="当前方案"
-                draggable={false}
-              />
-              {view === 'back' || view === 'risk' ? (
-                <em className="tuning-device__cam-label">凸起 {flow.custom.cameraBump.toFixed(1)} mm</em>
-              ) : (
-                <em className="tuning-device__size-label">{flow.custom.width.toFixed(1)} × {flow.custom.height.toFixed(1)} mm</em>
-              )}
-            </div>
-
-            {handVisible ? (
-              <img className="tuning-device__hand" src="/assets/hero-phone-cut.png" alt="" />
-            ) : null}
+            <ShapeDiverPhoneViewer
+              spec={{
+                width: submittedCustom.width,
+                height: submittedCustom.height,
+                thickness: submittedCustom.thickness,
+                cornerRadius: submittedCustom.cornerRadius,
+                weight: submittedCustom.weight,
+                cameraBump: submittedCustom.cameraBump,
+                sideArc: submittedCustom.sideArc,
+                backArc: submittedCustom.backArc,
+                centerOfMassOffset: submittedCustom.centerOfMassOffset,
+              }}
+              updatingLabel="正在更新当前方案模型"
+            />
+            <em className="tuning-device__size-label">
+              {submittedCustom.width.toFixed(1)} x {submittedCustom.height.toFixed(1)} mm
+            </em>
 
             {view === 'risk' ? (
               <>
@@ -155,7 +199,14 @@ export default function TuningPage() {
                   setRiskTip(null);
                 }}
               >
-                {item.label}
+                {view === item.key ? (
+                  <motion.span
+                    layoutId="tuning-view-pill"
+                    className="tuning-views__pill"
+                    transition={{ type: 'spring', duration: 0.4, bounce: 0.15 }}
+                  />
+                ) : null}
+                <span className="tuning-views__label">{item.label}</span>
               </button>
             ))}
           </nav>
@@ -175,34 +226,44 @@ export default function TuningPage() {
         </section>
 
         <aside className="tuning-panel glass-card">
+          <div className="tuning-panel__inner">
           <header className="tuning-panel__head">
             <h1>参数微调</h1>
-            <button type="button" className="glass-button" onClick={() => navigate('/report')}>
-              <Save size={13} strokeWidth={1.7} />
-              方案保存
-            </button>
+            <div className="tuning-panel__actions">
+              <button
+                type="button"
+                className={`tuning-panel__update ${hasPendingModelUpdate ? 'is-dirty' : ''}`}
+                onClick={commitModelUpdate}
+              >
+                方案更新
+              </button>
+              <button type="button" className="tuning-panel__save" onClick={saveTuningScheme}>
+                方案保存
+              </button>
+            </div>
           </header>
 
           <Section title="基本尺寸" count={4} open>
-            <RangeRow label="宽度" value={flow.custom.width} min={60} max={85} step={0.1} unit="mm" ideal={ideal.width} onChange={(v) => updateCustom({ width: v })} />
-            <RangeRow label="高度" value={flow.custom.height} min={120} max={180} step={0.1} unit="mm" ideal={ideal.height} onChange={(v) => updateCustom({ height: v })} />
-            <RangeRow label="厚度" value={flow.custom.thickness} min={6} max={11} step={0.1} unit="mm" ideal={ideal.thickness} onChange={(v) => updateCustom({ thickness: v })} />
-            <RangeRow label="重量" value={flow.custom.weight} min={120} max={260} step={1} unit="g" ideal={ideal.weight} onChange={(v) => updateCustom({ weight: v })} />
+            <RangeRow label="宽度" value={draftCustom.width} min={60} max={85} step={0.1} unit="mm" ideal={ideal.width} onChange={updateWidth} />
+            <RangeRow label="长宽比" value={aspectRatio} min={1.75} max={2.3} step={0.01} unit="" ideal={idealAspectRatio} decimals={2} onChange={updateAspectRatio} />
+            <RangeRow label="厚度" value={draftCustom.thickness} min={6} max={11} step={0.1} unit="mm" ideal={ideal.thickness} onChange={(v) => updateCustom({ thickness: v })} />
+            <RangeRow label="重量" value={draftCustom.weight} min={120} max={260} step={1} unit="g" ideal={ideal.weight} onChange={(v) => updateCustom({ weight: v })} />
           </Section>
 
           <Section title="功能部件（后摄像头模组）" count={3} open={view === 'back' || view === 'risk'}>
-            <RangeRow label="镜头凸起" value={flow.custom.cameraBump} min={0.8} max={5.5} step={0.1} unit="mm" ideal={ideal.cameraBump} onChange={(v) => updateCustom({ cameraBump: v })} />
+            <RangeRow label="镜头凸起" value={draftCustom.cameraBump} min={0.8} max={5.5} step={0.1} unit="mm" ideal={ideal.cameraBump} onChange={(v) => updateCustom({ cameraBump: v })} />
             <ChoiceRow label="后摄位置" value={cameraSide} options={['左上', '居中', '右上']} onChange={setCameraSide} />
           </Section>
 
-          <Section title="形态曲率" count={3}>
-            <RangeRow label="四边圆角" value={flow.custom.cornerRadius} min={2} max={20} step={0.5} unit="R" ideal={ideal.cornerRadius} onChange={(v) => updateCustom({ cornerRadius: v })} />
-            <RangeRow label="背面弧度" value={flow.custom.backArc} min={0} max={100} step={1} unit="%" ideal={ideal.backArc} onChange={(v) => updateCustom({ backArc: v })} />
+          <Section title="形态曲率" count={4}>
+            <RangeRow label="四边圆角" value={draftCustom.cornerRadius} min={2} max={20} step={0.5} unit="R" ideal={ideal.cornerRadius} onChange={(v) => updateCustom({ cornerRadius: v })} />
+            <RangeRow label="侧边弧度" value={draftCustom.sideArc} min={0} max={3} step={0.1} unit="mm" ideal={3} onChange={(v) => updateCustom({ sideArc: v })} />
+            <RangeRow label="背面弧度" value={draftCustom.backArc} min={0} max={100} step={1} unit="%" ideal={ideal.backArc} onChange={(v) => updateCustom({ backArc: v })} />
             <ChoiceRow label="边缘过渡" value={cornerStyle} options={['生硬过渡', '柔和过渡', '圆弧过渡']} onChange={setCornerStyle} />
           </Section>
 
           <Section title="整机平衡" count={1}>
-            <RangeRow label="重心偏移" value={flow.custom.centerOfMassOffset} min={0} max={10} step={0.1} unit="mm" ideal={ideal.centerOfMassOffset} onChange={(v) => updateCustom({ centerOfMassOffset: v })} />
+            <RangeRow label="重心偏移" value={draftCustom.centerOfMassOffset} min={0} max={10} step={0.1} unit="mm" ideal={ideal.centerOfMassOffset} onChange={(v) => updateCustom({ centerOfMassOffset: v })} />
           </Section>
 
           <ToggleRow
@@ -214,6 +275,7 @@ export default function TuningPage() {
               setRiskTip(null);
             }}
           />
+          </div>
         </aside>
       </main>
     </div>
@@ -226,27 +288,110 @@ function Section({ title, count, open = false, children }: { title: string; coun
     <section className={`tuning-section ${isOpen ? 'is-open' : ''}`}>
       <button type="button" className="tuning-section__head" onClick={() => setOpen((v) => !v)}>
         <h2>{title}</h2>
-        <span>{count} 项</span>
+        <span className="tuning-section__meta">
+          {count} 项
+          <ChevronDown size={13} strokeWidth={1.8} className="tuning-section__chevron" />
+        </span>
       </button>
-      {isOpen ? <div className="tuning-section__body">{children}</div> : null}
+      <AnimatePresence initial={false}>
+        {isOpen ? (
+          <motion.div
+            className="tuning-section__reveal"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.28, ease: [0.32, 0.72, 0, 1] }}
+            style={{ overflow: 'hidden' }}
+          >
+            <div className="tuning-section__body">{children}</div>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
     </section>
   );
 }
 
-function RangeRow({ label, value, min, max, step, unit, ideal, onChange }: { label: string; value: number; min: number; max: number; step: number; unit: string; ideal: number; onChange: (v: number) => void }) {
-  const idealMarker = Math.min(100, Math.max(0, ((ideal - min) / (max - min)) * 100));
+// 最优解分布条：依据用户生理数据派生的理想值，用一排绿色小柱体大致标出最优区间
+// （实验限制下只能对几个数据点做粗略推荐，故呈"柱状分布"而非连续曲线）
+function DistributionBar({ ideal, min, max }: { ideal: number; min: number; max: number }) {
+  const N = 9;
+  const idealPos = Math.min(1, Math.max(0, (ideal - min) / (max - min)));
+  return (
+    <div className="tuning-dist" aria-hidden>
+      {Array.from({ length: N }).map((_, i) => {
+        const center = (i + 0.5) / N;
+        const closeness = Math.exp(-(((center - idealPos) / 0.17) ** 2)); // 0..1 越接近理想越高
+        const height = 4 + closeness * 14;
+        const level = closeness > 0.72 ? 'peak' : closeness > 0.42 ? 'near' : closeness > 0.18 ? 'mid' : 'far';
+        return (
+          <span key={i} className={`tuning-dist__bar is-${level}`} style={{ height: `${height.toFixed(1)}px` }} />
+        );
+      })}
+    </div>
+  );
+}
+
+function RangeRow({
+  label,
+  value,
+  min,
+  max,
+  step,
+  unit,
+  ideal,
+  decimals: decimalsOverride,
+  onChange,
+}: {
+  label: string;
+  value: number;
+  min: number;
+  max: number;
+  step: number;
+  unit: string;
+  ideal: number;
+  decimals?: number;
+  onChange: (v: number) => void;
+}) {
   const valueMarker = Math.min(100, Math.max(0, ((value - min) / (max - min)) * 100));
+  const decimals = decimalsOverride ?? (unit === 'g' || unit === '%' ? 0 : 1);
+
+  const valueFromClientX = (clientX: number, element: HTMLElement) => {
+    const rect = element.getBoundingClientRect();
+    const ratio = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
+    const raw = min + ratio * (max - min);
+    const stepped = min + Math.round((raw - min) / step) * step;
+    return Number(Math.min(max, Math.max(min, stepped)).toFixed(3));
+  };
+
+  const handleTrackPointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const track = event.currentTarget;
+    onChange(valueFromClientX(event.clientX, track));
+    event.preventDefault();
+
+    const handlePointerMove = (moveEvent: PointerEvent) => {
+      onChange(valueFromClientX(moveEvent.clientX, track));
+    };
+    const handlePointerUp = () => {
+      window.removeEventListener('pointermove', handlePointerMove);
+      window.removeEventListener('pointerup', handlePointerUp);
+    };
+
+    window.addEventListener('pointermove', handlePointerMove);
+    window.addEventListener('pointerup', handlePointerUp, { once: true });
+  };
+
   return (
     <div className="tuning-range">
       <div className="tuning-range__head">
-        <span>{label}</span>
-        <strong>{value.toFixed(unit === 'g' || unit === '%' ? 0 : 1)}<small>{unit}</small></strong>
+        <span>{label}{unit ? `(${unit})` : ''}</span>
+        <strong>{value.toFixed(decimals)}</strong>
       </div>
-      <div className="tuning-range__track">
-        <span className="tuning-range__fill" style={{ width: `${valueMarker}%` }} />
-        <span className="tuning-range__ideal" style={{ left: `${idealMarker}%` }} title={`理想 ${ideal.toFixed(1)}${unit}`} />
+      <div className="tuning-range__viz" onPointerDown={handleTrackPointerDown}>
+        <DistributionBar ideal={ideal} min={min} max={max} />
+        <span className="tuning-range__line" />
         <input
           type="range"
+          className="tuning-range__input"
           min={min}
           max={max}
           step={step}
@@ -257,8 +402,8 @@ function RangeRow({ label, value, min, max, step, unit, ideal, onChange }: { lab
         <span className="tuning-range__thumb" style={{ left: `${valueMarker}%` }} />
       </div>
       <div className="tuning-range__foot">
-        <span>MIN {min}{unit}</span>
-        <span>MAX {max}{unit}</span>
+        <span>MIN {min}</span>
+        <span>MAX {max}</span>
       </div>
     </div>
   );
