@@ -147,8 +147,6 @@ export default function ShapeDiverPhoneViewer({
           Object.values(session.parameters).map((parameter) => parameter.name || parameter.displayname || parameter.id),
         );
 
-        const values = getCustomizationValues(session, spec);
-        if (Object.keys(values).length) await session.customize(values, true, true);
         await fitViewport(viewport);
         setStatus('ready');
       } catch (err) {

@@ -137,6 +137,11 @@
   overflow-x: hidden;
 }
 
+.app-shell__content:has(.tuning-page),
+.app-shell__content:has(.best-phone-page) {
+  overflow: hidden;
+}
+
 /* ─────────────────── 右侧面板抽屉把手（/tuning、/best-phone）─────────────────── */
 .panel-handle {
   position: absolute;

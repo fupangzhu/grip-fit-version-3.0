@@ -349,9 +349,31 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  padding: 32px 18px 22px;
+  padding: 18px 18px 16px;
   overflow-y: auto;
+  overflow-x: hidden;
   box-sizing: border-box;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(210, 218, 232, 0.72) rgba(210, 218, 232, 0.16);
+}
+
+.tuning-panel__inner::-webkit-scrollbar {
+  width: 6px;
+}
+
+.tuning-panel__inner::-webkit-scrollbar-track {
+  background: rgba(210, 218, 232, 0.16);
+  border-radius: 999px;
+}
+
+.tuning-panel__inner::-webkit-scrollbar-thumb {
+  min-height: 72px;
+  border-radius: 999px;
+  background: rgba(210, 218, 232, 0.74);
+}
+
+.tuning-panel__inner::-webkit-scrollbar-thumb:hover {
+  background: rgba(232, 238, 248, 0.9);
 }
 
 .tuning-panel__head {
@@ -359,7 +381,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .tuning-panel__head h1 {
@@ -449,7 +471,7 @@
 
 /* —— 折叠分区：标题做成淡色渐变托底条（无边框卡片）—— */
 .tuning-section {
-  margin-top: 6px;
+  margin-top: 5px;
 }
 
 .tuning-section__head {
@@ -506,15 +528,15 @@
 .tuning-section__body {
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  padding: 16px 6px 18px;
+  gap: 14px;
+  padding: 12px 6px 14px;
 }
 
 /* —— 参数行（扁平，无卡片）—— */
 .tuning-range {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 9px;
 }
 
 .tuning-range__head {
@@ -620,7 +642,7 @@
 .tuning-choice {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
 }
 
 .tuning-choice p {
@@ -665,8 +687,8 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-top: 12px;
-  padding: 12px 14px;
+  margin-top: 8px;
+  padding: 10px 14px;
   border: 1px solid var(--card-border);
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.02);
