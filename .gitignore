@@ -6,3 +6,5 @@ output/
 public/assets/home-reference.png
 public/assets/hand-guide-dotted*.png
 public/assets/hand-guide-generated.png
+
+.vercel

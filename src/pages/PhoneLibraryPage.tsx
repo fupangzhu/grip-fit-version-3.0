@@ -12,6 +12,7 @@ type SortMode = 'match' | 'price-asc' | 'weight-asc';
 type ReleaseFilter = 'all' | '1y' | '2y' | 'older';
 
 const PAGE_SIZE = 6;
+const easeOut = [0.22, 1, 0.36, 1] as const;
 
 export default function PhoneLibraryPage() {
   const navigate = useNavigate();
@@ -143,6 +144,13 @@ export default function PhoneLibraryPage() {
           <span>价格</span>
           <span>操作</span>
         </div>
+        <motion.div
+          className="library-table__body"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.28, ease: easeOut }}
+        >
+          <AnimatePresence mode="popLayout">
         {visible.map((entry, index) => {
           const phone = entry.phone;
           const rank = (safePage - 1) * PAGE_SIZE + index + 1;
@@ -150,11 +158,14 @@ export default function PhoneLibraryPage() {
           const isFav = flow.favoriteIds.includes(phone.id);
           return (
             <motion.article
+              layout
               key={phone.id}
               className="library-row"
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.04 * index, duration: 0.32 }}
+              initial={{ opacity: 0, y: 8, scale: 0.995 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -6, scale: 0.995 }}
+              whileHover={{ y: -1 }}
+              transition={{ delay: 0.035 * index, duration: 0.26, ease: easeOut }}
             >
               <strong className={`library-row__rank ${rank <= 3 && safePage === 1 ? 'is-top' : ''}`}>{rank}</strong>
               <div className="library-row__name">
@@ -190,6 +201,8 @@ export default function PhoneLibraryPage() {
             </motion.article>
           );
         })}
+          </AnimatePresence>
+        </motion.div>
 
         {visible.length === 0 ? <div className="library-empty">无匹配机型，请调整筛选条件</div> : null}
       </section>

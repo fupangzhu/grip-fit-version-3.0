@@ -12,7 +12,7 @@ export default function RoleSelectPage() {
   const chooseEnterprise = () => {
     setNotice('正在跳转到企业端...');
     window.setTimeout(() => {
-      window.location.href = 'https://grip-fit-tob.vercel.app/';
+      window.location.href = 'https://grip-fit-tob.vercel.app/tob/role-select';
     }, 320);
   };
 

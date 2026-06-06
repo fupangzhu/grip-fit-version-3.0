@@ -138,7 +138,8 @@
 }
 
 .app-shell__content:has(.tuning-page),
-.app-shell__content:has(.best-phone-page) {
+.app-shell__content:has(.best-phone-page),
+.app-shell__content:has(.library-page) {
   overflow: hidden;
 }
 

@@ -85,6 +85,7 @@ export interface CategoricalDim {
   group: ErgoGroup;
   label: string;
   labelEn: string;
+  unit?: string;
   type: 'categorical';
   options: string[];        // 候选项
   best: string;             // 推荐选项（所有人群实验最佳）

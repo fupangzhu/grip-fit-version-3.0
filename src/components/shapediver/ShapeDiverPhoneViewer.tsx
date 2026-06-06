@@ -11,6 +11,32 @@ const SHAPEDIVER_TICKET =
   '6439345a758ecade13352d2152f2512791efd050498810bb0e12f9f6c81fd4787b77fbd54718a23deed172c1c5cdeb3adb6511b6e04dd46a4a4163dd062f21400cb1cca2fb1894d37c12f6bd30c9bc509fee158ae1810b6bbada684c642203b22895803c77e16d-854b0c9e4e9e0f704a76e2a5a137748b';
 const SHAPEDIVER_MODEL_VIEW_URL = 'https://sdr8euc1.eu-central-1.shapediver.com';
 
+/* ---- 全局单例会话：只冷启动一次、/tuning 与 /best-phone 复用、保持热度 ---- */
+let sharedSessionPromise: Promise<ISessionApi> | null = null;
+function getSharedSession(): Promise<ISessionApi> {
+  if (!sharedSessionPromise) {
+    sharedSessionPromise = createSession({
+      ticket: SHAPEDIVER_TICKET,
+      modelViewUrl: SHAPEDIVER_MODEL_VIEW_URL,
+      id: 'gripfit-theoretical-phone-session',
+    })
+      .then((session) => {
+        session.customizeOnParameterChange = false;
+        return session;
+      })
+      .catch((err) => {
+        sharedSessionPromise = null;
+        throw err;
+      });
+  }
+  return sharedSessionPromise;
+}
+
+/** 可选：在 App 早期调用，提前唤醒 ShapeDiver 后端，绕过用户进页面时的冷启动 */
+export function prewarmShapeDiver(): void {
+  void getSharedSession().catch(() => {});
+}
+
 export type ShapeDiverPhoneSpec = {
   width: number;
   height: number;
@@ -84,6 +110,7 @@ export default function ShapeDiverPhoneViewer({
   const viewportRef = useRef<IViewportApi | null>(null);
   const [status, setStatus] = useState<'loading' | 'ready' | 'updating' | 'error'>('loading');
   const [error, setError] = useState('');
+  const viewportId = useMemo(() => `gripfit-sd-vp-${Math.random().toString(36).slice(2)}`, []);
 
   const specKey = useMemo(
     () => [
@@ -109,9 +136,11 @@ export default function ShapeDiverPhoneViewer({
       setError('');
 
       try {
+        const sessionPromise = getSharedSession();
+
         const viewport = await createViewport({
           canvas: canvasRef.current,
-          id: 'gripfit-theoretical-phone-viewport',
+          id: viewportId,
           branding: {
             backgroundColor: '#000000',
             busyModeSpinner: 'default',
@@ -128,24 +157,23 @@ export default function ShapeDiverPhoneViewer({
         const rect = wrapperRef.current?.getBoundingClientRect();
         if (rect?.width && rect?.height) viewport.resize(rect.width, rect.height);
 
-        const session = await createSession({
-          ticket: SHAPEDIVER_TICKET,
-          modelViewUrl: SHAPEDIVER_MODEL_VIEW_URL,
-          id: 'gripfit-theoretical-phone-session',
-        });
-        session.customizeOnParameterChange = false;
-
         if (cancelled) {
-          await session.close();
           await viewport.close();
           return;
         }
-
-        sessionRef.current = session;
         viewportRef.current = viewport;
+
+        const session = await sessionPromise;
+        if (cancelled) return;
+        sessionRef.current = session;
+
         onParameterNames?.(
           Object.values(session.parameters).map((parameter) => parameter.name || parameter.displayname || parameter.id),
         );
+
+        const initialValues = getCustomizationValues(session, spec);
+        if (Object.keys(initialValues).length) await session.customize(initialValues, false, true);
+        if (cancelled) return;
 
         await fitViewport(viewport);
         setStatus('ready');
@@ -160,11 +188,9 @@ export default function ShapeDiverPhoneViewer({
 
     return () => {
       cancelled = true;
-      const session = sessionRef.current;
       const viewport = viewportRef.current;
       sessionRef.current = null;
       viewportRef.current = null;
-      void session?.close();
       void viewport?.close();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps

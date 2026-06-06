@@ -1,13 +1,18 @@
 /* PhoneLibraryPage — hi-fi 21-23 */
 
 .library-page {
-  padding: 28px 36px 36px;
+  height: 100%;
+  min-height: 0;
+  box-sizing: border-box;
+  padding: 22px 36px 24px;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 12px;
+  overflow: hidden;
 }
 
 .library-page__head {
+  flex: 0 0 auto;
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
@@ -38,6 +43,7 @@
 
 /* —— Stats —— */
 .library-stats {
+  flex: 0 0 auto;
   display: grid;
   grid-template-columns: 1fr 1.6fr;
   gap: 14px;
@@ -47,9 +53,10 @@
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 18px 22px;
+  min-height: 84px;
+  padding: 14px 20px;
   border: 1px solid var(--card-border);
-  border-radius: 12px;
+  border-radius: 10px;
   background: rgba(39, 42, 47, 0.42);
 }
 
@@ -97,6 +104,7 @@
 
 /* —— Chips —— */
 .library-chips {
+  flex: 0 0 auto;
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
@@ -106,8 +114,8 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  height: 32px;
-  padding: 0 14px;
+  height: 30px;
+  padding: 0 13px;
   border: 1px solid var(--card-border);
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.02);
@@ -115,12 +123,13 @@
   font-family: var(--font-zh);
   font-size: 12px;
   cursor: pointer;
-  transition: all 180ms ease;
+  transition: color 160ms var(--ease-out), border-color 160ms var(--ease-out), background 160ms var(--ease-out), transform 140ms var(--ease-out);
 }
 
 .library-chip:hover {
   color: var(--text-1);
   border-color: rgba(180, 197, 255, 0.32);
+  transform: translateY(-1px);
 }
 
 .library-chip--accent {
@@ -131,16 +140,20 @@
 
 /* —— Table —— */
 .library-table {
+  flex: 1 1 auto;
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 7px;
+  overflow: hidden;
 }
 
 .library-table__head {
+  flex: 0 0 auto;
   display: grid;
   grid-template-columns: 44px 1.6fr 1.2fr 86px 78px 96px 124px;
   gap: 16px;
-  padding: 10px 18px;
+  padding: 8px 18px;
   color: var(--text-2);
   font-family: var(--font-en);
   font-size: 10.4px;
@@ -148,16 +161,44 @@
   letter-spacing: 2px;
 }
 
+.library-table__body {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding-right: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(180, 197, 255, 0.45) transparent;
+}
+
+.library-table__body::-webkit-scrollbar {
+  width: 5px;
+}
+
+.library-table__body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.library-table__body::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(180, 197, 255, 0.48);
+}
+
 .library-row {
+  flex: 0 0 auto;
   display: grid;
   grid-template-columns: 44px 1.6fr 1.2fr 86px 78px 96px 124px;
   gap: 16px;
   align-items: center;
-  padding: 14px 18px;
+  min-height: 84px;
+  padding: 10px 18px;
   border: 1px solid var(--card-border);
   border-radius: 8px;
   background: rgba(39, 42, 47, 0.42);
-  transition: all 180ms ease;
+  transition: background 180ms var(--ease-out), border-color 180ms var(--ease-out);
 }
 
 .library-row:hover {
@@ -234,8 +275,8 @@
 
 .match-pie {
   position: relative;
-  width: 48px;
-  height: 48px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   background: conic-gradient(#7adba0 var(--match-deg), rgba(255, 255, 255, 0.06) var(--match-deg));
   display: flex;
@@ -355,11 +396,12 @@
 
 /* —— Pagination —— */
 .library-pagination {
+  flex: 0 0 auto;
   display: inline-flex;
   align-self: center;
   align-items: center;
   gap: 4px;
-  margin-top: 8px;
+  margin-top: 2px;
 }
 
 .library-pagination button {
