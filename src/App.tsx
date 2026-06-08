@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect, useState, type CSSProperties, type ReactNode } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 const ThreeDemoPage = lazy(() => import('./pages/ThreeDemoPage'));
@@ -23,9 +23,88 @@ import DashboardPage from './pages/DashboardPage';
 
 const RedirectHome = () => <Navigate to="/" replace />;
 
+const MOBILE_LANDSCAPE_QUERY = '(max-width: 980px) and (orientation: landscape)';
+const MOBILE_LANDSCAPE_BASE = {
+  width: 760,
+  height: 350,
+  maxScale: 1.16,
+};
+
+type MobileLandscapeScaleState = {
+  active: boolean;
+  scale: number;
+  stageWidth: number;
+  stageHeight: number;
+};
+
+function getMobileLandscapeScale(): MobileLandscapeScaleState {
+  if (typeof window === 'undefined' || !window.matchMedia(MOBILE_LANDSCAPE_QUERY).matches) {
+    return { active: false, scale: 1, stageWidth: 0, stageHeight: 0 };
+  }
+
+  const viewport = window.visualViewport;
+  const width = viewport?.width || window.innerWidth;
+  const height = viewport?.height || window.innerHeight;
+  const fitScale = Math.min(
+    width / MOBILE_LANDSCAPE_BASE.width,
+    height / MOBILE_LANDSCAPE_BASE.height,
+  );
+  const scale = Math.max(1, Math.min(MOBILE_LANDSCAPE_BASE.maxScale, fitScale));
+
+  return {
+    active: true,
+    scale,
+    stageWidth: width / scale,
+    stageHeight: height / scale,
+  };
+}
+
+function MobileLandscapeScaleFrame({ children }: { children: ReactNode }) {
+  const [scaleState, setScaleState] = useState<MobileLandscapeScaleState>(() =>
+    getMobileLandscapeScale(),
+  );
+
+  useEffect(() => {
+    const update = () => setScaleState(getMobileLandscapeScale());
+    const media = window.matchMedia(MOBILE_LANDSCAPE_QUERY);
+    const viewport = window.visualViewport;
+
+    update();
+    media.addEventListener('change', update);
+    window.addEventListener('resize', update);
+    window.addEventListener('orientationchange', update);
+    viewport?.addEventListener('resize', update);
+
+    return () => {
+      media.removeEventListener('change', update);
+      window.removeEventListener('resize', update);
+      window.removeEventListener('orientationchange', update);
+      viewport?.removeEventListener('resize', update);
+    };
+  }, []);
+
+  const style = scaleState.active
+    ? ({
+        '--gripfit-mobile-scale': scaleState.scale,
+        '--gripfit-mobile-stage-width': `${scaleState.stageWidth}px`,
+        '--gripfit-mobile-stage-height': `${scaleState.stageHeight}px`,
+      } as CSSProperties)
+    : undefined;
+
+  return (
+    <div
+      className={`gripfit-scale-frame ${scaleState.active ? 'is-mobile-landscape' : ''}`}
+      style={style}
+    >
+      <div className="gripfit-scale-stage">{children}</div>
+    </div>
+  );
+}
+
 export default function App() {
   return (
     <Suspense fallback={null}>
+      <MobileLandscapeScaleFrame>
     {import.meta.env.DEV ? <DevNav /> : null}
     <Routes>
       {/* 保留路由：onboarding 流程 */}
@@ -55,6 +134,7 @@ export default function App() {
 
       <Route path="*" element={<RedirectHome />} />
     </Routes>
+      </MobileLandscapeScaleFrame>
     </Suspense>
   );
 }

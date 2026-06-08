@@ -212,7 +212,7 @@
 
   .home-copy {
     left: 44px;
-    top: 50%;
+    top: 46%;
     transform: translateY(-50%);
   }
 
@@ -233,9 +233,9 @@
   }
 
   .home-start {
-    margin-top: 12px;
+    margin-top: 10px;
     width: 96px;
-    height: 34px;
+    height: 32px;
     border-radius: 7px;
     font-size: 11px;
   }
