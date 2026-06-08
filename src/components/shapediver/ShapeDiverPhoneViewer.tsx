@@ -8,7 +8,7 @@ import {
 import './ShapeDiverPhoneViewer.css';
 
 const SHAPEDIVER_TICKET =
-  '6439345a758ecade13352d2152f2512791efd050498810bb0e12f9f6c81fd4787b77fbd54718a23deed172c1c5cdeb3adb6511b6e04dd46a4a4163dd062f21400cb1cca2fb1894d37c12f6bd30c9bc509fee158ae1810b6bbada684c642203b22895803c77e16d-854b0c9e4e9e0f704a76e2a5a137748b';
+  '803138a7900259ed5521c6b60a470244619c7c2275f32f4f1d425f162fd6ec2cc0431d6731fcd843b7fc902a7ac72a4a70ffc3e1baf61ac0a558e073d0c7cdb678b7b9b9751d0af529810f6a28d09ca81c20bed0651dd41e9f8e62168389e62483bc619177c527-ee141ca9f941bf7546204311cc0a4053';
 const SHAPEDIVER_MODEL_VIEW_URL = 'https://sdr8euc1.eu-central-1.shapediver.com';
 
 /* ---- 全局单例会话：只冷启动一次、/tuning 与 /best-phone 复用、保持热度 ---- */
