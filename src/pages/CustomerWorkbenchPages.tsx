@@ -135,6 +135,38 @@ const CAROUSEL_SPECS = [
   { hand: { length: 195.0, width: 88.4 }, phone: { weight: 224, width: 78.3 } },
 ];
 
+async function requestMobileScanSetup() {
+  const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  if (!isMobile) return;
+
+  window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+
+  const root = document.documentElement as HTMLElement & {
+    webkitRequestFullscreen?: () => Promise<void> | void;
+  };
+
+  try {
+    if (!document.fullscreenElement) {
+      if (root.requestFullscreen) {
+        await root.requestFullscreen({ navigationUI: 'hide' }).catch(() => undefined);
+      } else {
+        await Promise.resolve(root.webkitRequestFullscreen?.());
+      }
+    }
+  } catch {
+    // iPhone Safari may not support programmatic fullscreen; keep scanning flow usable.
+  }
+
+  try {
+    const orientation = screen.orientation as ScreenOrientation & {
+      lock?: (orientation: string) => Promise<void>;
+    };
+    await orientation.lock?.('landscape');
+  } catch {
+    // Orientation lock is browser-dependent and generally unavailable on iPhone Safari.
+  }
+}
+
 function ProfileInfoPage() {
   const navigate = useNavigate();
   const [gender, setGender] = useState<(typeof profileGenderOptions)[number]['key']>('male');
@@ -397,9 +429,8 @@ function ProfileInfoPage() {
         return;
       }
 
-      const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-      const preferred = isMobile ? 'environment' : 'user';
-      const fallback = isMobile ? 'user' : 'environment';
+      const preferred = 'user';
+      const fallback = 'environment';
       const requests: MediaStreamConstraints[] = [
         { audio: false, video: { facingMode: { ideal: preferred }, width: { ideal: 1280 }, height: { ideal: 720 } } },
         { audio: false, video: { facingMode: { ideal: fallback }, width: { ideal: 1280 }, height: { ideal: 720 } } },
@@ -453,6 +484,10 @@ function ProfileInfoPage() {
   const stepLabel = stepNumber === 1 ? '01' : '02';
   const trackPercent = stepNumber === 1 ? 50 : 100;
   const formLocked = stage !== 'profile';
+  const startScan = async () => {
+    await requestMobileScanSetup();
+    setStage('scan-active');
+  };
 
   return (
     <div className="page-shell profile-info-page">
@@ -516,7 +551,7 @@ function ProfileInfoPage() {
             </div>
 
             {!formLocked ? (
-              <button className="profile-primary" type="button" onClick={() => setStage('scan-active')}>
+              <button className="profile-primary" type="button" onClick={startScan}>
                 <span>确认提交</span>
                 <img src="/assets/profile-figma-icon-arrow.svg" alt="" />
               </button>
@@ -556,7 +591,7 @@ function ProfileInfoPage() {
               captured={capturedHand}
               measure={handMeasure}
               onConfirm={() => navigate('/measure')}
-              onRetry={() => setStage('scan-active')}
+              onRetry={startScan}
             />
           ) : null}
         </section>

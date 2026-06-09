@@ -1705,3 +1705,141 @@
   --accent-blue: #4d82ff;
   --accent: #a8bdff;
 }
+
+@media (max-width: 980px) and (orientation: landscape) {
+  .profile-stage {
+    --profile-left: min(64%, 500px);
+    --profile-pad: 34px;
+    --profile-content: min(340px, calc(var(--profile-left) - (var(--profile-pad) * 2)));
+    width: 100%;
+    height: 100%;
+  }
+
+  .profile-topbar {
+    height: 40px;
+    padding: 0 22px;
+  }
+
+  .profile-topbar span {
+    font-size: 12px;
+    letter-spacing: 2.4px;
+  }
+
+  .profile-panel {
+    top: 40px;
+  }
+
+  .profile-panel-scroll {
+    overflow-y: auto;
+  }
+
+  .profile-progress {
+    margin-top: 10px;
+    width: var(--profile-content);
+  }
+
+  .profile-progress__meta {
+    width: var(--profile-content);
+    justify-content: flex-start;
+    gap: 10px;
+  }
+
+  .profile-progress__meta span {
+    white-space: nowrap;
+  }
+
+  .profile-progress__meta span:first-child {
+    font-size: 8px;
+    letter-spacing: 1.2px;
+  }
+
+  .profile-progress__meta span:last-child {
+    font-size: 10px;
+  }
+
+  .profile-progress__track {
+    margin-top: 4px;
+    width: var(--profile-content);
+  }
+
+  .profile-panel h1 {
+    margin-top: 11px;
+    font-size: 21px;
+    line-height: 25px;
+    letter-spacing: -0.4px;
+  }
+
+  .profile-option-section--gender {
+    margin-top: 9px;
+  }
+
+  .profile-option-section--age {
+    margin-top: 8px;
+  }
+
+  .profile-section-label {
+    font-size: 8.5px;
+    line-height: 12px;
+    letter-spacing: 1px;
+  }
+
+  .profile-gender-grid,
+  .profile-age-grid {
+    margin-top: 6px;
+  }
+
+  .profile-gender-grid {
+    gap: 10px;
+  }
+
+  .profile-gender-grid button {
+    height: 44px;
+    gap: 6px;
+    padding: 7px;
+    font-size: 9.5px;
+  }
+
+  .profile-gender-grid button img {
+    width: 18px;
+    height: 18px;
+  }
+
+  .profile-gender-grid button:nth-child(2) img {
+    width: 13px;
+    height: 19px;
+  }
+
+  .profile-age-grid {
+    gap: 7px;
+  }
+
+  .profile-age-grid button {
+    height: 34px;
+    padding: 5px 5px;
+  }
+
+  .profile-age-grid button strong {
+    font-size: 10px;
+    line-height: 13px;
+  }
+
+  .profile-age-grid button span {
+    font-size: 7.5px;
+    line-height: 10px;
+  }
+
+  .profile-primary {
+    height: 32px;
+    margin-top: 9px;
+    margin-bottom: 14px;
+    font-size: 10px;
+  }
+
+  .profile-visual {
+    top: 40px;
+  }
+
+  .profile-visual-slide img {
+    max-height: 82%;
+  }
+}

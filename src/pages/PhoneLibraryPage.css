@@ -639,8 +639,8 @@
 
 @media (max-width: 980px) and (orientation: landscape) {
   .library-page {
-    padding: 12px 20px 12px;
-    gap: 8px;
+    padding: 9px 20px 8px;
+    gap: 6px;
   }
 
   .library-page__head {
@@ -667,9 +667,9 @@
   }
 
   .library-stats__item {
-    min-height: 50px;
-    gap: 9px;
-    padding: 9px 12px;
+    min-height: 42px;
+    gap: 8px;
+    padding: 7px 12px;
     border-radius: 8px;
   }
 
@@ -683,7 +683,7 @@
   }
 
   .library-chip {
-    height: 25px;
+    height: 23px;
     padding: 0 10px;
     font-size: 10px;
   }
@@ -699,19 +699,19 @@
   }
 
   .library-table__head {
-    padding: 5px 10px;
+    padding: 4px 10px;
     font-size: 8px;
     letter-spacing: 1px;
   }
 
   .library-table__body {
-    gap: 5px;
+    gap: 4px;
     padding-right: 3px;
   }
 
   .library-row {
-    min-height: 54px;
-    padding: 6px 10px;
+    min-height: 48px;
+    padding: 4px 10px;
   }
 
   .library-row__rank {
@@ -732,8 +732,8 @@
   }
 
   .match-pie {
-    width: 34px;
-    height: 34px;
+    width: 30px;
+    height: 30px;
     font-size: 9px;
   }
 
@@ -763,8 +763,8 @@
   }
 
   .library-pagination button {
-    width: 28px;
-    height: 28px;
+    width: 26px;
+    height: 26px;
     font-size: 10px;
   }
 }
